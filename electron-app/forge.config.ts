@@ -7,9 +7,17 @@ import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
+require('path');
+
 
 const config: ForgeConfig = {
-  packagerConfig: {},
+  packagerConfig: {
+    appCopyright: 'Copyright © 2023 Jigglypuff Enterprises',
+    // appBundleId: 'com.electronicarts.electronicarts',
+    // appCategoryType: 'public.app-category.developer-tools',
+    icon: __dirname + '/assets/circle_logo_thicker',
+    name: 'Caribu',
+  },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
   plugins: [
