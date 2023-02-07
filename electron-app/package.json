@@ -1,6 +1,6 @@
 {
-  "name": "electron-app",
-  "productName": "electron-app",
+  "name": "Caribu",
+  "productName": "Caribu",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
