@@ -1,7 +1,9 @@
+import WelcomePage from "./components/WelcomePage";
+
 export default function App() {
   return (
     <div>
-      <h1>Please work please work🤕</h1>
+      <WelcomePage/>
     </div>
   );
 }
