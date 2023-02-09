@@ -27,7 +27,7 @@ class ClassTester {
 
 const outerClass = new ClassTester(testStringOuter)
 
-starWarsController.getCharacters = (req, res, next) => {
+starWarsController.getCharacters = function (req, res, next) {
   const awsObj = {}
   //comment 2
   awsObj.req = req.body
@@ -58,8 +58,8 @@ starWarsController.getSpecies = (req, res, next) => {
 };
 
 function testNamedFunc (anyVar) {
-	testNum++;
-  	let newString = anyVar + "jujjj"
+	  testNum++;
+  	let newString = anyVar + "jujjj" + testStringOuter
     return newString
 };
 

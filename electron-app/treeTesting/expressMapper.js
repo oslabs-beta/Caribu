@@ -2,12 +2,12 @@
 const e = require('express')
 
 //add color to terminal output
-const colors = require('colors') // this is
+// const colors = require('colors') // this is
 
 //Diff server testing (I threw `module.exports = app` at the bottom of each of these when I was testing)
-const catApp = require('./server')
+// const starWarsApp = require('../../../cs/juniorUnits/unit-10-databases/server/server')
 // const starWarsApp = require('../../cs/juniorUnits/unit-10-databases/server/server')
-// const expressApp = require('../../cs/juniorUnits/unit-9-express/server/server')
+const expressApp = require('../../../cs/juniorUnits/unit-9-express/server/server')
 
 
 //app switcher for easy switching between apps. 
@@ -158,7 +158,7 @@ appTree.app._router.stack.forEach(router => {
 // Access a specific endpoint's routes like this:
 // appTree.routers[0].endpoints['PATH_OF_ENDPOINT'].listMiddlewareFuncs()
 // for example, this works for my cat thing:
-appTree.routers[0].endpoints['/:catId'].listMiddlewareFuncs()
+// appTree.routers[0].endpoints['/:catId'].listMiddlewareFuncs()
 //
 // note:
 // this doesn't work by iterating through `appTree.routers[0].endpoints` with a for of/in loop. No idea why.
@@ -169,8 +169,8 @@ appTree.routers[0].endpoints['/:catId'].listMiddlewareFuncs()
 // console.log('\n\n', appTree.routers[0].endpoints['/:catId'].middlewareChain, '\n\n')
 // console.log('\n\n', appTree.routers[0].endpoints['/:catId'].stack[0], '\n\n')
 // console.log('\n\n', appTree.routers[0], '\n\n')
-appTree.routers[0].endpoints['/:catId'].listMiddlewareFuncs()
-console.log(appTree.routers[0].endpoints['/:catId'])
+// appTree.routers[0].endpoints['/:catId'].listMiddlewareFuncs()
+// console.log(appTree.routers[0].endpoints['/:catId'])
 // appTree.routers[0].endpoints['/'].listMiddlewareFuncs()
 
 // const endpoints = Object.keys(appTree.routers[0].endpoints)
