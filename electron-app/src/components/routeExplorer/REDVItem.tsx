@@ -1,7 +1,7 @@
 export default function REDVItem(props: object) {
 
   return (
-      <div>
+      <div className="redv-item">
           REDVItem
       </div>
 

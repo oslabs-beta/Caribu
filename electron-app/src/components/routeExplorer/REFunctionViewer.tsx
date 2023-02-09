@@ -6,6 +6,8 @@ export default function REFunctionViewer(props: object) {
       <div>
           REFunctionViewer
           <REFVItem/>
+          <REFVItem/>
+          <REFVItem/>
       </div>
 
   )

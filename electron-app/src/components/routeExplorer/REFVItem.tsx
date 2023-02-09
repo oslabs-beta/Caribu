@@ -1,7 +1,7 @@
 export default function REFVItem(props: object) {
 
     return (
-        <div>
+        <div className="refv-item">
             REFVItem
         </div>
 
