@@ -1,6 +1,6 @@
-import REDependencyViewer from "./REDependencyViewer";
-import REFunctionViewer from "./REFunctionViewer";
-import RERouteViewer from "./RERouteViewer";
+import REDependencyViewer from "../components/routeExplorer/REDependencyViewer";
+import REFunctionViewer from "../components/routeExplorer/REFunctionViewer";
+import RERouteViewer from "../components/routeExplorer/RERouteViewer";
 
 
 const RouteExplorer = (props: object) => {

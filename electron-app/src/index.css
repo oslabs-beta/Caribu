@@ -6,6 +6,8 @@ body {
   padding: 2rem;
 }
 
+/* key: re = RouteExplorer, po = PurityOverview, m = Metrics */
+
 .re-main {
   display: flex;
 }
@@ -22,4 +24,51 @@ body {
   border: 1px solid;
 }
 
+.po-containers {
+  display: flex;
+}
 
+.po-container {
+  display: flex;
+  border: 1px solid;
+  margin: 5px;
+}
+
+.poc-details {
+  border: 1px solid red;
+  margin: 2px;
+}
+
+.m-main {
+
+}
+
+.m-buttons-container {
+  display: flex;
+}
+
+.m-information {
+  display: flex;
+}
+
+.m-button {
+  border: 1px solid red;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.m-graph {
+  border: 1px solid blue;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.m-suggestions {
+  border: 1px solid green;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.ms-item {
+  margin: 2px;
+}
