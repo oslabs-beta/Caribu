@@ -9,25 +9,6 @@ export interface viewsState {
 
 const initialState: viewsState = {
   routes: [
-    {
-      routeName: '/character',
-      routeMethods: {
-        GET: {
-
-        },
-        POST: {
-
-        }
-      }
-    },
-    {
-      routeName: '/species',
-      routeMethods: {
-        GET: {
-
-        }
-      }
-    }
   ],
   controllers: [],
   apis: [],
