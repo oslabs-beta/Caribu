@@ -4,4 +4,89 @@ body {
   margin: auto;
   max-width: 38rem;
   padding: 2rem;
+  /* background-color: #1f1f23; */
+}
+
+/* key: re = RouteExplorer, po = PurityOverview, m = Metrics */
+
+.re-main {
+  display: flex;
+}
+
+.re-routes {
+  border: 1px solid;
+  margin: 5px;
+}
+
+.re-functions {
+  border: 1px solid;
+  margin: 5px;
+}
+
+.refv-item{
+  margin: 2px;
+  border: 1px solid green;
+}
+
+.re-dependencies {
+  border: 1px solid;
+  margin: 5px;
+}
+
+.redv-item{
+  margin: 2px;
+  border: 1px solid blue;
+}
+
+.po-containers {
+  display: flex;
+}
+
+.po-container {
+  display: flex;
+  border: 1px solid;
+  margin: 5px;
+}
+
+.poc-details {
+  border: 1px solid red;
+  margin: 2px;
+}
+
+.m-main {
+
+}
+
+.m-buttons-container {
+  display: flex;
+}
+
+.m-information {
+  display: flex;
+}
+
+.m-button {
+  border: 1px solid red;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.m-graph {
+  border: 1px solid blue;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.m-suggestions {
+  border: 1px solid green;
+  margin: 10px;
+  border-radius: 5px;
+}
+
+.ms-item {
+  margin: 2px;
+}
+
+Link {
+  
 }
