@@ -23,7 +23,7 @@ export default function App() {
         <Link to="/metrics">Metrics</Link>
       </div>
       <Routes>
-        <Route path='/' element={<div>Welcome Placeholder</div>}/>
+        <Route path='/' element={<WelcomePage/>}/>
         <Route path='/rexplorer' element={<RouteExplorer/>}/>
         <Route path='/purity' element={<Purity/>}/>
         <Route path='/metrics' element={<Metrics/>}/>
