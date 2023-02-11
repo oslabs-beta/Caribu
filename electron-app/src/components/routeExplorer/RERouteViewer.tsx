@@ -6,8 +6,8 @@ export default function RERouteViewer(props: object) {
   const routes = useSelector((state: RootState) => state.views.routes); // routes is an array of objects
   const items = [];
   for(let i = 0; i < routes.length; i++){
-    let name = routes[i].routeName;
-    let methods = Object.keys(routes[i].routeMethods);
+    const name = routes[i].routeName;
+    const methods = Object.keys(routes[i].routeMethods);
     for(let j = 0; j < methods.length; j++)
       items.push(
       <div>

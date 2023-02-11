@@ -1,3 +1,5 @@
+//This is not the true backend, it is simply a server for front end testing.
+
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -17,10 +19,24 @@ app.get('/routes', (req, res) => {
       routeName: '/character',
       routeMethods: {
         GET: {
-
+          middlewares: [{
+            functionInfo: {
+              funcName: 'getCharacters',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [6, 40],
+              funcDef: 'lorem ipsum dolor sit amet',
+            }
+          }]
         },
         POST: {
- 
+          middlewares: [{
+            functionInfo: {
+              funcName: 'addCharacter',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [102, 119],
+              funcDef: 'tbh i dont know hehe',
+            }
+          }]
         }
       }
     },
@@ -28,7 +44,13 @@ app.get('/routes', (req, res) => {
       routeName: '/species',
       routeMethods: {
         GET: {
-
+          middlewares: [{
+            functionInfo: {
+              funcName: 'getCharacters',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [6, 40]
+            }
+          }]
         }
       }
     });

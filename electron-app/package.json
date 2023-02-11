@@ -1,10 +1,11 @@
+{
   "name": "Caribu",
   "productName": "Caribu",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start & node electron-app/server/server.ts",
+    "start": "electron-forge start && node electron-app/server/server.ts",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",

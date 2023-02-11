@@ -2,13 +2,54 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 export interface viewsState {
+  // TBD: flesh out nested types more after talking to backend
   routes: object[],
   controllers: object[],
   apis: object[],
 }
 
 const initialState: viewsState = {
-  routes: [
+  // FOR TESTING ONLY: populate initial state to test if redux state is accessible from components
+  routes: [ 
+ /*    {
+      routeName: '/character',
+      routeMethods: {
+        GET: {
+          middlewares: [{
+            functionInfo: {
+              funcName: 'getCharacters',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [6, 40],
+              funcDef: 'lorem ipsum dolor sit amet',
+            }
+          }]
+        },
+        POST: {
+          middlewares: [{
+            functionInfo: {
+              funcName: 'addCharacter',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [102, 119],
+              funcDef: 'tbh i dont know hehe',
+            }
+          }]
+        }
+      }
+    },
+    {
+      routeName: '/species',
+      routeMethods: {
+        GET: {
+          middlewares: [{
+            functionInfo: {
+              funcName: 'getCharacters',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [6, 40]
+            }
+          }]
+        }
+      }
+    } */
   ],
   controllers: [],
   apis: [],
