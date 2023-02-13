@@ -45,6 +45,7 @@ starWarsController.getCharacters = (req, res, next) => {
 };
 
 starWarsController.getSpecies = (req, res, next) => {
+  testNamedFunc("hello")
   // write code here
   const reqID = req.query.id;
   const text =

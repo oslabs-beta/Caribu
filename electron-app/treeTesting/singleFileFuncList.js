@@ -9,7 +9,7 @@ const  _traverse = require('@babel/traverse')
 const traverse = _traverse.default;
 
 // read the given file and convert it to a string
-const code = fs.readFileSync('./morryExampleSWAPI.js').toString()
+const code = fs.readFileSync('/Users/morry/git/Caribu/electron-app/treeTesting/morryExampleSWAPI.js').toString()
 
 // parse it to an AST
 // we will probably have to add an {options object with a bucnh of [plugins in an array]} later as a second argument for stuff like TS/flow/other stuff
@@ -32,16 +32,17 @@ const ast = parser.parse(code)
 
 class FuncObject {
   constructor (path) {
-    this.funcName = this.funcLabel(path)
+    this.funcName = this.funcLabel(path) || "anonymous"
     this.updates = this.listUpdates(path)
     this.declares = this.listDeclares(path)
     this.returns = this.listReturns(path)
     this.depends = this.listDepends(path)
+    this.location = path.node.loc
   }
 
   funcLabel (path) {
-    // console.log("fincLabelpath.node.id", path)
-    return path.node.id.name
+    // console.log("\n\n\n\n\n\n\n\n\n\n\n*******************\nfincLabelpath.node.id", path)
+    return path.node.id?.name || path.node.type
   }
 
   listUpdates (path) {
@@ -51,11 +52,34 @@ class FuncObject {
     //iterate through the body of the function and find expression statements
     path.node.body.body.forEach(bodyNode => {
       if (bodyNode.type === 'ExpressionStatement') {
+        // console.log(path)
         let indivUpdateObj = {}
-        // get teh type of expression 
         indivUpdateObj.typeOfExpression = bodyNode.expression.type
+        // console.log(bodyNode)
+        if (bodyNode.expression.type = 'AssignmentExpression') {
+          // console.log(bodyNode.expression)
+          //it is either a direcgt update
+          //which means it has NO left or right
+          if (!bodyNode.expression.left) {
+            indivUpdateObj.varName = bodyNode.expression.argument?.loc?.identifierName
+          } else {
+            //or it is an assignment 
+  
+            // console.log(bodyNode.expression.left?.object?.name + "." + bodyNode.expression.left.property.name)
+            indivUpdateObj.varName = bodyNode.expression.left.object.name + "." + bodyNode.expression.left.property.name
+            updatesArr.push(indivUpdateObj)
+
+          }
+        }
+        // if (bodyNode.expression.type = 'UpdateExpression') {
+        //   indivUpdateObj.varName = bodyNode.expression.argument?.loc?.identifierName
+        // }
+        // let indivUpdateObj = {}
+        // get teh type of expression 
+        
         // get the name of the var it acts on 
-        indivUpdateObj.varName = bodyNode.expression.argument.loc.identifierName
+        // need the OR because .loc.identifierName only works on direct mutations (I think) for example: testNum++
+        // indivUpdateObj.varName = bodyNode.expression.argument?.loc?.identifierName
         updatesArr.push(indivUpdateObj)
       }
     })
@@ -81,38 +105,23 @@ class FuncObject {
     // let simpleDeclares = this.declares.reduce((acc, curr) => {acc.push(curr.varName)}, [])
     let simpleDeclares = []
     this.declares.forEach(el => {
-      console.log(el)
+      // console.log(el)
       simpleDeclares.push(el.varName)
     })
     // console.log(simpleDeclares)
     let dependsList = []
     path.traverse({
       Identifier(path) {
-        // console.log("listDepends")
+        // console.log("listDepends")indivUpdateObj.varName = bodyNode.expression.argument?.loc?.identifierName
         // console.log(`Identifier found: ${path.node.name}`);
         if (simpleDeclares.includes(path.node.name) || path.node.name == funcName) {
-          console.log(`${path.node.name} is an INTERNAL variable`)
+          // console.log(`${path.node.name} is an INTERNAL variable`)
         } else {
-          console.log(`${path.node.name} is an EXTERNAL variable`)
+          // console.log(`${path.node.name} is an EXTERNAL variable`)
           dependsList.push(path.node.name)
         }
       }
     })
-    // traverse(path, {
-    //   VariableDeclaration(lilPath) {
-    //     console.log(lilPath)
-    //   }
-
-    // })
-    //each func has a return statement (potentially more than 1)
-    //this will need to be updated to better handle the case of multiple returns (eg. conditional returns) later
-    // path.node.body.body.forEach(bodyNode => {
-      
-    //   console.log(bodyNode)
-    //   // if (bodyNode.type === 'Identifier' && ) {
-    //   //   returnVal.push(bodyNode.argument.name)
-    //   // }
-    // })
     return dependsList
   }
 
@@ -134,36 +143,30 @@ console.log('******************************************************** NEW RUN **
 //travserse and 
 traverse(ast, {
   FunctionDeclaration(path) {
-    // skip if not being used as reference
-    // console.log("////////////////////////////////////////// FUNCTION DECLARATTION //////////////////////////////////////////")
-    // console.log(`Regular Func Name: ${path.node.id.name}`)
-    //this shows things that the functions *creates* and binds values to? ie: parameters for the args that get passed in and vars named in the func
-    // console.log(path.scope)
-    // console.dir(path)
-    // console.log(path.node.body.body)
-    // path.node.body.body.forEach(subNode => {
-    //   if (subNode.expression) {
-    //     // console.log(subNode.expression)
-    //     // console.log(subNode.expression.argument.loc.identifierName)
-    //     // console.log(subNode.expression.argument.loc.start)
-    //   }
-
-    // })
     // console.log("*************************************************************************************************")
     let newFuncInfo = new FuncObject(path)
     console.log(newFuncInfo)
 
-
-    // console.dir(path, {depth : 4})
-    // const parentType = path.parent.type
-    // // console.log(path)
-    // if (parentType == 'AssignmentExpression') {
-    //   console.log(path)
-    // }
   },
 });
 
+traverse(ast, {
+  FunctionExpression(path) {
+    // console.log("*************************************************************************************************")
+    let newFuncInfo = new FuncObject(path)
+    console.log(newFuncInfo)
 
+  },
+});
+
+traverse(ast, {
+  ArrowFunctionExpression(path) {
+    // console.log("*************************************************************************************************")
+    let newFuncInfo = new FuncObject(path)
+    console.log(newFuncInfo)
+
+  },
+});
 
 
 

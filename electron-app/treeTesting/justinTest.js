@@ -6,7 +6,7 @@ const traverse = require("@babel/traverse").default;
 const t = require("@babel/types");
 // const escope = require("escope");
 
-const myCode = fs.readFileSync("./exampleSWAPIAST.js").toString();
+const myCode = fs.readFileSync("/Users/morry/git/Caribu/electron-app/treeTesting/justinsExSWAPI.js").toString();
 // console.log(myCode);
 const myAST = parse(myCode);
 
@@ -30,25 +30,25 @@ for (let i = 0; i < myBody.length; i++) {
 //   },
 // });
 
-// const globalVariables = new Set();
+const globalVariables = new Set();
 
-// traverse(myAST, {
-//   VariableDeclaration(path) {
-//     path.node.declarations.forEach((declaration) => {
-//       globalVariables.add(declaration.id.name);
-//     });
-//   },
+traverse(myAST, {
+  VariableDeclaration(path) {
+    path.node.declarations.forEach((declaration) => {
+      globalVariables.add(declaration.id.name);
+    });
+  },
 
-//   Identifier(path) {
-//     const node = path.node;
-//     if (globalVariables.has(node.name)) {
-//       log.cyan(
-//         `Reference to global variable ${node.name} at line`,
-//         `${node.loc.start.line}`
-//       );
-//     }
-//   },
-// });
+  Identifier(path) {
+    const node = path.node;
+    if (globalVariables.has(node.name)) {
+      log.cyan(
+        `Reference to global variable ${node.name} at line`,
+        `${node.loc.start.line}`
+      );
+    }
+  },
+});
 
 // Finds where variable is referenced and prints what function it is referenced in. Prints null when it is an anon function for some reason its not going into while block
 
@@ -61,6 +61,7 @@ traverse(myAST, {
       let parent = path.parentPath;
 
       while (parent) {
+      // log.magenta("in while loop with this parentNode:" , parent)
         if (
           t.isFunctionDeclaration(parent.node) ||
           t.isFunctionExpression(parent.node)
@@ -72,6 +73,7 @@ traverse(myAST, {
         }
         parent = parent.parentPath;
       }
+      if (!functionName) console.log(`Reference to ${targetVariableName} found in function anonymous function. Node:`, path.node)
 
       console.log(
         `Reference to ${targetVariableName} found in function ${functionName}. Node:`,

@@ -7,7 +7,7 @@ const e = require('express')
 //Diff server testing (I threw `module.exports = app` at the bottom of each of these when I was testing)
 // const starWarsApp = require('../../../cs/juniorUnits/unit-10-databases/server/server')
 // const starWarsApp = require('../../cs/juniorUnits/unit-10-databases/server/server')
-const expressApp = require('../../../cs/juniorUnits/unit-9-express/server/server')
+const expressApp = require('../../../cs/juniorUnits/expressTest/serverReset/server')
 
 
 //app switcher for easy switching between apps. 
@@ -197,22 +197,30 @@ app._router.stack.forEach(function(middleware){
     
     //log the different sub-routes 
     console.log('\n\nMIDDLEWARE HANDLERS STACK: \n')
-    middleware.handle.stack.forEach(el => {console.log(el.route.path)})
+    middleware.handle.stack.forEach(el => {
+      console.log(el)
+      console.log(el.route.stack)
+      el.route.stack.forEach(ul => {
+        console.log(ul)
+        // console.log(require.resolve(ul.handle.label))
+      })
+    })
 
     //for each subroute, list the associated function definitons
     //limited to just the /locations route for ease -of reasing
-    // middleware.handle.stack.forEach(function(handler){
-    //   // if (handler.route.path === '/locations/') {
-    //     // console.log(`\n\n SPECIFIC STACK ROUTE '${handler.route.path}': \n`)
+    middleware.handle.stack.forEach(function(handler){
+      // if (handler.route.path === '/locations/') {
+        // console.log(`\n\n SPECIFIC STACK ROUTE '${handler.route.path}': \n`)
         
-    //     //log the stack for the specific route
-    //     // console.log(handler.route)
+        //log the stack for the specific route
+        // console.log(handler.route)
         
-    //     //list every function definition
-    //     console.log(`\n\n FUNCTION DEFINTIONS IN ROUTE ${handler.route.path}: \n`)
-    //       handler.route.stack.forEach(el => {
-    //         console.log(el.handle.toString(), '\n')
-    //       })
-    //     }
+        //list every function definition
+        // console.log(`\n\n FUNCTION DEFINTIONS IN ROUTE ${handler.route.path}: \n`)
+        //   handler.route.stack.forEach(el => {
+        //     console.log(el.handle.toString(), '\n')
+        //   })
+        }
+        )
   }
 })
