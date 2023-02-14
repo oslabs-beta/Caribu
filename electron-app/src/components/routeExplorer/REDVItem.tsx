@@ -1,8 +1,11 @@
 export default function REDVItem(props: object) {
 
   return (
-      <div className="redv-item">
-          REDVItem
+      <div>
+        <button className="redv-item" onClick={() => console.log('REDVItem clicked')}>
+          {props.upVarName}
+          {props.depVarName}
+        </button>
       </div>
 
   )
