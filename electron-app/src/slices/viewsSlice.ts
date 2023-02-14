@@ -70,4 +70,9 @@ export const viewsSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { update_routes } = viewsSlice.actions;
 
+// Thunk action creator for fetching 
+export const fetchRoutes: ()=>void = () => async (dispatch, getState) => {
+  const response = await fetch('/api/routes');
+  dispatch(update_routes(response));
+}
 export default viewsSlice.reducer;
