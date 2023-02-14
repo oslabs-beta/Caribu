@@ -8,27 +8,27 @@ const testNum = 12;
 let bruh = 5 + testNum;
 const testStringOuter = "OUTER";
 
-class ClassTester {
-  constructor(val) {
-    this.value = val;
-    this.valTwice = `${val} and ${val} again`;
-  }
-  get area() {
-    return this.returnValHello();
-  }
-  // Method
-  calcArea() {
-    return this.value + "HELLOOOOOOO";
-  }
-  *getSides() {
-    yield this.value;
-    yield this.valTwice;
-  }
-}
+// class ClassTester {
+//   constructor(val) {
+//     this.value = val;
+//     this.valTwice = `${val} and ${val} again`;
+//   }
+//   get area() {
+//     return this.returnValHello();
+//   }
+//   // Method
+//   calcArea() {
+//     return this.value + "HELLOOOOOOO";
+//   }
+//   *getSides() {
+//     yield this.value;
+//     yield this.valTwice;
+//   }
+// }
 
-const outerClass = new ClassTester(testStringOuter);
+// const outerClass = new ClassTester(testStringOuter);
 
-starWarsController.getCharacters = (req, res, next) => {
+starWarsController.getCharacters = function coolAnon(req, res, next) {
   testNum++;
   const awsObj = {};
   //comment 2
@@ -44,7 +44,7 @@ starWarsController.getCharacters = (req, res, next) => {
     .then(() => next());
 };
 
-starWarsController.getSpecies = (req, res, next) => {
+starWarsController.getSpecies = function speciesGetter(req, res, next) {
   // write code here
   const reqID = req.query.id;
   const text =
