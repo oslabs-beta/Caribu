@@ -48,8 +48,11 @@
     "@babel/traverse": "^7.20.13",
     "electron-squirrel-startup": "^1.0.0",
     "escope": "^4.0.0",
+    "express-router-dependency-graph": "^1.1.3",
+    "mercedlogger": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "scope-analyzer": "^2.1.2"
+    "scope-analyzer": "^2.1.2",
+    "skott": "^0.18.0"
   }
 }

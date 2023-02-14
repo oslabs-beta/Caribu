@@ -27,7 +27,7 @@ class ClassTester {
 
 const outerClass = new ClassTester(testStringOuter)
 
-starWarsController.getCharacters = function (req, res, next) {
+starWarsController.getCharacters = function functionNameLol (req, res, next) {
   const awsObj = {}
   //comment 2
   awsObj.req = req.body
