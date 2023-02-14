@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //at homepage - on endpoint main, send main page to front end
-app.get('/routes', (req, res) => {
+app.get('/api/routes', (req, res) => {
   res.json(
     {
       routeName: '/character',
