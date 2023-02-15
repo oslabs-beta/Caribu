@@ -44,12 +44,7 @@ starWarsController.getCharacters = function coolAnon(req, res, next) {
     .then(() => next());
 };
 
-<<<<<<< HEAD
 starWarsController.getSpecies = function speciesGetter(req, res, next) {
-=======
-starWarsController.getSpecies = (req, res, next) => {
-  testNamedFunc("hello")
->>>>>>> 604a7b9b53c838643bee110512858ce05166d7b3
   // write code here
   const reqID = req.query.id;
   const text =

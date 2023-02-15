@@ -6,11 +6,7 @@ const traverse = require("@babel/traverse").default;
 const t = require("@babel/types");
 // const escope = require("escope");
 
-<<<<<<< HEAD
 const myCode = fs.readFileSync("./justinsExSWAPI.js").toString();
-=======
-const myCode = fs.readFileSync("/Users/morry/git/Caribu/electron-app/treeTesting/justinsExSWAPI.js").toString();
->>>>>>> 604a7b9b53c838643bee110512858ce05166d7b3
 // console.log(myCode);
 const myAST = parse(myCode);
 
@@ -34,26 +30,17 @@ for (let i = 0; i < myBody.length; i++) {
 //   },
 // });
 
-<<<<<<< HEAD
 const globalVariables = {};
-=======
-const globalVariables = new Set();
->>>>>>> 604a7b9b53c838643bee110512858ce05166d7b3
 
 traverse(myAST, {
   VariableDeclaration(path) {
     path.node.declarations.forEach((declaration) => {
-<<<<<<< HEAD
       globalVariables[declaration.id.name] = [];
-=======
-      globalVariables.add(declaration.id.name);
->>>>>>> 604a7b9b53c838643bee110512858ce05166d7b3
     });
   },
 
   Identifier(path) {
     const node = path.node;
-<<<<<<< HEAD
     // console.log(node);
     // if (globalVariables.has(node.name)) {
     //   log.magenta(
@@ -71,16 +58,6 @@ console.log(globalVariables);
 // for (const key in globalVariables) {
 //   console.log(key);
 // }
-=======
-    if (globalVariables.has(node.name)) {
-      log.cyan(
-        `Reference to global variable ${node.name} at line`,
-        `${node.loc.start.line}`
-      );
-    }
-  },
-});
->>>>>>> 604a7b9b53c838643bee110512858ce05166d7b3
 
 // Finds where variable is referenced and prints what function it is referenced in. Prints null when it is an anon function for some reason its not going into while block
 
@@ -92,11 +69,7 @@ traverse(myAST, {
       let functionName = null;
       let parent = path.parentPath;
       while (parent) {
-<<<<<<< HEAD
         // console.log(t.isArrowFunctionExpression(parent.node));
-=======
-      // log.magenta("in while loop with this parentNode:" , parent)
->>>>>>> 604a7b9b53c838643bee110512858ce05166d7b3
         if (
           t.isFunctionDeclaration(parent.node) ||
           t.isFunctionExpression(parent.node)
@@ -107,11 +80,6 @@ traverse(myAST, {
         }
         parent = parent.parentPath;
       }
-<<<<<<< HEAD
-=======
-      if (!functionName) console.log(`Reference to ${targetVariableName} found in function anonymous function. Node:`, path.node)
-
->>>>>>> 604a7b9b53c838643bee110512858ce05166d7b3
       console.log(
         `Reference to ${targetVariableName} found in function ${functionName}. Node:`,
         path.node
