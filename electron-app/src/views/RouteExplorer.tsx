@@ -1,10 +1,16 @@
 import REDependencyViewer from "../components/routeExplorer/REDependencyViewer";
 import REFunctionViewer from "../components/routeExplorer/REFunctionViewer";
 import RERouteViewer from "../components/routeExplorer/RERouteViewer";
-
+/**for testing state*/
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+/**for testing state */
 
 const RouteExplorer = (props: object) => {
-
+  /**for testing state */
+  const views = useSelector((state: RootState) => state.views);
+  console.log('RouteExplorer routes state is ',views.routes);
+  /**for testing state */
 
   console.log(props);
   return (
