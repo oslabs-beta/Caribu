@@ -179,6 +179,7 @@ fs.writeFileSync('originalAppTree.json', JSON.stringify(originalAppTree), (error
   if (error) throw error;
 });
 
-module.exports = originalAppTree
+module.exports = originalAppTree;
+
 
 //

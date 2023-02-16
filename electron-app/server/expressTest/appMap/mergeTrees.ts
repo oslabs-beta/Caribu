@@ -1,101 +1,104 @@
-const originalTree = require('./originalAppTree.json')
-const renamedTree = require('./renamedAppTree.json')
-const fs = require('fs')
-const parser = require('@babel/parser')
-const { parse } = require('@babel/core')
+const originalTree = require("./originalAppTree.json");
+const renamedTree = require("./renamedAppTree.json");
+const fs = require("fs");
+const parser = require("@babel/parser");
+const { parse } = require("@babel/core");
 
-const  _traverse = require('@babel/traverse')
-const { isGeneratorFunction } = require('util/types')
+const _traverse = require("@babel/traverse");
+const { isGeneratorFunction } = require("util/types");
 const traverse = _traverse.default;
 
 //declare a class for funcObject which we will use to make/store info about mw functions we find
 class FuncObject {
-  funcName : string;
-  updates : any[];
-  declares : any[];
-  returns : any[];
-  depends : any[];
-  location : object;
-  constructor (path : object) {
-    this.funcName = this.funcLabel(path) || "anonymous"
-    this.updates = this.listUpdates(path)
-    this.declares = this.listDeclares(path)
-    this.returns = this.listReturns(path)
-    this.depends = this.listDepends(path)
-    this.location = path.node.loc
+  funcName: string;
+  updates: any[];
+  declares: any[];
+  returns: any[];
+  depends: any[];
+  location: object;
+  constructor(path: object) {
+    this.funcName = this.funcLabel(path) || "anonymous";
+    this.updates = this.listUpdates(path);
+    this.declares = this.listDeclares(path);
+    this.returns = this.listReturns(path);
+    this.depends = this.listDepends(path);
+    this.location = path.node.loc;
   }
 
   //makes the function's name / label
-  funcLabel (path : object):string {
+  funcLabel(path: object): string {
     // console.log("\n\n\n\n\n\n\n\n\n\n\n*******************\nfincLabelpath.node.id", path)
-    return path.node.id?.name || path.node.type
+    return path.node.id?.name || path.node.type;
   }
 
   //gets a list all of the variables the function updates
   // **** NEED TO FIX THIS FUNCTIONALITY TO MAKE MORE PRECISE INFO AS NEEDED FOR FRONTEND OBJECT******
-  listUpdates (path : object):any[] {
+  listUpdates(path: object): any[] {
     // defines an array of updated variables
-    let updatesArr : any[] = []
+    let updatesArr: any[] = [];
     // creates an individual object for holding info on each updated variable
     // iterate through the body of the function and finds expression statements (stuff that updates/assigns/changes)
-    path.node.body.body.forEach((bodyNode : object) => {
-      if (bodyNode.type === 'ExpressionStatement') {
-        let indivUpdateObj : object = {}
-        indivUpdateObj.typeOfExpression = bodyNode.expression.type
+    path.node.body.body.forEach((bodyNode: object) => {
+      if (bodyNode.type === "ExpressionStatement") {
+        let indivUpdateObj: object = {};
+        indivUpdateObj.typeOfExpression = bodyNode.expression.type;
         //*****need to add a varName t the object in the case that the below conditional does not hit*****
-        if (bodyNode.expression.type = 'AssignmentExpression') {
+        if ((bodyNode.expression.type = "AssignmentExpression")) {
           //it is either a direct update
           //which means it has NO left or right
           if (!bodyNode.expression.left) {
-            indivUpdateObj.varName = bodyNode.expression.argument?.loc?.identifierName
+            indivUpdateObj.varName =
+              bodyNode.expression.argument?.loc?.identifierName;
           } else {
-            //or it is an assignment 
+            //or it is an assignment
             //which means we need to know the object it belongs to and the property we are updating
             //We need to fix this to either figure out the base object (maybe ONLY the base object)
             //that we are updating (eg. what is ALLLL the way left (`big`) in big.random.object.we.are.updating)
-            indivUpdateObj.varName = bodyNode.expression.left.object.name + "." + bodyNode.expression.left.property.name
-            updatesArr.push(indivUpdateObj)
-
+            indivUpdateObj.varName =
+              bodyNode.expression.left.object.name +
+              "." +
+              bodyNode.expression.left.property.name;
+            updatesArr.push(indivUpdateObj);
           }
         }
         //push the updateObj to updatesArr
-        updatesArr.push(indivUpdateObj)
+        updatesArr.push(indivUpdateObj);
       }
-    })
+    });
     //return the full list of updates
-    return updatesArr
+    return updatesArr;
   }
 
-  //should probably split this up into 'internally declares' variables and 'parameters' bc theyre different enough 
-  listDeclares (path : object) {
-    let declaresArr = []
-    //bindings are things that the functions *creates*/*declares* and binds values to? 
+  //should probably split this up into 'internally declares' variables and 'parameters' bc theyre different enough
+  listDeclares(path: object) {
+    let declaresArr = [];
+    //bindings are things that the functions *creates*/*declares* and binds values to?
     //ie: parameters for the args that get passed in and vars named in the func
     //these are all in a convenient object, so we can just iterate through it
     for (let binding in path.scope.bindings) {
-      let indivDeclareObj : object = {}
-      indivDeclareObj.varName = path.scope.bindings[binding].identifier.name
-      declaresArr.push(indivDeclareObj)
+      let indivDeclareObj: object = {};
+      indivDeclareObj.varName = path.scope.bindings[binding].identifier.name;
+      declaresArr.push(indivDeclareObj);
     }
-    return declaresArr
+    return declaresArr;
   }
 
-  // lists the upstream dependencies of the objects 
+  // lists the upstream dependencies of the objects
   // probably need to fix this function a bit
-  listDepends (path : object) {
+  listDepends(path: object) {
     //get function name
-    const funcName = this.funcName
+    const funcName = this.funcName;
     //create an array for everything that the function declares
-    let simpleDeclares : any[] = []
+    let simpleDeclares: any[] = [];
 
-    //iterate through it 
-    this.declares.forEach(el => {
+    //iterate through it
+    this.declares.forEach((el) => {
       // console.log(el)
-      simpleDeclares.push(el.varName)
-    })
+      simpleDeclares.push(el.varName);
+    });
 
     //create a list to hold all dependencies
-    let dependsList : string[] = []
+    let dependsList: string[] = [];
 
     //traverse for identifiers.
     //logic here is that anything identifier that is not DECLARED by the function is necessarily DEPENDED ON by the function
@@ -103,45 +106,48 @@ class FuncObject {
       Identifier(path) {
         // if the identifier is the function name (redundant) or is included in the list of what it declares
         // then it is not something the function depends on
-        if (!simpleDeclares.includes(path.node.name) && path.node.name != funcName) {
+        if (
+          !simpleDeclares.includes(path.node.name) &&
+          path.node.name != funcName
+        ) {
           //delete all these comments between the two uncommented lines if this works fine
-        //   // console.log(`${path.node.name} is an INTERNAL variable`)
-        //   // i think we can get rid of this first if statement, there's nothing here
-        // } else {
+          //   // console.log(`${path.node.name} is an INTERNAL variable`)
+          //   // i think we can get rid of this first if statement, there's nothing here
+          // } else {
           //if it is not, then it
           // console.log(`${path.node.name} is an EXTERNAL variable`)
-          dependsList.push(path.node.name)
+          dependsList.push(path.node.name);
         }
-      }
-    })
-    return dependsList
+      },
+    });
+    return dependsList;
   }
 
   //lists what the function can return
-  listReturns (path : object) {
-    let returnVal = []
+  listReturns(path: object) {
+    let returnVal = [];
     //each func has a return statement (potentially more than 1)
     //this will need to be updated to better handle the case of multiple returns (eg. conditional returns) later
-    path.node.body.body.forEach((bodyNode : object) => {
-      if (bodyNode.type === 'ReturnStatement') {
-        returnVal.push(bodyNode.argument.name)
+    path.node.body.body.forEach((bodyNode: object) => {
+      if (bodyNode.type === "ReturnStatement") {
+        returnVal.push(bodyNode.argument.name);
       }
-    })
-    return returnVal
+    });
+    return returnVal;
   }
 }
 
 //utility function, just allows you to pass a tree in and do a bunch of logs, you can use or ignore
-function info (tree : object) {
-  console.log('**** TREE.ROUTERS **** {object}')
-  console.log(tree)
-  console.log('**** TREE.ROUTERS **** [array]')
-  console.log(tree.routers)
-  console.log('**** TREE.ROUTERS.STACK **** [array]')
-  tree.routers.forEach(el => {
-    console.log(el)
-  })
-  console.log('**** TREE.ROUTERS.STACK[i].endpoints{}.stack **** {obj}')
+function info(tree: object) {
+  console.log("**** TREE.ROUTERS **** {object}");
+  console.log(tree);
+  console.log("**** TREE.ROUTERS **** [array]");
+  console.log(tree.routers);
+  console.log("**** TREE.ROUTERS.STACK **** [array]");
+  tree.routers.forEach((el) => {
+    console.log(el);
+  });
+  console.log("**** TREE.ROUTERS.STACK[i].endpoints{}.stack **** {obj}");
   // tree.routers.forEach(el => {
   //   for (let endpoint in el.endpoints) {
   //     console.log(el.endpoints[endpoint])
@@ -151,11 +157,11 @@ function info (tree : object) {
 }
 
 // start location parsing function
-function isolateNumbers(string : string):string {
+function isolateNumbers(string: string): string {
   //get start index of S
   //can probs change this to CBUSTART and adjust the number (I think it'd be 8)
-  const startIndex : number = string.indexOf('S') + 5;
-  let numbers : string = '';
+  const startIndex: number = string.indexOf("S") + 5;
+  let numbers: string = "";
   //iterate through string until you hit something thats not a number (end of start portion of funcName)
   for (let i = startIndex; i < string.length; i++) {
     if (!isNaN(string[i])) {
@@ -168,165 +174,167 @@ function isolateNumbers(string : string):string {
 }
 
 // path parsing function
-function isolatePath (string : string):string {
+function isolatePath(string: string): string {
   //path goes from start of CBUPATH_$ to end of string
-  const startIndex : number = string.indexOf('CBUPATH_$')
-  let slicedString : string = string.slice(startIndex+7)
-  
+  const startIndex: number = string.indexOf("CBUPATH_$");
+  let slicedString: string = string.slice(startIndex + 7);
+
   //un-replace all the sanitized characters with / and . to recreate the filepath
-  let parsedPath : string = slicedString.replaceAll('$', '/').replaceAll('_','.')
-  return parsedPath
+  let parsedPath: string = slicedString
+    .replaceAll("$", "/")
+    .replaceAll("_", ".")
+    .replaceAll("Ü", "-");
+  return parsedPath;
 }
 
 // info(originalTree)
 
-
-
 // create a function
 // it will take the old tree and the new tree
-function mergeTrees (oldTree : object, renamedTree : object):object {
+function mergeTrees(oldTree: object, renamedTree: object): object {
   //iterate through new tree
   //tree (obj)
   //routers (v. bound dispatch) [arr of {obj}]
   //for each router
-    for (let routerNum = 0; routerNum < oldTree.routers.length; routerNum++) {
-      //for each endpoint in the router, make
-      for (let endpoint in oldTree.routers[routerNum].endpoints) {
+  for (let routerNum = 0; routerNum < oldTree.routers.length; routerNum++) {
+    //for each endpoint in the router, make
+    for (let endpoint in oldTree.routers[routerNum].endpoints) {
+      //loop through the endpoint's mw
+      let currentMw: object =
+        oldTree.routers[routerNum].endpoints[endpoint]["middlewareChain"];
+      let matchingMw: object =
+        renamedTree.routers[routerNum].endpoints[endpoint]["middlewareChain"];
 
-        //loop through the endpoint's mw
-        let currentMw : object = oldTree.routers[routerNum].endpoints[endpoint]['middlewareChain']
-        let matchingMw : object = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain']
+      // iterate through middleware linked list and get func info for each one
+      // pulling from the matching mw where necessary
+      while (currentMw) {
+        //assign info
+        currentMw.name = matchingMw.name;
+        currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name));
+        currentMw.filePath = "." + isolatePath(currentMw.name);
+        currentMw.funcInfo = getFuncInfo(
+          currentMw.filePath,
+          currentMw.startingPosition
+        );
 
-        // iterate through middleware linked list and get func info for each one
-        // pulling from the matching mw where necessary
-        while (currentMw) {
-          //assign info
-          currentMw.name = matchingMw.name
-          currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-          currentMw.filePath = "." + isolatePath(currentMw.name)
-          currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition)
-
-          //move on
-          currentMw = currentMw.nextFunc
-          matchingMw = matchingMw.nextFunc
-        }
+        //move on
+        currentMw = currentMw.nextFunc;
+        matchingMw = matchingMw.nextFunc;
       }
-
     }
+  }
 
   // return the old tree with name properties on its middleware chain nodes
-  return oldTree
+  return oldTree;
 }
 
-const mergedTree = mergeTrees(originalTree, renamedTree)
+const mergedTree = mergeTrees(originalTree, renamedTree);
 
-function getFuncInfo (filePath : string, startingIndex : number) {
+function getFuncInfo(filePath: string, startingIndex: number) {
   // console.log("filepath in getFuncInfo:" , filePath)
-  const code : string = fs.readFileSync(filePath).toString()
-  let funcInfo : object = {}
-  const ast : object = parser.parse(code)
+  const code: string = fs.readFileSync(filePath).toString();
+  let funcInfo: object = {};
+  const ast: object = parser.parse(code);
 
   // traverses functions with names
   traverse(ast, {
     FunctionDeclaration(path) {
       //get the starting index of the node we are on
-      const start : number = path.node.loc.start.index;
+      const start: number = path.node.loc.start.index;
       // check if the line number of interest is within the start and end lines of the function definition
-        if (startingIndex === start) {
-          // stop the traversal once we have found the information we are looking for
-          // because we are only interested in the first function definition that matches line number
-          let newFuncInfo : object = new FuncObject(path)
-          funcInfo = newFuncInfo
-        }
-    }
-    
+      if (startingIndex === start) {
+        // stop the traversal once we have found the information we are looking for
+        // because we are only interested in the first function definition that matches line number
+        let newFuncInfo: object = new FuncObject(path);
+        funcInfo = newFuncInfo;
+      }
+    },
   });
 
   // traverses anonymous functions
   traverse(ast, {
     FunctionExpression(path) {
       //get the starting index of the node we are on
-      const start : number = path.node.loc.start.index;
+      const start: number = path.node.loc.start.index;
       // check if the line number of interest is within the start and end lines of the function definition
-        if (startingIndex === start) {
-          // stop the traversal once we have found the information we are looking for
-          // because we are only interested in the first function definition that matches line number
-          let newFuncInfo : object = new FuncObject(path)
-          funcInfo = newFuncInfo
-        }
-    }
-    
+      if (startingIndex === start) {
+        // stop the traversal once we have found the information we are looking for
+        // because we are only interested in the first function definition that matches line number
+        let newFuncInfo: object = new FuncObject(path);
+        funcInfo = newFuncInfo;
+      }
+    },
   });
 
   // traverses arrow functions
   traverse(ast, {
     ArrowFunctionExpression(path) {
       //get the starting index of the node we are on
-      const start : number = path.node.loc.start.index;
+      const start: number = path.node.loc.start.index;
       // check if the line number of interest is within the start and end lines of the function definition
-        if (startingIndex === start) {
-          // stop the traversal once we have found the information we are looking for
-          // because we are only interested in the first function definition that matches line number
-          let newFuncInfo : object = new FuncObject(path)
-          funcInfo = newFuncInfo
-        }
-    }
-    
+      if (startingIndex === start) {
+        // stop the traversal once we have found the information we are looking for
+        // because we are only interested in the first function definition that matches line number
+        let newFuncInfo: object = new FuncObject(path);
+        funcInfo = newFuncInfo;
+      }
+    },
   });
   // return the func info object
-  return funcInfo
-} 
+  return funcInfo;
+}
 
-const finalObj : object[] = []
+const finalObj: object[] = [];
 
 // console.log(mergedTree)
 // console.log(mergedTree.routers)
-mergedTree.routers.forEach(route => {
+mergedTree.routers.forEach((route) => {
   // console.log(route.endpoints)
   for (let endpoint in route.endpoints) {
-    let routeObj : object = {}
+    let routeObj: object = {};
     //save path to a variable
-    let endpointPath : string = route.endpoints[endpoint].path
-  
+    let endpointPath: string = route.endpoints[endpoint].path;
+
     //save methods to a variable (may need to fix later for multiple endpoints on single route?)
-    let endpointMethod : string = Object.keys(route.endpoints[endpoint].methods)[0]
-  
+    let endpointMethod: string = Object.keys(
+      route.endpoints[endpoint].methods
+    )[0];
+
     // console.log(endpointPath, endpointMethod)
-    
+
     //check if endpoint exists, if not, make it and an array for its methods
     if (!routeObj[endpointPath]) {
-      console.log("didnt exist")
-      routeObj.routeName = endpointPath
-      routeObj.routeMethods = {}
-      routeObj.routeMethods[endpointMethod] = {}
+      console.log("didnt exist");
+      routeObj.routeName = endpointPath;
+      routeObj.routeMethods = {};
+      routeObj.routeMethods[endpointMethod] = {};
     }
-    
+
     // routeObj.routeMethods[endpointMethod] = {}
 
     //this keeps the mwChain as a linkedList
     // routeObj.routeMethods[endpointMethod].middlewareChain = route.endpoints[endpoint].middlewareChain
 
     //this will make it into an array
-    routeObj.routeMethods[endpointMethod].middlewares = []
-    
-    let current : object = route.endpoints[endpoint].middlewareChain
+    routeObj.routeMethods[endpointMethod].middlewares = [];
+
+    let current: object = route.endpoints[endpoint].middlewareChain;
     while (current) {
-      routeObj.routeMethods[endpointMethod].middlewares.push(current)
-      current = current.nextFunc
+      routeObj.routeMethods[endpointMethod].middlewares.push(current);
+      current = current.nextFunc;
     }
 
-
     // console.log(route.endpoints[endpoint].middlewareChain)
-    finalObj.push(routeObj)
+    finalObj.push(routeObj);
   }
-})
+});
 
-console.log(finalObj)
+console.log(finalObj);
 // console.log(finalObj)
-console.log(finalObj)
-console.dir(finalObj, {depth : 4})
-console.log(finalObj[0].routeName)
-console.dir(finalObj[0].routeMethods, {depth : 5})
+console.log(finalObj);
+console.dir(finalObj, { depth: 4 });
+console.log(finalObj[0].routeName);
+console.dir(finalObj[0].routeMethods, { depth: 5 });
 // console.log(finalObj[0].routeMethods.delete.middlewares[0])
 
 // console.log('///// FUNC INFO PART OF OBJ /////')
@@ -343,19 +351,12 @@ console.dir(finalObj[0].routeMethods, {depth : 5})
 
 // console.log('///// UPSTREAM DEPENDENCIES PART OF OBJ /////')
 
-
 // console.log("deps:", finalObj[2].routeMethods.get.middlewares[0].funcInfo)
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-
-
 
 // {
 //   routers: [
@@ -374,8 +375,6 @@ console.dir(finalObj[0].routeMethods, {depth : 5})
 //   ],
 //   boundDispatchers: [ { path: '/', bd: [Object], methods: [Object], stack: [Array] } ]
 // }
-
-
 
 // {
 //   routeName: '/character',
@@ -433,7 +432,7 @@ console.dir(finalObj[0].routeMethods, {depth : 5})
 //               dependentFuncFile : 'addCharacters dependentfunc1 file path',
 //               dependentFuncPosition: [2, 12],
 //               dependentFuncDef : 'addCharacters dependentfunc1 definition'
-              // depUseInFunc
+// depUseInFunc
 //             }]
 //           }
 //         }

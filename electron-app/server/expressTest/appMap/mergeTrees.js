@@ -1,14 +1,15 @@
-var originalTree = require('./originalAppTree.json');
-var renamedTree = require('./renamedAppTree.json');
-var fs = require('fs');
-var parser = require('@babel/parser');
-var parse = require('@babel/core').parse;
-var _traverse = require('@babel/traverse');
-var isGeneratorFunction = require('util/types').isGeneratorFunction;
-var traverse = _traverse["default"];
+"use strict";
+const originalTree = require('./originalAppTree.json');
+const renamedTree = require('./renamedAppTree.json');
+const fs = require('fs');
+const parser = require('@babel/parser');
+const { parse } = require('@babel/core');
+const _traverse = require('@babel/traverse');
+const { isGeneratorFunction } = require('util/types');
+const traverse = _traverse.default;
 //declare a class for funcObject which we will use to make/store info about mw functions we find
-var FuncObject = /** @class */ (function () {
-    function FuncObject(path) {
+class FuncObject {
+    constructor(path) {
         this.funcName = this.funcLabel(path) || "anonymous";
         this.updates = this.listUpdates(path);
         this.declares = this.listDeclares(path);
@@ -17,22 +18,22 @@ var FuncObject = /** @class */ (function () {
         this.location = path.node.loc;
     }
     //makes the function's name / label
-    FuncObject.prototype.funcLabel = function (path) {
+    funcLabel(path) {
         var _a;
         // console.log("\n\n\n\n\n\n\n\n\n\n\n*******************\nfincLabelpath.node.id", path)
         return ((_a = path.node.id) === null || _a === void 0 ? void 0 : _a.name) || path.node.type;
-    };
+    }
     //gets a list all of the variables the function updates
     // **** NEED TO FIX THIS FUNCTIONALITY TO MAKE MORE PRECISE INFO AS NEEDED FOR FRONTEND OBJECT******
-    FuncObject.prototype.listUpdates = function (path) {
+    listUpdates(path) {
         // defines an array of updated variables
-        var updatesArr = [];
+        let updatesArr = [];
         // creates an individual object for holding info on each updated variable
         // iterate through the body of the function and finds expression statements (stuff that updates/assigns/changes)
-        path.node.body.body.forEach(function (bodyNode) {
+        path.node.body.body.forEach((bodyNode) => {
             var _a, _b;
             if (bodyNode.type === 'ExpressionStatement') {
-                var indivUpdateObj = {};
+                let indivUpdateObj = {};
                 indivUpdateObj.typeOfExpression = bodyNode.expression.type;
                 //*****need to add a varName t the object in the case that the below conditional does not hit*****
                 if (bodyNode.expression.type = 'AssignmentExpression') {
@@ -56,38 +57,38 @@ var FuncObject = /** @class */ (function () {
         });
         //return the full list of updates
         return updatesArr;
-    };
+    }
     //should probably split this up into 'internally declares' variables and 'parameters' bc theyre different enough 
-    FuncObject.prototype.listDeclares = function (path) {
-        var declaresArr = [];
+    listDeclares(path) {
+        let declaresArr = [];
         //bindings are things that the functions *creates*/*declares* and binds values to? 
         //ie: parameters for the args that get passed in and vars named in the func
         //these are all in a convenient object, so we can just iterate through it
-        for (var binding in path.scope.bindings) {
-            var indivDeclareObj = {};
+        for (let binding in path.scope.bindings) {
+            let indivDeclareObj = {};
             indivDeclareObj.varName = path.scope.bindings[binding].identifier.name;
             declaresArr.push(indivDeclareObj);
         }
         return declaresArr;
-    };
+    }
     // lists the upstream dependencies of the objects 
     // probably need to fix this function a bit
-    FuncObject.prototype.listDepends = function (path) {
+    listDepends(path) {
         //get function name
-        var funcName = this.funcName;
+        const funcName = this.funcName;
         //create an array for everything that the function declares
-        var simpleDeclares = [];
+        let simpleDeclares = [];
         //iterate through it 
-        this.declares.forEach(function (el) {
+        this.declares.forEach(el => {
             // console.log(el)
             simpleDeclares.push(el.varName);
         });
         //create a list to hold all dependencies
-        var dependsList = [];
+        let dependsList = [];
         //traverse for identifiers.
         //logic here is that anything identifier that is not DECLARED by the function is necessarily DEPENDED ON by the function
         path.traverse({
-            Identifier: function (path) {
+            Identifier(path) {
                 // if the identifier is the function name (redundant) or is included in the list of what it declares
                 // then it is not something the function depends on
                 if (!simpleDeclares.includes(path.node.name) && path.node.name != funcName) {
@@ -102,21 +103,20 @@ var FuncObject = /** @class */ (function () {
             }
         });
         return dependsList;
-    };
+    }
     //lists what the function can return
-    FuncObject.prototype.listReturns = function (path) {
-        var returnVal = [];
+    listReturns(path) {
+        let returnVal = [];
         //each func has a return statement (potentially more than 1)
         //this will need to be updated to better handle the case of multiple returns (eg. conditional returns) later
-        path.node.body.body.forEach(function (bodyNode) {
+        path.node.body.body.forEach((bodyNode) => {
             if (bodyNode.type === 'ReturnStatement') {
                 returnVal.push(bodyNode.argument.name);
             }
         });
         return returnVal;
-    };
-    return FuncObject;
-}());
+    }
+}
 //utility function, just allows you to pass a tree in and do a bunch of logs, you can use or ignore
 function info(tree) {
     console.log('**** TREE.ROUTERS **** {object}');
@@ -124,7 +124,7 @@ function info(tree) {
     console.log('**** TREE.ROUTERS **** [array]');
     console.log(tree.routers);
     console.log('**** TREE.ROUTERS.STACK **** [array]');
-    tree.routers.forEach(function (el) {
+    tree.routers.forEach(el => {
         console.log(el);
     });
     console.log('**** TREE.ROUTERS.STACK[i].endpoints{}.stack **** {obj}');
@@ -139,10 +139,10 @@ function info(tree) {
 function isolateNumbers(string) {
     //get start index of S
     //can probs change this to CBUSTART and adjust the number (I think it'd be 8)
-    var startIndex = string.indexOf('S') + 5;
-    var numbers = '';
+    const startIndex = string.indexOf('S') + 5;
+    let numbers = '';
     //iterate through string until you hit something thats not a number (end of start portion of funcName)
-    for (var i = startIndex; i < string.length; i++) {
+    for (let i = startIndex; i < string.length; i++) {
         if (!isNaN(string[i])) {
             numbers += string[i];
         }
@@ -155,10 +155,10 @@ function isolateNumbers(string) {
 // path parsing function
 function isolatePath(string) {
     //path goes from start of CBUPATH_$ to end of string
-    var startIndex = string.indexOf('CBUPATH_$');
-    var slicedString = string.slice(startIndex + 7);
+    const startIndex = string.indexOf('CBUPATH_$');
+    let slicedString = string.slice(startIndex + 7);
     //un-replace all the sanitized characters with / and . to recreate the filepath
-    var parsedPath = slicedString.replaceAll('$', '/').replaceAll('_', '.');
+    let parsedPath = slicedString.replaceAll('$', '/').replaceAll('_', '.');
     return parsedPath;
 }
 // info(originalTree)
@@ -169,12 +169,12 @@ function mergeTrees(oldTree, renamedTree) {
     //tree (obj)
     //routers (v. bound dispatch) [arr of {obj}]
     //for each router
-    for (var routerNum = 0; routerNum < oldTree.routers.length; routerNum++) {
+    for (let routerNum = 0; routerNum < oldTree.routers.length; routerNum++) {
         //for each endpoint in the router, make
-        for (var endpoint in oldTree.routers[routerNum].endpoints) {
+        for (let endpoint in oldTree.routers[routerNum].endpoints) {
             //loop through the endpoint's mw
-            var currentMw = oldTree.routers[routerNum].endpoints[endpoint]['middlewareChain'];
-            var matchingMw = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain'];
+            let currentMw = oldTree.routers[routerNum].endpoints[endpoint]['middlewareChain'];
+            let matchingMw = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain'];
             // iterate through middleware linked list and get func info for each one
             // pulling from the matching mw where necessary
             while (currentMw) {
@@ -192,50 +192,50 @@ function mergeTrees(oldTree, renamedTree) {
     // return the old tree with name properties on its middleware chain nodes
     return oldTree;
 }
-var mergedTree = mergeTrees(originalTree, renamedTree);
+const mergedTree = mergeTrees(originalTree, renamedTree);
 function getFuncInfo(filePath, startingIndex) {
     // console.log("filepath in getFuncInfo:" , filePath)
-    var code = fs.readFileSync(filePath).toString();
-    var funcInfo = {};
-    var ast = parser.parse(code);
+    const code = fs.readFileSync(filePath).toString();
+    let funcInfo = {};
+    const ast = parser.parse(code);
     // traverses functions with names
     traverse(ast, {
-        FunctionDeclaration: function (path) {
+        FunctionDeclaration(path) {
             //get the starting index of the node we are on
-            var start = path.node.loc.start.index;
+            const start = path.node.loc.start.index;
             // check if the line number of interest is within the start and end lines of the function definition
             if (startingIndex === start) {
                 // stop the traversal once we have found the information we are looking for
                 // because we are only interested in the first function definition that matches line number
-                var newFuncInfo = new FuncObject(path);
+                let newFuncInfo = new FuncObject(path);
                 funcInfo = newFuncInfo;
             }
         }
     });
     // traverses anonymous functions
     traverse(ast, {
-        FunctionExpression: function (path) {
+        FunctionExpression(path) {
             //get the starting index of the node we are on
-            var start = path.node.loc.start.index;
+            const start = path.node.loc.start.index;
             // check if the line number of interest is within the start and end lines of the function definition
             if (startingIndex === start) {
                 // stop the traversal once we have found the information we are looking for
                 // because we are only interested in the first function definition that matches line number
-                var newFuncInfo = new FuncObject(path);
+                let newFuncInfo = new FuncObject(path);
                 funcInfo = newFuncInfo;
             }
         }
     });
     // traverses arrow functions
     traverse(ast, {
-        ArrowFunctionExpression: function (path) {
+        ArrowFunctionExpression(path) {
             //get the starting index of the node we are on
-            var start = path.node.loc.start.index;
+            const start = path.node.loc.start.index;
             // check if the line number of interest is within the start and end lines of the function definition
             if (startingIndex === start) {
                 // stop the traversal once we have found the information we are looking for
                 // because we are only interested in the first function definition that matches line number
-                var newFuncInfo = new FuncObject(path);
+                let newFuncInfo = new FuncObject(path);
                 funcInfo = newFuncInfo;
             }
         }
@@ -243,17 +243,17 @@ function getFuncInfo(filePath, startingIndex) {
     // return the func info object
     return funcInfo;
 }
-var finalObj = [];
+const finalObj = [];
 // console.log(mergedTree)
 // console.log(mergedTree.routers)
-mergedTree.routers.forEach(function (route) {
+mergedTree.routers.forEach(route => {
     // console.log(route.endpoints)
-    for (var endpoint in route.endpoints) {
-        var routeObj = {};
+    for (let endpoint in route.endpoints) {
+        let routeObj = {};
         //save path to a variable
-        var endpointPath = route.endpoints[endpoint].path;
+        let endpointPath = route.endpoints[endpoint].path;
         //save methods to a variable (may need to fix later for multiple endpoints on single route?)
-        var endpointMethod = Object.keys(route.endpoints[endpoint].methods)[0];
+        let endpointMethod = Object.keys(route.endpoints[endpoint].methods)[0];
         // console.log(endpointPath, endpointMethod)
         //check if endpoint exists, if not, make it and an array for its methods
         if (!routeObj[endpointPath]) {
@@ -267,7 +267,7 @@ mergedTree.routers.forEach(function (route) {
         // routeObj.routeMethods[endpointMethod].middlewareChain = route.endpoints[endpoint].middlewareChain
         //this will make it into an array
         routeObj.routeMethods[endpointMethod].middlewares = [];
-        var current = route.endpoints[endpoint].middlewareChain;
+        let current = route.endpoints[endpoint].middlewareChain;
         while (current) {
             routeObj.routeMethods[endpointMethod].middlewares.push(current);
             current = current.nextFunc;
