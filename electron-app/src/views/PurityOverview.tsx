@@ -1,6 +1,46 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import POContainer from "../components/purityOverview/POContainer";
+import { ReactElement } from "react";
+
+class Node {
+  val: string;
+  parent: Node;
+  routes: Set<string>;
+  functions: Set<string>;
+  
+  constructor(value: string, route: string){
+    this.val = value;
+    this.parent = this;
+    this.routes = new Set([route]);
+    this.functions = new Set([value]);
+  }
+}
+
+function find(x: Node): Node{
+  if(x.parent === x){
+    return x;
+  } else {
+    x.parent = find(x.parent);
+    return x.parent;
+  }
+}
+
+function union(x: Node, y: Node): void{
+  if(find(x) === find(y)) return;
+  else {
+    const routes = new Set([...x.parent.routes, ...y.parent.routes]);
+    const functions = new Set([...x.parent.functions, ...y.parent.functions]);
+    find(y).parent = find(x);
+    x.parent.routes = routes;
+    x.parent.functions = functions;
+  }
+}
+
+function addRoute(x: Node, route: string): void{
+  find(x).routes.add(route);
+}
+
 
 const Purity = (props: object) => {
 
@@ -26,8 +66,6 @@ const Purity = (props: object) => {
     return routesDict;
   }
 
-  const reducedRoutes = parseRoutes();
-
   function generateContainers(){
 
     function isolateRouteFunctions(){
@@ -42,45 +80,7 @@ const Purity = (props: object) => {
       return isoFuncs;
     }
 
-    function findSharedMiddlewares(isoFuncs: object){
-
-      class Node {
-        val: string;
-        parent: Node;
-        routes: Set<string>;
-        functions: Set<string>;
-        
-        constructor(value: string, route: string){
-          this.val = value;
-          this.parent = this;
-          this.routes = new Set([route]);
-          this.functions = new Set([value]);
-        }
-      }
-
-      function addRoute(x: Node, route: string): void{
-        find(x).routes.add(route);
-      }
-
-      function find(x: Node): Node{
-        if(x.parent === x){
-          return x;
-        } else {
-          x.parent = find(x.parent);
-          return x.parent;
-        }
-      }
-
-      function union(x: Node, y: Node): void{
-        if(find(x) === find(y)) return;
-        else {
-          const routes = new Set([...x.parent.routes, ...y.parent.routes]);
-          const functions = new Set([...x.parent.functions, ...y.parent.functions]);
-          find(y).parent = find(x);
-          x.parent.routes = routes;
-          x.parent.functions = functions;
-        }
-      }
+    function groupSharedMiddlewares(isoFuncs: object){
 
       function getGroupsFromRoute(route: string): Node[]{
         const funcs = isoFuncs[route];
@@ -120,22 +120,29 @@ const Purity = (props: object) => {
 
       processRoutes(Object.keys(isoFuncs));
 
-      console.log('alllllll', allFuncs);
       const groups = getUniqueGroups(Object.values(allFuncs));
-      console.log("G", groups);
-
-      const shared: object[] = [];
-      // for(const key in isoFuncs){
-        
-      // }
-      return shared;
+      
+      return groups;
     }
 
-    const isoFuncs = isolateRouteFunctions();
-    console.log(findSharedMiddlewares(isoFuncs));
+    const reducedRoutes = parseRoutes();
+    const isoFuncs: object = isolateRouteFunctions();
+    const sharedMiddlewares: Array<Node> = groupSharedMiddlewares(isoFuncs);
+    console.log('shared', sharedMiddlewares);
+
+    const containers: ReactElement[] = [];
+
+    for(let i = 0; i < sharedMiddlewares.length; i++){
+      console.log(sharedMiddlewares[i].routes);
+      console.log(sharedMiddlewares[i].functions);
+      containers.push(
+        <POContainer reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
+      );
+    }
+    return containers;
   }
 
-  generateContainers();
+  const containers = generateContainers();
 
   return (
     <div className="po-main">
@@ -143,9 +150,7 @@ const Purity = (props: object) => {
         Route dependency Breakdowns
       </div>
       <div className="po-containers">
-        <POContainer/>
-        <POContainer/>
-        <POContainer/>
+        {containers}
       </div>
     </div>
   );
