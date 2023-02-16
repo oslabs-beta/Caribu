@@ -12,7 +12,8 @@ const WelcomePage = (props: object) => {
       <div className='wp-instructions'>To get started, drag and drop your application folder. Then specify the relative path of your main server file. </div>
       <div className='form-wrapper'>
         <form>
-          <input type="file" multiple onChange={async (e)=> {
+          <input type="file" type="file" id="filepicker" name="fileList" webkitdirectory multiple 
+            onChange={async (e)=> {
             console.log('WelcomePage file onChange func fired with ', e.target.files[0].path);
             await dispatch(update_filepath({path: e.target.files[0].path}));
             console.log('WelcomePage file onChange after dispatch state is', views.filepath);
