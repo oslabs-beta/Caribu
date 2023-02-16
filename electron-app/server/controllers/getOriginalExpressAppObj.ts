@@ -164,17 +164,17 @@ module.exports = (req, res, next) => {
     }
   });
 
-  console.log(appTree);
+  // console.log(appTree);
   appTree.routers.forEach((el) => {
-    console.log(
-      "************************************************************************************************************"
-    );
+    // console.log(
+    //   "************************************************************************************************************"
+    // );
     // console.log(el)
     // console.log(el.endpoints)
     for (let endpoint in el.endpoints) {
       // console.log(el.endpoints[endpoint].stack)
-      console.log("THIS IS ENDPOINT: ", endpoint);
-      console.log("THIS IS ENDPOINT MW STACK: ", el.endpoints[endpoint].stack);
+      // console.log("THIS IS ENDPOINT: ", endpoint);
+      // console.log("THIS IS ENDPOINT MW STACK: ", el.endpoints[endpoint].stack);
     }
     // // el.endpoints.forEach(elEnd => {
     //   console.log(elEnd.middlewareChain)

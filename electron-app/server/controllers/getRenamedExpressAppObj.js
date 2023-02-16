@@ -124,6 +124,7 @@ module.exports = function (req, res, next) {
             this.funcString = func.handle.toString();
             // this will get reassigned if it is not the last LL node
             this.nextFunc = null;
+            this.name = func.name;
         }
         return middlewareLLNode;
     }());
@@ -142,15 +143,17 @@ module.exports = function (req, res, next) {
             appTree.routers.push(newRouter);
         }
     });
-    console.log(appTree);
+    // console.log(appTree);
     appTree.routers.forEach(function (el) {
-        console.log("************************************************************************************************************");
+        // console.log(
+        //   "************************************************************************************************************"
+        // );
         // console.log(el)
         // console.log(el.endpoints)
         for (var endpoint in el.endpoints) {
             // console.log(el.endpoints[endpoint].stack)
-            console.log("THIS IS ENDPOINT: ", endpoint);
-            console.log("THIS IS ENDPOINT MW STACK: ", el.endpoints[endpoint].stack);
+            // console.log("THIS IS ENDPOINT: ", endpoint);
+            // console.log("THIS IS ENDPOINT MW STACK: ", el.endpoints[endpoint].stack);
         }
         // // el.endpoints.forEach(elEnd => {
         //   console.log(elEnd.middlewareChain)

@@ -113,5 +113,5 @@ module.exports = function (req, res, next) {
     console.log("done processing");
     setTimeout(function () {
         next();
-    }, 10000);
+    }, 5000);
 };

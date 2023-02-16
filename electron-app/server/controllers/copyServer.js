@@ -5,7 +5,8 @@ const copyServer = (req, res, next) => {
   fs.rmSync(copiedServer, { recursive: true, force: true });
   fs.mkdirSync(copiedServer);
   fs.cpSync(
-    "/Users/justinribs/repos/unit-9-express-practice/server",
+    // "/Users/justinribs/repos/unit-9-express-practice/server",
+    '/Users/morry/git/cs/juniorUnits/unit-9-express/server',
     copiedServer,
     { recursive: true },
     (err) => {
