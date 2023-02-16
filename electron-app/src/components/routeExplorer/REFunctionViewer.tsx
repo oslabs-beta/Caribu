@@ -7,7 +7,6 @@ export default function REFunctionViewer(props: object) {
   const routes = useSelector((state: RootState) => state.views.routes);
   const routeIndex = useSelector((state: RootState) => state.views.routeIndex);
   const method = useSelector((state: RootState) => state.views.curMethod);
-  console.log(method);
 
   const functions = [];
 
@@ -15,7 +14,6 @@ export default function REFunctionViewer(props: object) {
     const middlewares = routes[routeIndex].routeMethods[method].middlewares;
     for(let i = 0; i < middlewares.length; i++){
       functions.push(<REFVItem middleware={middlewares[i]} />)
-      console.log(middlewares[i].functionInfo.funcName);
     }
   }
 

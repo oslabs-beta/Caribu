@@ -1,4 +1,12 @@
-export default function REDVItem(props: object) {
+
+interface REDVItemProps {
+  upVarName?: string,
+  upVarPath?: string,
+  depVarName?: string,
+  depVarPath?: string,
+}
+
+export default function REDVItem(props: REDVItemProps) {
 
   return (
       <div>

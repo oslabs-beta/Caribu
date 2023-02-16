@@ -11,7 +11,6 @@ export default function REFVItem(props: REFVItemProps) {
     const dispatch = useDispatch();
 
     function selectFunction(){
-        console.log(funcName);
         dispatch(update_dependency({middleware: props.middleware}));
     }
     const funcName = props.middleware.functionInfo.funcName

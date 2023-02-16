@@ -140,6 +140,21 @@ const initialState: viewsState = {
         GET: {
           middlewares: [{
             functionInfo: {
+              funcName: 'authenticate',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [0, 30],
+            },
+            deps : {
+              totalUpstreamDeps : 0,
+              totalDownstreamDeps : 0,
+              upstream : [],
+              downstream : {
+                dependents: []
+              }
+            }
+          },
+          {
+            functionInfo: {
               funcName: 'getSpecies',
               funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
               funcPosition: [6, 40],
@@ -172,6 +187,21 @@ const initialState: viewsState = {
       routeMethods: {
         GET: {
           middlewares: [{
+            functionInfo: {
+              funcName: 'authenticate',
+              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
+              funcPosition: [0, 30],
+            },
+            deps : {
+              totalUpstreamDeps : 0,
+              totalDownstreamDeps : 0,
+              upstream : [],
+              downstream : {
+                dependents: []
+              }
+            }
+          },
+          {
             functionInfo: {
               funcName: 'getPlanets',
               funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
