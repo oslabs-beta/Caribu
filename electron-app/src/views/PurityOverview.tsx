@@ -108,7 +108,7 @@ const Purity = (props: object) => {
 
       function getUniqueGroups(groups: Node[]) {
 
-      return [...new Set(groups.map(x => find))]
+      return [...new Set(groups.map(x => find(x)))]
       }
 
 
