@@ -18,23 +18,23 @@ export interface viewsState {
             funcDef: string,
           },
           deps?: {
-            totalUpstreamDeps: number,
-            totalDownstreamDeps: number,
-            upstream: {
-              dependents: Array<{
+            totalUpstreamDeps?: number,
+            totalDownstreamDeps?: number,
+            upstream?: {
+              dependents?: Array<{
                 upVarName: string,
                 upVarFile: string,
-                upVarPosition: number[],
-                upVarDef: string,
-                upVarUseInFunc: string,
+                upVarPosition?: number[],
+                upVarDef?: string,
+                upVarUseInFunc?: string,
               }>,
             } 
-            downstream: {
-              dependents: Array<{
+            downstream?: {
+              dependents?: Array<{
                 dependentFuncName: string,
                 dependentFuncFile: string,
-                dependentFuncPosition: number[],
-                dependentFuncDef: string,
+                dependentFuncPosition?: number[],
+                dependentFuncDef?: string,
               }>
             },
           }
@@ -48,29 +48,60 @@ export interface viewsState {
             funcPosition: number[],
             funcDef: string,
           },
-          deps: {
-            totalUpstreamDeps: number,
-            totalDownstreamDeps: number,
-            upstream: {
-              dependents: Array<{
-                upVarName: string,
-                upVarFile: string,
-                upVarPosition: number[],
-                upVarDef: string,
-                upVarUseInFunc: string,
+          deps?: {
+            totalUpstreamDeps?: number,
+            totalDownstreamDeps?: number,
+            upstream?: {
+              dependents?: Array<{
+                upVarName?: string,
+                upVarFile?: string,
+                upVarPosition?: number[],
+                upVarDef?: string,
+                upVarUseInFunc?: string,
               }>,
             } 
-            downstream: {
-              dependents: Array<{
-                dependentFuncName: string,
-                dependentFuncFile: string,
-                dependentFuncPosition: number[],
-                dependentFuncDef: string,
+            downstream?: {
+              dependents?: Array<{
+                dependentFuncName?: string,
+                dependentFuncFile?: string,
+                dependentFuncPosition?: number[],
+                dependentFuncDef?: string,
               }>
             },
           }
         }>
-      }
+      },
+      DELETE?: {
+        middlewares: Array<{
+          functionInfo: {
+            funcName: string,
+            funcFile: string,
+            funcPosition: number[],
+            funcDef: string,
+          },
+          deps?: {
+            totalUpstreamDeps?: number,
+            totalDownstreamDeps?: number,
+            upstream?: {
+              dependents?: Array<{
+                upVarName?: string,
+                upVarFile?: string,
+                upVarPosition?: number[],
+                upVarDef?: string,
+                upVarUseInFunc?: string,
+              }>,
+            } 
+            downstream?: {
+              dependents?: Array<{
+                dependentFuncName?: string,
+                dependentFuncFile?: string,
+                dependentFuncPosition?: number[],
+                dependentFuncDef?: string,
+              }>
+            },
+          }
+        }>
+      },
     }
   }>,
   controllers: object[],
@@ -136,7 +167,7 @@ export const fetchRoutes = () => {
     console.log('viewsSlice anonymous thunk func fired');
     console.log('fetching to /api/routes with filepath: ', getState().views.filepath);
     console.log('fetching to /api/routes with serverpath: ', getState().views.serverpath);
-    const response = await fetch('http://localhost:3030/api/routes', {
+    const response = await fetch('http://10.0.10.156:6969/routes', {
       method: 'POST',
       // add a header: URLSearchParams sets the header for us so having below was causing an error
 /*       headers: {
