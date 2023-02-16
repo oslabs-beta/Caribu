@@ -144,7 +144,7 @@ export const fetchRoutes = () => {
       }, */
       body: new URLSearchParams({
         filepath: getState().views.filepath,
-        serverpath: getState().views.serverpath,
+        serverpath: getState().views.filepath.concat('/').concat(getState().views.serverpath),
       }),
     });
     console.log('viewsSlice server responded with :', response.body);

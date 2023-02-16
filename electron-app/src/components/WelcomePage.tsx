@@ -6,16 +6,15 @@ import { fetchRoutes, update_filepath, update_serverpath } from "../slices/views
 const WelcomePage = (props: object) => {
   const dispatch = useDispatch();
   const views = useSelector((state: RootState) => state.views);
-  console.log(views.routes);
   return (
     <div>
       <div className='wp-header'>Welcome. Yup</div>
-      <div className='wp-instructions'>To get started, simply do stuff</div>
+      <div className='wp-instructions'>To get started, drag and drop your application folder. Then specify the relative path of your main server file. </div>
       <div className='form-wrapper'>
         <form>
-          <input type="file" onChange={async (e)=> {
-            console.log('WelcomePage file onChange func fired with ', e.target.value);
-            await dispatch(update_filepath({path: e.target.value}));
+          <input type="file" multiple onChange={async (e)=> {
+            console.log('WelcomePage file onChange func fired with ', e.target.files[0].path);
+            await dispatch(update_filepath({path: e.target.files[0].path}));
             console.log('WelcomePage file onChange after dispatch state is', views.filepath);
             }}/>
           <input type="text" onChange={async (e)=>{
