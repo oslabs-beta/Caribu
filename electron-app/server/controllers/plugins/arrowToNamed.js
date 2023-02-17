@@ -22,7 +22,7 @@ var _default = (0, _helperPluginUtils.declare)((api, options) => {
         if (!path.isArrowFunctionExpression()) return;
         // let filePath =
         fileName = fileName.replaceAll("-", "Ü");
-        let name = `CARIBU_CBUSTART${path.node.start}_CBUEND${path.node.end}_CBUPATH${fileName}`;
+        let name = `CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART${path.node.start}_CBUEND${path.node.end}_CBUPATH${fileName}`;
         path.arrowFunctionToExpression({
           allowInsertArrow: false,
           noNewArrows,

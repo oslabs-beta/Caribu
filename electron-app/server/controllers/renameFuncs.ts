@@ -1,10 +1,10 @@
-module.exports = (req, res, next) => {
+const renameFuncs = (req, res, next) => {
   console.log("IN RENAME FUNCS");
   //   const acorn = require("acorn");
   //   const walk = require("acorn-walk");
   const fs = require("fs");
   const { copiedServer, renamedServer } = require("./serverDirPaths");
-  const { arrowToNamed } = require("./pluginPaths");
+  const { arrowToNamed, declarationToNewDeclaration, expressionToDeclaration } = require("./pluginPaths");
   let counter = 0;
   // babel modules
   const parser = require("@babel/parser");
@@ -21,6 +21,18 @@ module.exports = (req, res, next) => {
     // assign replace the value of using the `arrowToNamed` plugin on the passed in code. Which will return an object of which we only want code for now.
     let replace: string = require("@babel/core").transformSync(code, {
       plugins: [
+        [
+          declarationToNewDeclaration,
+          {
+            fileName: filePath,
+          },
+        ],
+        [
+          expressionToDeclaration,
+          {
+            fileName: filePath,
+          },
+        ],
         [
           arrowToNamed,
           {
@@ -129,3 +141,7 @@ module.exports = (req, res, next) => {
     next();
   }, 5000);
 };
+
+// renameFuncs()
+
+module.exports = renameFuncs
