@@ -12,18 +12,13 @@ export default function POContainer(props: POContainerProps) {
   const routeContainer: ReactElement[] = [];
 
   props.sharedRoutes.forEach(el => {
-    const methods = [];
-    for(const method in props.reducedRoutes[el]){
-      console.log('rd',props.reducedRoutes[el][method])
-      methods.push(props.reducedRoutes[el][method]);
-    }
+    console.log('rd',props.reducedRoutes[el]);
 
     routeContainer.push(
       <div>
-        <POCDetails route={el} methods={methods}/>
+        <POCDetails route={el} methods={props.reducedRoutes[el]}/>
       </div>
     )
-    console.log('method', methods)
   })
 
   return (

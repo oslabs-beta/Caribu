@@ -133,8 +133,6 @@ const Purity = (props: object) => {
     const containers: ReactElement[] = [];
 
     for(let i = 0; i < sharedMiddlewares.length; i++){
-      console.log(sharedMiddlewares[i].routes);
-      console.log(sharedMiddlewares[i].functions);
       containers.push(
         <POContainer reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
       );
