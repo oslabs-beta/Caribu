@@ -13,6 +13,12 @@ var PORT = 6969;
  */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'POST');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
 //at homepage - on endpoint main, send main page to front end
 //req.body will have the serverDir and the serverFile
 //copy full server from filepath (shell command?)

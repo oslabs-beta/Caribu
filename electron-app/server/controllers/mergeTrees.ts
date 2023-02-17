@@ -129,6 +129,10 @@ module.exports = (req, res, next) => {
       const assignmentChecker = {
         AssignmentExpression(path) {
           const newUpdateObj = {
+            dependentFuncName : '',
+            dependentFuncFile : '',
+            dependentFuncPosition : [],
+            dependentFuncDef : '',
             updateName : '',
             updateType : 'AssignmentExpression',
             updateDefinition : '',
@@ -140,16 +144,16 @@ module.exports = (req, res, next) => {
             // console.log(path.node.left)
             if (path.node.left.type === 'MemberExpression') {
               // console.log('dependency - object / memberExpression: ', code.slice(path.node.left.start, path.node.left.end))
-              newUpdateObj.updateName = code.slice(path.node.left.start, path.node.left.end)
-              newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
-              newUpdateObj.updatePosition = [path.node.start, path.node.end]
+              newUpdateObj.dependentFuncName = newUpdateObj.updateName = code.slice(path.node.left.start, path.node.left.end)
+              newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
+              newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
             if (path.node.left.type === 'Identifier') {
               // console.log("dependency - identifier: ", path.node.left.name)
-              newUpdateObj.updateName = path.node.left.name
-              newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
-              newUpdateObj.updatePosition = [path.node.start, path.node.end]
+              newUpdateObj.dependentFuncName = newUpdateObj.updateName = path.node.left.name
+              newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
+              newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
             // console.log("3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n NEW UPDATE OBJ \n 3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n")
@@ -169,6 +173,10 @@ module.exports = (req, res, next) => {
       const updateChecker = {
         UpdateExpression(path) {
           const newUpdateObj = {
+            dependentFuncName : '',
+            dependentFuncFile : '',
+            dependentFuncPosition : [],
+            dependentFuncDef : '',
             updateName : '',
             updateType : 'UpdateExpression',
             updateDefinition : '',
@@ -180,16 +188,16 @@ module.exports = (req, res, next) => {
             // console.log(path.node.left)
             if (path.node.argument === 'MemberExpression') {
               // console.log('dependency - object / memberExpression: ', code.slice(path.node.left.start, path.node.left.end))
-              newUpdateObj.updateName = code.slice(path.node.argument.start, path.node.argument.end)
-              newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
-              newUpdateObj.updatePosition = [path.node.start, path.node.end]
+              newUpdateObj.dependentFuncName = newUpdateObj.updateName = code.slice(path.node.argument.start, path.node.argument.end)
+              newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
+              newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
             if (path.node.argument === 'Identifier') {
               // console.log("dependency - identifier: ", path.node.left.name)
-              newUpdateObj.updateName = path.node.argument.name
-              newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
-              newUpdateObj.updatePosition = [path.node.start, path.node.end]
+              newUpdateObj.dependentFuncName = newUpdateObj.updateName = path.node.argument.name
+              newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
+              newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
             // console.log("3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n NEW UPDATE OBJ \n 3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n")
@@ -312,7 +320,10 @@ module.exports = (req, res, next) => {
             let originalDeclaration = findOriginalDeclaration(path.node.name, filePath, funcName)
             if (originalDeclaration) {
               let dependsVar = {
-                dependsName : path.node.name,
+                upVarName : path.node.name,
+                upVarFile : filePath,
+                upVarPosition : [path.node.start, path.node.end],
+                // upVarDef : originalDeclaration.definition
                 location : [path.node.start, path.node.end],
                 originalDeclaration
               }
@@ -596,21 +607,25 @@ module.exports = (req, res, next) => {
     // console.log(methodObj)
     for (const method in methodObj) {
       let oneMethod = methodObj[method]
-      console.log(oneMethod)
+      // console.log(oneMethod)
       oneMethod.middlewares.forEach((middleware, i) => {
         let newObj = {}
-        newObj.funcInfo = {
+        newObj.functionInfo = {
           funcName : middleware.name,
           funcFile : middleware.filePath,
           funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
           funcDef : middleware.funcString
         }
-  
-        newObj.upstream = middleware.funcInfo.depends
-        newObj.updates = middleware.funcInfo.updates
+        console.log(middleware.funcInfo.depends)
+        newObj.deps =  {
+          upstream : { dependents : middleware.funcInfo.depends || []},
+          downstream : { dependents : middleware.funcInfo.updates || []}
+        }
+
         route.routeMethods[method].middlewares[i] = newObj
-        console.log('NEW OBJ')
-        // console.log(newObj)
+        console.log('NEW OBJ IN ROUTE: ', method)
+        console.log('IN FUNC: ', middleware.name)
+        // console.dir(newObj.deps, {depth : 4})
         // console.log(methodObj[method][i])
       })
       // console.log(oneMethod)
