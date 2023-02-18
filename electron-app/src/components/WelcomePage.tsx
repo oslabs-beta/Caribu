@@ -2,8 +2,7 @@ import React from 'react';
 
 const WelcomePage = (props: object) => {
 
-
-  console.log(props);
+  
   return (
     <div>
       <div className='wp-header'>Welcome. Yup</div>
