@@ -8,6 +8,8 @@ interface REDVItemProps {
 
 export default function REDVItem(props: REDVItemProps) {
 
+
+  // only renders the respective variable in the div if the variable exists. otherwise it is blank.
   return (
       <div>
         <button className="redv-item" onClick={() => console.log('REDVItem clicked')}>

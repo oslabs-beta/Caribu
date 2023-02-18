@@ -10,6 +10,7 @@ interface RERVItemProps {
 export default function RERVItem(props: RERVItemProps) {
     const dispatch = useDispatch()
 
+    // this function updates the state with the current selected method and clears current middlewares on click of the route item components
     function selectRoute(){
         dispatch(update_method({method: props.method, routeIndex: props.index}));
         dispatch(update_dependency({middleware: {}}));
