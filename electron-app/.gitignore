@@ -89,3 +89,8 @@ typings/
 out/
 
 *package-lock
+
+
+# backend copy stuff
+server/copiedServer/
+server/renamedServer/

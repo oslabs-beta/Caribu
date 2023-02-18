@@ -1,22 +1,20 @@
 var renameFuncs = function (req, res, next) {
     console.log("IN RENAME FUNCS");
-    //   const acorn = require("acorn");
-    //   const walk = require("acorn-walk");
     var fs = require("fs");
     var _a = require("./serverDirPaths"), copiedServer = _a.copiedServer, renamedServer = _a.renamedServer;
+    //plugin paths
     var _b = require("./pluginPaths"), arrowToNamed = _b.arrowToNamed, declarationToNewDeclaration = _b.declarationToNewDeclaration, expressionToDeclaration = _b.expressionToDeclaration;
-    var counter = 0;
     // babel modules
     var parser = require("@babel/parser");
     var generate = require("@babel/generator")["default"];
-    // const { default } = generate
     // this is some weird require vs. import thing.
     // see https://github.com/babel/babel/issues/13855
-    var _traverse = require("@babel/traverse");
-    var traverse = _traverse["default"];
-    //
+    // const _traverse = require("@babel/traverse");
+    // const traverse = _traverse.default;
+    var traverse = require("@babel/traverse")["default"];
     // this is the main transform function. It takes code, parses it, renames all its arrow functions, transforms it back into code, and returns it
     var babelTransform = function (code, filePath) {
+        //stop the requiring of this every time
         // assign replace the value of using the `arrowToNamed` plugin on the passed in code. Which will return an object of which we only want code for now.
         var replace = require("@babel/core").transformSync(code, {
             plugins: [
@@ -79,6 +77,10 @@ var renameFuncs = function (req, res, next) {
                     console.log("before dir Check");
                     //if it's a directory (folder) and not a file, then we want to recursively process the files/folders in it
                     if (stat.isDirectory()) {
+                        if (oldFilePath.indexOf('/node_modules')) {
+                            console.log("".concat(oldFilePath, " contains '/node_modules' when we have already copied the node modules. Continuing without copying."));
+                            return;
+                        }
                         // if (!oldFilePath.indexOf(".git")) {
                         console.log(oldFilePath + " is a directory");
                         console.log(newFilePath);
@@ -106,6 +108,7 @@ var renameFuncs = function (req, res, next) {
                             var cleanFilePath = oldFilePath
                                 .replaceAll("/", "$")
                                 .replaceAll(".", "_");
+                            //maybe add umlaut thing
                             cleanFilePath = cleanFilePath.slice(1);
                             //invoke the transform and give the result to modified code
                             var modifiedCode = babelTransform(code, cleanFilePath);

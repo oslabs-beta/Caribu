@@ -1,4 +1,4 @@
-module.exports = function (req, res, next) {
+var mergeTreesExport = function (req, res, next) {
     var originalTree = require('../originalAppTree.json');
     var renamedTree = require('../renamedAppTree.json');
     var fs = require('fs');
@@ -16,7 +16,7 @@ module.exports = function (req, res, next) {
             this.funcName = this.funcLabel(path) || "anonymous_function_at_".concat(path.node.start, "-").concat(path.node.end, "_in_").concat(filePath);
             this.params = this.listParams(path, filePath);
             this.declares = this.listDeclares(path, filePath, code);
-            this.returns = this.listReturns(path, filePath);
+            this.returns = this.listReturns(path, code);
             this.depends = {};
             this.updates = {};
             this.location = path.node.loc;
@@ -309,9 +309,15 @@ module.exports = function (req, res, next) {
             });
             this.depends = dependsList;
         };
-        FuncObject.prototype.listReturns = function (path) {
+        FuncObject.prototype.listReturns = function (path, code) {
+            console.log(path);
             var returnVal = [];
-            //each func has a return statement (potentially more than 1)
+            //if a is a one-liner that sends a response or otherwise calls a function, deal with it (eg. `(req, res) => json.status(200).json({obj:ect})`)
+            if (path.node.body.type === 'CallExpression') {
+                returnVal.push(code.slice(path.node.body.start, path.node.body.end));
+                return returnVal;
+            }
+            //other than one liners, each func has a return statement (potentially more than 1)
             //this will need to be updated to better handle the case of multiple returns (eg. conditional returns) later
             path.node.body.body.forEach(function (bodyNode) {
                 if (bodyNode.type === 'ReturnStatement') {
@@ -343,7 +349,7 @@ module.exports = function (req, res, next) {
         // stack.forEach(el => console.log(el))
     }
     function isolateNumbers(string) {
-        var startIndex = string.indexOf('S') + 5;
+        var startIndex = string.indexOf('CBUSTART') + 8;
         var numbers = '';
         for (var i = startIndex; i < string.length; i++) {
             if (!isNaN(string[i])) {
@@ -353,6 +359,7 @@ module.exports = function (req, res, next) {
                 break;
             }
         }
+        console.log("NUMBERS: ", numbers);
         return numbers;
     }
     function isolatePath(string) {
@@ -364,12 +371,12 @@ module.exports = function (req, res, next) {
         console.log("cleaned path from name", parsedPath);
         return parsedPath;
     }
-    // function isolateName (string) {
-    //   const nameStart = string.indexOf('function')+9
-    //   const firstParen = string.indexOf('(')
-    //   let name = string.slice(nameStart, firstParen)
-    //   return name
-    // }
+    function isolateType(string) {
+        var nameStart = string.indexOf('CBUTYPE_') + 8;
+        var firstUnder = string.indexOf('_', nameStart + 12);
+        var funcType = string.slice(nameStart, firstUnder);
+        return funcType;
+    }
     // info(originalTree)
     // create a function
     // it will take the old tree and the new tree
@@ -390,6 +397,7 @@ module.exports = function (req, res, next) {
                     // matchingMw.name = isolateName(matchingMw.funcString)
                     // currentMw.name = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain'].name
                     currentMw.name = matchingMw.name;
+                    currentMw.type = isolateType(currentMw.name);
                     // console.log("CURRENT MW:",  currentMw)
                     // console.log("MATCHING MW:",  matchingMw)
                     currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name));
@@ -397,7 +405,7 @@ module.exports = function (req, res, next) {
                     // currentMw.filePath = "." + isolatePath(currentMw.name)
                     currentMw.filePath = "/" + isolatePath(currentMw.name);
                     // currentMw.filePath = isolatePath(currentMw.name)
-                    currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition);
+                    currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type);
                     currentMw = currentMw.nextFunc;
                     matchingMw = matchingMw.nextFunc;
                 }
@@ -408,66 +416,73 @@ module.exports = function (req, res, next) {
         return oldTree;
     }
     var mergedTree = mergeTrees(originalTree, renamedTree);
-    function getFuncInfo(filePath, startingIndex) {
+    function getFuncInfo(filePath, startingIndex, funcType) {
         // console.log("filepath in getFuncInfo:" , filePath)
         var code = fs.readFileSync(filePath).toString();
         var funcInfo = null;
         var ast = parser.parse(code);
+        console.log(funcType);
         // console.log(ast)
-        traverse(ast, {
-            //functions with names 
-            FunctionDeclaration: function (path) {
-                // console.log("IN TRAVERSAL")
-                // given that I have the info about the function in the AST, how can I access the location and pass it in?
-                var start = path.node.loc.start.index;
-                // check if the line number of interest is within the start and end lines of the function definition
-                if (startingIndex === start) {
-                    // console.log(`Function Named ${path.node.id.name}` , path.node);
-                    // stop the traversal once we have found the information we are looking for
-                    // because we are only interested in the first function definition that matches line number
-                    var newFuncInfo = new FuncObject(path, filePath, code, ast);
-                    // console.log(newFuncInfo);
-                    funcInfo = newFuncInfo;
-                    // path.stop();
+        if (funcType === 'FUNCTIONDECLARATION') {
+            traverse(ast, {
+                //functions with names 
+                FunctionDeclaration: function (path) {
+                    // console.log("IN TRAVERSAL")
+                    // given that I have the info about the function in the AST, how can I access the location and pass it in?
+                    var start = path.node.loc.start.index;
+                    // check if the line number of interest is within the start and end lines of the function definition
+                    if (startingIndex === start) {
+                        // console.log(`Function Named ${path.node.id.name}` , path.node);
+                        // stop the traversal once we have found the information we are looking for
+                        // because we are only interested in the first function definition that matches line number
+                        var newFuncInfo = new FuncObject(path, filePath, code, ast);
+                        // console.log(newFuncInfo);
+                        funcInfo = newFuncInfo;
+                        // path.stop();
+                    }
                 }
-            }
-        });
-        traverse(ast, {
-            //functions with names 
-            FunctionExpression: function (path) {
-                // console.log("IN TRAVERSAL")
-                // given that I have the info about the function in the AST, how can I access the location and pass it in?
-                var start = path.node.loc.start.index;
-                // check if the line number of interest is within the start and end lines of the function definition
-                if (startingIndex === start) {
-                    // console.log(`Function Named ${path.node.id.name}` , path.node);
-                    // stop the traversal once we have found the information we are looking for
-                    // because we are only interested in the first function definition that matches line number
-                    var newFuncInfo = new FuncObject(path, filePath, code, ast);
-                    // console.log(newFuncInfo);
-                    funcInfo = newFuncInfo;
-                    // path.stop();
+            });
+        }
+        if (funcType === 'FUNCTIONEXPRESSION') {
+            traverse(ast, {
+                //functions with names 
+                FunctionExpression: function (path) {
+                    // console.log("IN TRAVERSAL")
+                    // given that I have the info about the function in the AST, how can I access the location and pass it in?
+                    var start = path.node.loc.start.index;
+                    // check if the line number of interest is within the start and end lines of the function definition
+                    if (startingIndex === start) {
+                        // console.log(`Function Named ${path.node.id.name}` , path.node);
+                        // stop the traversal once we have found the information we are looking for
+                        // because we are only interested in the first function definition that matches line number
+                        var newFuncInfo = new FuncObject(path, filePath, code, ast);
+                        // console.log(newFuncInfo);
+                        funcInfo = newFuncInfo;
+                        // path.stop();
+                    }
                 }
-            }
-        });
-        traverse(ast, {
-            //functions with names 
-            ArrowFunctionExpression: function (path) {
-                // console.log("IN TRAVERSAL")
-                // given that I have the info about the function in the AST, how can I access the location and pass it in?
-                var start = path.node.loc.start.index;
-                // check if the line number of interest is within the start and end lines of the function definition
-                if (startingIndex === start) {
-                    // console.log(`Function Named ${path.node.id.name}` , path.node);
-                    // stop the traversal once we have found the information we are looking for
-                    // because we are only interested in the first function definition that matches line number
-                    var newFuncInfo = new FuncObject(path, filePath, code, ast);
-                    // console.log(newFuncInfo);
-                    funcInfo = newFuncInfo;
-                    // path.stop();
+            });
+        }
+        if (funcType === 'ARROWFUNCTION') {
+            traverse(ast, {
+                //functions with names 
+                ArrowFunctionExpression: function (path) {
+                    // console.log("IN TRAVERSAL")
+                    // given that I have the info about the function in the AST, how can I access the location and pass it in?
+                    var start = path.node.loc.start.index;
+                    // check if the line number of interest is within the start and end lines of the function definition
+                    if (startingIndex === start) {
+                        // console.log(`Function Named ${path.node.id.name}` , path.node);
+                        // stop the traversal once we have found the information we are looking for
+                        // because we are only interested in the first function definition that matches line number
+                        var newFuncInfo = new FuncObject(path, filePath, code, ast);
+                        // console.log(newFuncInfo);
+                        funcInfo = newFuncInfo;
+                        // path.stop();
+                    }
                 }
-            }
-        });
+            });
+        }
         // console.log(funcInfo)
         return funcInfo;
     }
@@ -497,6 +512,7 @@ module.exports = function (req, res, next) {
             routeObj.routeMethods[endpointMethod].middlewares = [];
             var current = route.endpoints[endpoint].middlewareChain;
             while (current) {
+                // console.log("THIS IS CURRENT:", current)
                 current.funcInfo.listUpdates();
                 current.funcInfo.listDepends();
                 current.funcInfo.deletePath();
@@ -572,3 +588,5 @@ module.exports = function (req, res, next) {
     res.locals.tree = finalObj;
     next();
 };
+// mergeTreesExport()
+module.exports = mergeTreesExport;

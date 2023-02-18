@@ -1,10 +1,10 @@
 module.exports = (req, res, next) => {
-  console.log("IN GET ORIGNIAL EXPRESS APP OBJ");
+  console.log("IN GET RENAMED EXPRESS APP OBJ");
   //require Express
   const e = require("express");
   const fs = require("fs");
   //**** NEED TO MAKE THIS DYNAMIC ****
-  const expressApp = require("../copiedServer/server.js");
+  const expressApp = require("../renamedServer/server.js");
   // const expressApp = require('../copiedServerNamed/server.js')
 
   const app = expressApp;
@@ -145,6 +145,7 @@ module.exports = (req, res, next) => {
       this.funcString = func.handle.toString();
       // this will get reassigned if it is not the last LL node
       this.nextFunc = null;
+      this.name = func.name
     }
   }
 
@@ -183,7 +184,7 @@ module.exports = (req, res, next) => {
 
   const originalAppTree = appTree;
   fs.writeFileSync(
-    "originalAppTree.json",
+    "renamedAppTree.json",
     JSON.stringify(originalAppTree),
     (error) => {
       if (error) throw error;

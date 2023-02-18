@@ -1,23 +1,26 @@
 const renameFuncs = (req, res, next) => {
   console.log("IN RENAME FUNCS");
-  //   const acorn = require("acorn");
-  //   const walk = require("acorn-walk");
   const fs = require("fs");
   const { copiedServer, renamedServer } = require("./serverDirPaths");
+
+  //plugin paths
   const { arrowToNamed, declarationToNewDeclaration, expressionToDeclaration } = require("./pluginPaths");
-  let counter = 0;
+  
   // babel modules
   const parser = require("@babel/parser");
   const generate = require("@babel/generator").default;
-  // const { default } = generate
+
   // this is some weird require vs. import thing.
   // see https://github.com/babel/babel/issues/13855
-  const _traverse = require("@babel/traverse");
-  const traverse = _traverse.default;
-  //
+  // const _traverse = require("@babel/traverse");
+  // const traverse = _traverse.default;
+  const traverse = require("@babel/traverse").default;
+
 
   // this is the main transform function. It takes code, parses it, renames all its arrow functions, transforms it back into code, and returns it
   const babelTransform = (code: string, filePath: string): string => {
+    //stop the requiring of this every time
+
     // assign replace the value of using the `arrowToNamed` plugin on the passed in code. Which will return an object of which we only want code for now.
     let replace: string = require("@babel/core").transformSync(code, {
       plugins: [
@@ -58,7 +61,7 @@ const renameFuncs = (req, res, next) => {
   // });
   //process the directory recursively
   const processDirectory = (oldDirectoryPath: string) => {
-    //if error, give error
+      //if error, give error
     fs.readdir(oldDirectoryPath, (error: any, files: any) => {
       if (error) {
         console.error(`Error reading directory: ${error}`);
@@ -89,6 +92,10 @@ const renameFuncs = (req, res, next) => {
           console.log("before dir Check");
           //if it's a directory (folder) and not a file, then we want to recursively process the files/folders in it
           if (stat.isDirectory()) {
+            if (oldFilePath.indexOf('/node_modules')) {
+              console.log(`${oldFilePath} contains '/node_modules' when we have already copied the node modules. Continuing without copying.`)
+              return
+            } 
             // if (!oldFilePath.indexOf(".git")) {
             console.log(oldFilePath + " is a directory");
             console.log(newFilePath);
@@ -116,6 +123,7 @@ const renameFuncs = (req, res, next) => {
               let cleanFilePath: string = oldFilePath
                 .replaceAll("/", "$")
                 .replaceAll(".", "_");
+                //maybe add umlaut thing
               cleanFilePath = cleanFilePath.slice(1);
 
               //invoke the transform and give the result to modified code

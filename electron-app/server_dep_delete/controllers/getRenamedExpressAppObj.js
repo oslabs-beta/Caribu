@@ -1,10 +1,11 @@
 module.exports = function (req, res, next) {
-    console.log("IN GET ORIGNIAL EXPRESS APP OBJ");
+    console.log("IN GET RENAMED EXPRESS APP OBJ");
     //require Express
     var e = require("express");
     var fs = require("fs");
     //**** NEED TO MAKE THIS DYNAMIC ****
-    var expressApp = require("../copiedServer/server.js");
+    const {renamedServer} = require('./serverDirPaths')
+    var expressApp = require(renamedServer+'/server.js');
     // const expressApp = require('../copiedServerNamed/server.js')
     var app = expressApp;
     //NODES NEEDED
@@ -124,6 +125,7 @@ module.exports = function (req, res, next) {
             this.funcString = func.handle.toString();
             // this will get reassigned if it is not the last LL node
             this.nextFunc = null;
+            this.name = func.name;
         }
         return middlewareLLNode;
     }());
@@ -159,7 +161,7 @@ module.exports = function (req, res, next) {
         // })
     });
     var originalAppTree = appTree;
-    fs.writeFileSync("originalAppTree.json", JSON.stringify(originalAppTree), function (error) {
+    fs.writeFileSync("renamedAppTree.json", JSON.stringify(originalAppTree), function (error) {
         if (error)
             throw error;
     });
