@@ -89,7 +89,6 @@ typings/
 # Electron-Forge
 out/
 
-
 # backend copy stuff
 server/copiedServer/
 server/renamedServer/
