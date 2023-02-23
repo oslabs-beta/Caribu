@@ -77,21 +77,22 @@ var renameFuncs = function (req, res, next) {
                     console.log("before dir Check");
                     //if it's a directory (folder) and not a file, then we want to recursively process the files/folders in it
                     if (stat.isDirectory()) {
-                        if (oldFilePath.indexOf('/node_modules')) {
-                            console.log("".concat(oldFilePath, " contains '/node_modules' when we have already copied the node modules. Continuing without copying."));
-                            return;
+                        if (oldFilePath.indexOf('/node_modules') !== -1) {
+                            console.log("".concat(oldFilePath, " contains '/node_modules' when we have already copied the node modules. Continuing without copying. Location: ").concat(oldFilePath.indexOf('/node_modules')));
                         }
-                        // if (!oldFilePath.indexOf(".git")) {
-                        console.log(oldFilePath + " is a directory");
-                        console.log(newFilePath);
-                        //make a new folder where none exists
-                        fs.mkdirSync(newFilePath, { recursive: true }, function (err) {
-                            return console.log("error in mkDirSync", err);
-                        });
-                        console.log("made this path:", newFilePath);
-                        //recursively process files
-                        processDirectory(oldFilePath);
-                        // }
+                        else {
+                            // if (!oldFilePath.indexOf(".git")) {
+                            console.log(oldFilePath + " is a directory");
+                            console.log(newFilePath);
+                            //make a new folder where none exists
+                            fs.mkdirSync(newFilePath, { recursive: true }, function (err) {
+                                return console.log("error in mkDirSync", err);
+                            });
+                            console.log("made this path:", newFilePath);
+                            //recursively process files
+                            processDirectory(oldFilePath);
+                            // }
+                        }
                     }
                     //else, if its a js file, then process it
                     //THIS IS A BIG BOTTLENECK VVVVV -- if we want to support anything other than js (like .ts, .svelte, etc. this is where we gotta start)
