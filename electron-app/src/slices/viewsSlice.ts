@@ -1,298 +1,120 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import type { useDispatch, useSelector } from 'react-redux' 
+import { RootState, AppDispatch } from "../store"
+
+const testUrl = 'http://10.0.11.26:6969/routes';
 
 export interface viewsState {
-  // TBD: flesh out nested types more after talking to backend
-  routes: object[],
+// TODO: confirm with backend which properties are optional
+// TODO: update for all fetch methods
+  routes: Array<{
+    routeName: string,
+    routeMethods: {
+      GET?: {
+        middlewares: Array<{
+          functionInfo: {
+            funcName: string,
+            funcFile: string,
+            funcPosition?: number[],
+            funcDef?: string,
+          },
+          deps?: {
+            totalUpstreamDeps?: number,
+            totalDownstreamDeps?: number,
+            upstream?: {
+                upVarName: string,
+                upVarFile: string,
+                upVarPosition?: number[],
+                upVarDef?: string,
+                upVarUseInFunc?: string,
+            },
+            downstream?: {
+                dependentFuncName: string,
+                dependentFuncFile: string,
+                dependentFuncPosition?: number[],
+                dependentFuncDef?: string,
+            },
+          }
+        }>
+      },
+      POST?: {
+        middlewares: Array<{
+          functionInfo: {
+            funcName: string,
+            funcFile: string,
+            funcPosition?: number[],
+            funcDef?: string,
+          },
+          deps?: {
+            totalUpstreamDeps?: number,
+            totalDownstreamDeps?: number,
+            upstream?: {
+                upVarName: string,
+                upVarFile: string,
+                upVarPosition?: number[],
+                upVarDef?: string,
+                upVarUseInFunc?: string,
+            },
+            downstream?: {
+                dependentFuncName: string,
+                dependentFuncFile: string,
+                dependentFuncPosition?: number[],
+                dependentFuncDef?: string,
+            },
+          }
+        }>
+      },
+      DELETE?: {
+        middlewares: Array<{
+          functionInfo: {
+            funcName: string,
+            funcFile: string,
+            funcPosition?: number[],
+            funcDef?: string,
+          },
+          deps?: {
+            totalUpstreamDeps?: number,
+            totalDownstreamDeps?: number,
+            upstream?: {
+                upVarName: string,
+                upVarFile: string,
+                upVarPosition?: number[],
+                upVarDef?: string,
+                upVarUseInFunc?: string,
+            },
+            downstream?: {
+                dependentFuncName: string,
+                dependentFuncFile: string,
+                dependentFuncPosition?: number[],
+                dependentFuncDef?: string,
+            },
+          }
+        }>
+      },
+    }
+  }>,
   controllers: object[],
   apis: object[],
   curMethod: string,
   routeIndex: number,
   curMetric: string,
   curMiddleware: object,
+  filepath: string,
+  serverpath: string,
 }
 
 const initialState: viewsState = {
   // FOR TESTING ONLY: populate initial state to test if redux state is accessible from components
-  routes: [
-    {
-      routeName: '/character',
-      routeMethods: {
-        GET: {
-          middlewares: [{
-            functionInfo: {
-              funcName: 'getCharacters',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [6, 40],
-              funcDef: 'lorem ipsum dolor sit amet',
-            },
-            deps : {
-              totalUpstreamDeps : 1,
-              totalDownstreamDeps : 1,
-              upstream : [{
-                upVarName : 'getCharacters upvarname1',
-                upVarFile : 'getCharacters upvar filepath1',
-                upVarPosition : [8, 15],
-                upVarDef : 'getCharacters upvarvariable def1',
-                upVarUseInFunc : 'getCharacters upvaruseinfunction1'
-              },
-              {
-                upVarName : 'getCharacters upvarname2',
-                upVarFile : 'getCharacters upvar filepath2',
-                upVarPosition : [8, 15],
-                upVarDef : 'getCharacters upvarvariable def2',
-                upVarUseInFunc : 'getCharacters upvaruseinfunction2'
-              },
-              {
-                upVarName : 'getCharacters upvarname3',
-                upVarFile : 'getCharacters upvar filepath3',
-                upVarPosition : [8, 15],
-                upVarDef : 'getCharacters upvarvariable def3',
-                upVarUseInFunc : 'getCharacters upvaruseinfunction3'
-              }],
-              downstream : {
-                dependents: [{
-                  dependentFuncName : 'getCharacters dependentfunc1 name',
-                  dependentFuncFile : 'getCharacters dependentfunc1 file path',
-                  dependentFuncPosition: [1, 25],
-                  dependentFuncDef : 'getCharacters dependentfunc1 definition'
-                },
-                {
-                  dependentFuncName : 'getCharacters dependentfunc2 name',
-                  dependentFuncFile : 'getCharacters dependentfunc2 file path',
-                  dependentFuncPosition: [1, 25],
-                  dependentFuncDef : 'getCharacters dependentfunc2 definition'
-                }]
-              }
-            }
-          }]
-        },
-        POST: {
-          middlewares: [{
-            functionInfo: {
-              funcName: 'addCharacter',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [102, 119],
-              funcDef: 'tbh i dont know hehe',
-            },
-            deps : {
-              totalUpstreamDeps : 1,
-              totalDownstreamDeps : 1,
-              upstream : [{
-                upVarName : 'addCharacters upvarname1',
-                upVarFile : 'addCharacters upvar filepath1',
-                upVarPosition : [9, 17],
-                upVarDef : 'addCharacters upvarvariable def1',
-                upVarUseInFunc : 'addCharacters upvaruseinfunction1'
-              }],
-              downstream : {
-                dependents: [{
-                  dependentFuncName : 'addCharacters dependentfunc1 name',
-                  dependentFile : 'addCharacters dependentfunc1 file path',
-                  dependentFuncPosition: [2, 12],
-                  dependentFuncDef : 'addCharacters dependentfunc1 definition'
-                },
-                {
-                  dependentFuncName : 'addCharacters dependentfunc2 name',
-                  dependentFile : 'addCharacters dependentfunc2 file path',
-                  dependentFuncPosition: [2, 12],
-                  dependentFuncDef : 'addCharacters dependentfunc2 definition'
-                },
-                {
-                  dependentFuncName : 'addCharacters dependentfunc3 name',
-                  dependentFile : 'addCharacters dependentfunc3 file path',
-                  dependentFuncPosition: [2, 12],
-                  dependentFuncDef : 'addCharacters dependentfunc3 definition'
-                },
-                {
-                  dependentFuncName : 'addCharacters dependentfunc4 name',
-                  dependentFile : 'addCharacters dependentfunc4 file path',
-                  dependentFuncPosition: [2, 12],
-                  dependentFuncDef : 'addCharacters dependentfunc4 definition'
-                },
-                {
-                  dependentFuncName : 'addCharacters dependentfunc5 name',
-                  dependentFile : 'addCharacters dependentfunc5 file path',
-                  dependentFuncPosition: [2, 12],
-                  dependentFuncDef : 'addCharacters dependentfunc5 definition'
-                },
-                {
-                  dependentFuncName : 'addCharacters dependentfunc6 name',
-                  dependentFile : 'addCharacters dependentfunc6 file path',
-                  dependentFuncPosition: [2, 12],
-                  dependentFuncDef : 'addCharacters dependentfunc6 definition'
-                },
-                {
-                  dependentFuncName : 'addCharacters dependentfunc7 name',
-                  dependentFile : 'addCharacters dependentfunc7 file path',
-                  dependentFuncPosition: [2, 12],
-                  dependentFuncDef : 'addCharacters dependentfunc7 definition'
-                }]
-              }
-            }
-          }]
-        }
-      }
-    },
-    {
-      routeName: '/species',
-      routeMethods: {
-        GET: {
-          middlewares: [{
-            functionInfo: {
-              funcName: 'authenticate',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [0, 30],
-            },
-            deps : {
-              totalUpstreamDeps : 0,
-              totalDownstreamDeps : 0,
-              upstream : [],
-              downstream : {
-                dependents: []
-              }
-            }
-          },
-          {
-            functionInfo: {
-              funcName: 'getSpecies',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [6, 40],
-            },
-            deps : {
-              totalUpstreamDeps : 1,
-              totalDownstreamDeps : 1,
-              upstream : [{
-                upVarName : 'getSpecies upvarname1',
-                upVarFile : 'getSpecies upvar filepath1',
-                upVarPosition : [2, 21],
-                upVarDef : 'getSpecies upvarvariable def1',
-                upVarUseInFunc : 'getSpecies upvaruseinfunction1'
-              }],
-              downstream : {
-                dependents: [{
-                  dependentFuncName : 'getSpecies dependentfunc1 name',
-                  dependentFile : 'getSpecies dependentfunc1 file path',
-                  dependentFuncPosition: [3, 7],
-                  dependentFuncDef : 'getSpecies dependentfunc1 definition'
-                }]
-              }
-            }
-          }]
-        }
-      }
-    },
-    {
-      routeName: '/planets',
-      routeMethods: {
-        GET: {
-          middlewares: [{
-            functionInfo: {
-              funcName: 'authenticate',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [0, 30],
-            },
-            deps : {
-              totalUpstreamDeps : 0,
-              totalDownstreamDeps : 0,
-              upstream : [],
-              downstream : {
-                dependents: []
-              }
-            }
-          },
-          {
-            functionInfo: {
-              funcName: 'getPlanets',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [2, 15],
-            },
-            deps : {
-              totalUpstreamDeps : 1,
-              totalDownstreamDeps : 1,
-              upstream : [{
-                upVarName : 'getPlanets upvarname1',
-                upVarFile : 'getPlanets upvar filepath1',
-                upVarPosition : [5, 19],
-                upVarDef : 'getPlanets upvarvariable def1',
-                upVarUseInFunc : 'getPlanets upvaruseinfunction1'
-              }],
-              downstream : {
-                dependents: [{
-                  dependentFuncName : 'getPlanets dependentfunc1 name',
-                  dependentFuncFile : 'getPlanets dependentfunc1 file path',
-                  dependentFuncPosition: [7, 12],
-                  dependentFuncDef : 'getPlanets dependentfunc1 definition'
-                }]
-              }
-            }
-          }]
-        },
-        POST: {
-          middlewares: [{
-            functionInfo: {
-              funcName: 'addPlanet',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [12, 32],
-            },
-            deps : {
-              totalUpstreamDeps : 1,
-              totalDownstreamDeps : 1,
-              upstream : [{
-                upVarName : 'addPlanet upvarname1',
-                upVarFile : 'addPlanet upvar filepath1',
-                upVarPosition : [5, 19],
-                upVarDef : 'addPlanet upvarvariable def1',
-                upVarUseInFunc : 'addPlanet upvaruseinfunction1'
-              }],
-              downstream : {
-                dependents: [{
-                  dependentFuncName : 'addPlanet dependentfunc1 name',
-                  dependentFuncFile : 'addPlanet dependentfunc1 file path',
-                  dependentFuncPosition: [7, 12],
-                  dependentFuncDef : 'addPlanet dependentfunc1 definition'
-                }]
-              }
-            }
-          }]
-        },
-        DELETE: {
-          middlewares: [{
-            functionInfo: {
-              funcName: 'deletePlanet',
-              funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-              funcPosition: [33, 42],
-            },
-            deps : {
-              totalUpstreamDeps : 1,
-              totalDownstreamDeps : 1,
-              upstream : [{
-                upVarName : 'deletePlanet upvarname1',
-                upVarFile : 'deletePlanet upvar filepath1',
-                upVarPosition : [5, 19],
-                upVarDef : 'deletePlanet upvarvariable def1',
-                upVarUseInFunc : 'deletePlanet upvaruseinfunction1'
-              }],
-              downstream : {
-                dependents: [{
-                  dependentFuncName : 'deletePlanet dependentfunc1 name',
-                  dependentFuncFile : 'deletePlanet dependentfunc1 file path',
-                  dependentFuncPosition: [7, 12],
-                  dependentFuncDef : 'deletePlanet dependentfunc1 definition'
-                }]
-              }
-            }
-          }]
-        }
-      }
-    }
-  ],
+  routes: [],
   controllers: [],
   apis: [],
   curMethod: "",
   routeIndex: 0,
   curMetric: "",
   curMiddleware: {},
+  filepath: '',
+  serverpath: ''
 }
 
 export const viewsSlice = createSlice({
@@ -301,22 +123,58 @@ export const viewsSlice = createSlice({
   // RTK allows us to write "mutating" logic in reducers; it doesn't actually mutate the state because it uses a library that detects changes to a "draft state" which produces a new immutable state based off those changes
   reducers: {
     // update the routes in the state to render to the page
-    update_routes: (state, action: PayloadAction<object[]>) => {
-      state.routes.push(action.payload);
+    update_routes: (state, action: PayloadAction<viewsState["routes"]>) => { 
+      console.log('viewsSlice update_routes fired with ', action.payload)
+      state.routes = action.payload;
     },
-    update_method: (state, action: PayloadAction<object[]>) => {
+    update_method: (state, action: PayloadAction<{method: string, routeIndex: number}>) => {
       const {method, routeIndex} = action.payload;
       state.curMethod = method;
       state.routeIndex = routeIndex;
     },
-    update_dependency: (state, action: PayloadAction<object[]>) => {
+    update_dependency: (state, action: PayloadAction<{middleware: object}>) => {
       const {middleware} = action.payload;
       state.curMiddleware = middleware;
-    }
+    },
+    update_filepath: (state, action: PayloadAction<{path: string}>) => {
+      console.log('viewsSlice update_filepath fired with ', action.payload);
+      const {path} = action.payload;
+      state.filepath = path;
+    },
+    update_serverpath: (state, action: PayloadAction<{path: string}>) => {
+      console.log('viewsSlice update_serverpath fired with ', action.payload);
+      const {path} = action.payload;
+      state.serverpath = path;
+    },
   },
-})
+});
+
+// Thunk action creator for fetching /api/routes
+export const fetchRoutes = () => {
+  console.log('viewsSlice fetchRoutes fired');
+  // return the thunk "action" funtion 
+  return async (dispatch: AppDispatch, getState: RootState) => {
+    console.log('viewsSlice anonymous thunk func fired');
+    console.log('fetching to /api/routes with filepath: ', getState().views.filepath);
+    console.log('fetching to /api/routes with serverpath: ', getState().views.serverpath);
+    const response = await fetch(testUrl, {
+      method: 'POST',
+      // add a header: URLSearchParams sets the header for us so having below was causing an error
+/*       headers: {
+        Content-Type: 'application/x-www-form-urlencoded;charset=UTF-8'
+      }, */
+      body: new URLSearchParams({
+        filepath: getState().views.filepath,
+        serverpath: getState().views.filepath.concat('/').concat(getState().views.serverpath),
+      }),
+    });
+    console.log('viewsSlice server responded with :', response.body);
+    dispatch(update_routes(await response.json()));
+  }
+}
 
 // Action creators are generated for each case reducer function
-export const { update_routes, update_method, update_dependency } = viewsSlice.actions;
+export const { update_routes, update_method, update_dependency, update_filepath, update_serverpath } = viewsSlice.actions;
+
 
 export default viewsSlice.reducer;
