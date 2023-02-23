@@ -1,9 +1,16 @@
 const fs = require("fs");
-const { copiedServer, renamedServer, node_modules } = require("./serverDirPaths");
+const { copiedServer, renamedServer, node_modules, processFolder } = require("./serverDirPaths");
 const copyServer = (req, res, next) => {
   console.log("IN COPYSERVER");
+  //make sure process folder exists
+  if (!fs.existsSync(processFolder)) {
+    fs.mkdirSync(processFolder)
+  }
+
   //clear out any existing copied server
-  fs.rmSync(copiedServer, { recursive: true, force: true });
+  if (fs.existsSync(copiedServer)) {
+    fs.rmSync(copiedServer, { recursive: true, force: true });
+  }
   //make a new one
   fs.mkdirSync(copiedServer);
   //copy a folder into there from somewhere (ideally, req.body,something)
@@ -19,8 +26,10 @@ const copyServer = (req, res, next) => {
       console.log(err);
     }
     );
-    
-  fs.rmSync(node_modules, { recursive: true, force: true });
+  
+  if (fs.existsSync(node_modules)) {
+    fs.rmSync(node_modules, { recursive: true, force: true });
+  }
   fs.mkdirSync(node_modules);
   //copy a folder into there from somewhere (ideally, req.body,something)
   fs.cpSync(
@@ -35,6 +44,10 @@ const copyServer = (req, res, next) => {
     }
     );
 
+  if (fs.existsSync(renamedServer)) {
+    fs.rmSync(renamedServer, { recursive: true, force: true });
+  }
+  fs.mkdirSync(renamedServer)
 
 
   console.log("BEFORE NEXT IN CPSERVER");
