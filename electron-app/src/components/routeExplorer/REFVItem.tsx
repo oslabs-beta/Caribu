@@ -10,10 +10,12 @@ export default function REFVItem(props: REFVItemProps) {
 
     const dispatch = useDispatch();
 
+    // updates the redux state with the currently selected dependency on click of the function component.
     function selectFunction(){
-        console.log(funcName);
         dispatch(update_dependency({middleware: props.middleware}));
     }
+
+    // assigns function name to funcname variable to allow it to render in the refv item component.
     const funcName = props.middleware.functionInfo.funcName
 
     return (

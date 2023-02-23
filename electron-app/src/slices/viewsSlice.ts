@@ -3,6 +3,8 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { useDispatch, useSelector } from 'react-redux' 
 import { RootState, AppDispatch } from "../store"
 
+const testUrl = 'http://10.0.11.26:6969/routes';
+
 export interface viewsState {
 // TODO: confirm with backend which properties are optional
 // TODO: update for all fetch methods
@@ -145,7 +147,7 @@ export const viewsSlice = createSlice({
       state.serverpath = path;
     },
   },
-})
+});
 
 // Thunk action creator for fetching /api/routes
 export const fetchRoutes = () => {
@@ -155,7 +157,7 @@ export const fetchRoutes = () => {
     console.log('viewsSlice anonymous thunk func fired');
     console.log('fetching to /api/routes with filepath: ', getState().views.filepath);
     console.log('fetching to /api/routes with serverpath: ', getState().views.serverpath);
-    const response = await fetch('http://localhost:3030/api/routes', {
+    const response = await fetch(testUrl, {
       method: 'POST',
       // add a header: URLSearchParams sets the header for us so having below was causing an error
 /*       headers: {

@@ -90,3 +90,6 @@ typings/
 out/
 
 
+# backend copy stuff
+server/copiedServer/
+server/renamedServer/

@@ -2,8 +2,9 @@ import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import RERVItem from './RERVItem';
 
-export default function RERouteViewer(props: object) {
+export default function RERouteViewer() {
 
+  // grabs the route object from the redux state
   const routes = useSelector((state: RootState) => state.views.routes); // routes is an array of objects
   console.log('RERouteViewer routes state is ', routes);
   console.log('RERouteViewer routes.length is ', routes.length)
@@ -16,7 +17,7 @@ export default function RERouteViewer(props: object) {
 
     for(let j = 0; j < methods.length; j++)
       routeItems.push(
-        <RERVItem method={methods[j]} name={name} index={i}/>
+        <RERVItem method={methods[j]} name={name} index={i} key={name + i}/>
       );
   }
   
