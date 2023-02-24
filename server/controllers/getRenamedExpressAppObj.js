@@ -5,7 +5,8 @@ module.exports = function (req, res, next) {
     var fs = require("fs");
     //**** NEED TO MAKE THIS DYNAMIC ****
     const {renamedServer} = require('./serverDirPaths')
-    var expressApp = require(renamedServer+'/server.js');
+    // var expressApp = require(renamedServer+'/server.js');
+    var expressApp = require(renamedServer+'/app.js');
     // const expressApp = require('../copiedServerNamed/server.js')
     var app = expressApp;
     //NODES NEEDED

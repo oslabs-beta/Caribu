@@ -4,7 +4,8 @@ module.exports = (req, res, next) => {
   const e = require("express");
   const fs = require("fs");
   //**** NEED TO MAKE THIS DYNAMIC ****
-  const expressApp = require("../renamedServer/server.js");
+  // const expressApp = require("../renamedServer/server.js");
+  const expressApp = require("../renamedServer/app.js");
   // const expressApp = require('../copiedServerNamed/server.js')
 
   const app = expressApp;
