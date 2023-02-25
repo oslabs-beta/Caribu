@@ -17,8 +17,8 @@ const WelcomePage = (props: object) => {
     <div className="welcomePage">
       <div className="wp-header">Welcome To Caribu</div>
       <div className="wp-instructions">
-        To get started, drop your file into the dropzone, then simply specify
-        your server files and node modules relative path, and submit!{" "}
+        To get started, drop the server folder for your application into the dropzone, then simply specify
+        the absolute paths to your server file and node modules folder, and submit!{" "}
       </div>
       <div>
         <DragDrop />
@@ -26,7 +26,7 @@ const WelcomePage = (props: object) => {
           <input
             className="serverName-wrapper"
             type="text"
-            placeholder="Enter server name here"
+            placeholder="Enter server path here"
             onChange={async (e) => {
               await dispatch(update_serverpath({ path: e.target.value }));
             }}
