@@ -4,7 +4,8 @@ module.exports = function (req, res, next) {
     console.log("IN GET ORIGNIAL EXPRESS APP OBJ");
     var e = require("express");
     var fs = require("fs");
-    var expressApp = require("../process/copiedServer/server.js");
+    var copiedServer = "../process/copiedServer";
+    var expressApp = require(copiedServer + req.body.serverpath.replace(req.body.filepath, ""));
     var app = expressApp;
     var AppTree = (function () {
         function AppTree(app) {

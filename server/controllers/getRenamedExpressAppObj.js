@@ -2,7 +2,8 @@ module.exports = function (req, res, next) {
     console.log("IN GET RENAMED EXPRESS APP OBJ");
     var e = require("express");
     var fs = require("fs");
-    var expressApp = require("../process/renamedServer/server.js");
+    var renamedServer = "../process/renamedServer";
+    var expressApp = require(renamedServer + req.body.serverpath.replace(req.body.filepath, ""));
     var app = expressApp;
     var AppTree = (function () {
         function AppTree(app) {
