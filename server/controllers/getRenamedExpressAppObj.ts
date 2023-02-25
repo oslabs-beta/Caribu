@@ -4,7 +4,9 @@ module.exports = (req, res, next) => {
   const e = require("express");
   const fs = require("fs");
   //**** NEED TO MAKE THIS DYNAMIC ****
-  const expressApp = require("../renamedServer/server.js");
+  const renamedServer = "../process/renamedServer";
+  const expressApp = require(renamedServer + req.body.serverpath.replace(req.body.filepath, ""));
+  // const expressApp = require("../renamedServer/app.js");
   // const expressApp = require('../copiedServerNamed/server.js')
 
   const app = expressApp;
@@ -154,6 +156,7 @@ module.exports = (req, res, next) => {
   // look at the routers stack
   appTree.app._router.stack.forEach((router) => {
     // if route is a bound dispatcher, create a new boundDispatcher
+    console.log('router name is ', router.name);
     if (router.name === "bound dispatch") {
       const newBD: object = new BoundDispatcher(router);
       appTree.boundDispatchers.push(newBD);
@@ -183,6 +186,7 @@ module.exports = (req, res, next) => {
   });
 
   const originalAppTree = appTree;
+  console.log('renamedappTree before writeFileSync is ', originalAppTree);
   fs.writeFileSync(
     "renamedAppTree.json",
     JSON.stringify(originalAppTree),

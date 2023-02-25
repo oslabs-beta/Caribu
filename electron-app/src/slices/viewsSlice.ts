@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store";
 
-const testUrl = "http://10.0.11.26:6969/routes";
+const testUrl = "http://localhost:3003/routes";
 
 export interface viewsState {
   // TODO: confirm with backend which properties are optional
@@ -184,12 +184,8 @@ export const fetchRoutes = () => {
       }, */
       body: new URLSearchParams({
         filepath: getState().views.filepath,
-        serverpath: getState()
-          .views.filepath.concat("/")
-          .concat(getState().views.serverpath),
-        nodepath: getState()
-          .views.filepath.concat("/")
-          .concat(getState().views.nodepath),
+        serverpath: getState().views.serverpath,
+        nodepath: getState().views.nodepath,
       }),
     });
     console.log("viewsSlice server responded with :", response.body);
