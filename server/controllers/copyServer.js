@@ -46,7 +46,7 @@ const copyServer = (req, res, next) => {
     // '/Users/melodyduany/Documents/Codesmith/projects/node-express-realworld-example-app/node_modules',
     // '/Users/melodyduany/Documents/Codesmith/challenges/unit-9-express/node_modules',
     // '/Users/melodyduany/Documents/Codesmith/challenges/unit-9-express-morrie/node_modules',
-    req.body.nodempath,
+    req.body.nodepath,
     node_modules,
     { recursive: true },
     (err) => {
