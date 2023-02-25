@@ -48,8 +48,11 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.2",
     "electron-squirrel-startup": "^1.0.0",
+    "fs": "^0.0.1-security",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-drag-drop-files": "^2.3.8",
+    "react-dropzone": "^14.2.3",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.1"
   }
