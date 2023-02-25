@@ -1,14 +1,18 @@
+import { Express } from 'express';
+
 module.exports = (req, res, next) => {
   console.log("IN GET ORIGNIAL EXPRESS APP OBJ");
   //require Express
   const e = require("express");
   const fs = require("fs");
   //**** NEED TO MAKE THIS DYNAMIC ****
-  // const expressApp = require("../copiedServer/server.js");
-  const expressApp = require("../copiedServer/app.js");
+  const expressApp: Express = require("../process/copiedServer/server.js");
+  // const expressApp = require("../copiedServer/app.js");
   // const expressApp = require('../copiedServerNamed/server.js')
 
-  const app = expressApp;
+  const app: Express = expressApp;
+  // console.log('app is ', app)
+  // console.log('expressApp is ', expressApp)
 
   //NODES NEEDED
 
@@ -16,7 +20,7 @@ module.exports = (req, res, next) => {
   // APP TREE
   // Beginning of tree, this holds the entirety of the app and initializes empty arrays for the routers and bound dispatchers (explained below)
   class AppTree {
-    app: object;
+    app: Express;
     routers: any[];
     boundDispatchers: any[];
     constructor(app: object) {
@@ -150,10 +154,12 @@ module.exports = (req, res, next) => {
   }
 
   // create app node
-  const appTree: object = new AppTree(app);
+  const appTree: AppTree = new AppTree(app);
 
   // look at the routers stack
   appTree.app._router.stack.forEach((router) => {
+    // console.log('router is ', router);
+    console.log('router name is ', router.name);
     // if route is a bound dispatcher, create a new boundDispatcher
     if (router.name === "bound dispatch") {
       const newBD: object = new BoundDispatcher(router);
@@ -162,6 +168,7 @@ module.exports = (req, res, next) => {
     // if the route is a router, create a new router
     if (router.name === "router") {
       const newRouter: object = new Router(router);
+      console.log('newRouter is ', newRouter);
       appTree.routers.push(newRouter);
     }
   });
@@ -179,8 +186,8 @@ module.exports = (req, res, next) => {
   //   //   console.log(elEnd.middlewareChain)
   //   // })
   // });
-
   const originalAppTree = appTree;
+  console.log('appTree before writeFileSync is ', originalAppTree);
   fs.writeFileSync(
     "originalAppTree.json",
     JSON.stringify(originalAppTree),

@@ -20,7 +20,9 @@ const copyServer = (req, res, next) => {
     // '/Users/morry/git/cs/juniorUnits/unit-9-express/server',
     // '/Users/morry/git/node-express-realworld-example-app',
     //'/Users/morry/git/cs/juniorUnits/unit-10-databases/server',
-    '/Users/melodyduany/Documents/Codesmith/projects/node-express-realworld-example-app',
+    // '/Users/melodyduany/Documents/Codesmith/projects/node-express-realworld-example-app',
+    // '/Users/melodyduany/Documents/Codesmith/challenges/unit-9-express/server',
+    '/Users/melodyduany/Documents/Codesmith/challenges/unit-9-express-morrie/server',
     copiedServer,
     { recursive: true },
     (err) => {
@@ -40,7 +42,9 @@ const copyServer = (req, res, next) => {
     // '/Users/morry/git/bodegaCat/server/',
     // '/Users/morry/git/node-express-realworld-example-app/node_modules',
     // '/Users/morry/git/cs/juniorUnits/unit-10-databases/node_modules',
-    '/Users/melodyduany/Documents/Codesmith/projects/node-express-realworld-example-app/node_modules',
+    // '/Users/melodyduany/Documents/Codesmith/projects/node-express-realworld-example-app/node_modules',
+    // '/Users/melodyduany/Documents/Codesmith/challenges/unit-9-express/node_modules',
+    '/Users/melodyduany/Documents/Codesmith/challenges/unit-9-express-morrie/node_modules',
     node_modules,
     { recursive: true },
     (err) => {
