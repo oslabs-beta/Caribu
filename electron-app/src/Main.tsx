@@ -11,7 +11,7 @@ root.render(
   // provide the redux store to react
   <Provider store={store}>
     <HashRouter>
-      <App />
+      <App/>
     </HashRouter>
   </Provider>
 );

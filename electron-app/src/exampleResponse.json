@@ -1,237 +1,360 @@
 [
-  {
-      "routeName": "/",
-      "routeMethods": {
-          "get": {
-              "middlewares": [
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART153_CBUEND1035_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
-                          "funcPosition": [
-                              153,
-                              1035
-                          ],
-                          "funcDef": "(req, res, next) => {\n  const awsObj = {}\n  awsObj.req = req.body\n  awsObj.res = res\n  console.log(\"in getCahr\")\n  fetch('https://5z7fvxgfqqjpyyyybl6uc2igxi0wmyqs.lambda-url.us-east-1.on.aws/')\n    .then(data => data.json())\n    // .then(data => data.body)\n    .then(data => console.log(\"data.body jsonified from AWS\", data))\n    .then(() => next())\n  // write code here\n  // const ourQuery =\n  // 'SELECT people.*, species.name AS species, planets.name AS Homeworld FROM people FULL OUTER JOIN species ON species._id = people.species_id FULL OUTER JOIN planets ON planets._id = people.homeworld_id';\n  // db.query(ourQuery)\n  //   .then((data) => data.rows)\n  //   .then((data) => (res.locals.characters = data))\n  //   .then(() => next())\n  //   .catch({\n  //     message: { err: 'ERROR - API call failed' },\n  //     log: 'ERROR in starWarsController.getCharacters',\n  //   });\n}"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  },
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART201_CBUEND258_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
-                          "funcPosition": [
-                              201,
-                              258
-                          ],
-                          "funcDef": "(req, res) => res.status(200).json(res.locals.characters)"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  }
-              ]
-          }
-      }
-  },
-  {
-      "routeName": "/species",
-      "routeMethods": {
-          "get": {
-              "middlewares": [
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1070_CBUEND1696_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
-                          "funcPosition": [
-                              1070,
-                              1696
-                          ],
-                          "funcDef": "(req, res, next) => {\n  // write code here\n  const reqID = req.query.id;\n  const text = 'SELECT species._id, species.classification, species.average_height, species.average_lifespan, species.language, species.name, planets.name AS homeworld FROM species LEFT OUTER JOIN planets ON species.homeworld_id = planets._id WHERE species._id = $1;';\n  const values = [reqID];\n  db.query(text, values)\n    .then((data) => data.rows[0])\n    .then((data) => (res.locals.species = data))\n    .then(() => next())\n    .catch({\n      message: { err: 'ERROR - API call failed' },\n      log: 'ERROR in starWarsController.getSpecies',\n    });\n}"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  },
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART321_CBUEND461_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
-                          "funcPosition": [
-                              321,
-                              461
-                          ],
-                          "funcDef": "(req, res) => {\n    console.log(\"res.locals.species in the router: \", res.locals.species);\n    res.status(200).json(res.locals.species);\n  }"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  }
-              ]
-          }
-      }
-  },
-  {
-      "routeName": "/homeworld",
-      "routeMethods": {
-          "get": {
-              "middlewares": [
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1733_CBUEND1788_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
-                          "funcPosition": [
-                              1733,
-                              1788
-                          ],
-                          "funcDef": "(req, res, next) => {\n  // write code here\n\n  next();\n}"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  },
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART528_CBUEND566_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
-                          "funcPosition": [
-                              528,
-                              566
-                          ],
-                          "funcDef": "(req, res) => res.status(200).json({})"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  }
-              ]
-          }
-      }
-  },
-  {
-      "routeName": "/film",
-      "routeMethods": {
-          "get": {
-              "middlewares": [
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1820_CBUEND1875_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
-                          "funcPosition": [
-                              1820,
-                              1875
-                          ],
-                          "funcDef": "(req, res, next) => {\n  // write code here\n\n  next();\n}"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  },
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART623_CBUEND661_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
-                          "funcPosition": [
-                              623,
-                              661
-                          ],
-                          "funcDef": "(req, res) => res.status(200).json({})"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  }
-              ]
-          }
-      }
-  },
-  {
-      "routeName": "/character",
-      "routeMethods": {
-          "post": {
-              "middlewares": [
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1912_CBUEND1967_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
-                          "funcPosition": [
-                              1912,
-                              1967
-                          ],
-                          "funcDef": "(req, res, next) => {\n  // write code here\n\n  next();\n}"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  },
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART729_CBUEND767_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
-                          "funcPosition": [
-                              729,
-                              767
-                          ],
-                          "funcDef": "(req, res) => res.status(200).json({})"
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  }
-              ]
-          }
-      }
-  }
+    {
+        "routeName": "/:id",
+        "routeMethods": {
+            "delete": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1745_CBUEND2126_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$characterController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/characterController.js",
+                            "funcPosition": [
+                                1745,
+                                2126
+                            ],
+                            "funcDef": "(req, res, next) => {\n    testNum-=3\n    console.log(\"in delete Char\")\n    const id = req.params.id;\n    res.locals.deleteId = id;\n    console.log(\"in character delete controller: \" , res.locals)\n    if (!id) next({ message: { err: 'characterController.deleteCharacter: ERROR: no ID received' }, log: 'ERROR: Incorrect Data Recieved in characterController.delete' });\n    next();\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART3951_CBUEND5460_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$fileController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                            "funcPosition": [
+                                3951,
+                                5460
+                            ],
+                            "funcDef": "async (req, res, next) => {\n  testNum--\n  try {\n    // check if the correct information is on res.locals\n    if (!res.locals.deleteId)\n      throw {\n        type: 'previous middleware error',\n        err: 'incorrect info on res.locals',\n      };\n    // grab the id from res.locals of the character that will be deleted\n    const { deleteId } = res.locals;\n    // read json file for all characters\n    const chars = await fs.readFile(path.resolve(__dirname, '../data/characters.json'), 'UTF-8');\n    const parsedData = JSON.parse(chars);\n    // grab the character based off id\n    const deleted = parsedData.results[deleteId];\n    // if character is not custom, throw error, invoking catch handler\n    if (deleted.custom !== true) throw {\n        type: 'incorrect data provided',\n        err: 'character must be custom',\n      };\n    // delete character object from array\n    parsedData.results.splice(deleteId, 1);\n    // re-id remaining custom cards\n    for (let i = deleteId; i < parsedData.results.length; i++) {\n      parsedData.results[i].dbId = i;\n    }\n    // write the updated info to file\n    await fs.writeFile(path.resolve(__dirname, '../data/characters.json'),\n      JSON.stringify(parsedData),'UTF-8');\n    // save deleted character in res.locals\n    res.locals.deletedCharacter = deleted;\n    return next();\n  } catch (err) {\n    return next(createErr({\n      method: 'deleteCharacter',\n      type: err.type ? err.type : 'reading/writing file',\n      err: err.err ? err.err : err,\n    }));\n  }\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": [
+                                    {
+                                        "upVarName": "parsedData",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                        "upVarPosition": [
+                                            4456,
+                                            4466
+                                        ],
+                                        "location": [
+                                            4456,
+                                            4466
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "declaredName": "parsedData",
+                                            "type": "const",
+                                            "definition": "const parsedData = JSON.parse(chars);",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "position": [
+                                                1264,
+                                                1301
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "parsedData",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                        "upVarPosition": [
+                                            5145,
+                                            5155
+                                        ],
+                                        "location": [
+                                            5145,
+                                            5155
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "declaredName": "parsedData",
+                                            "type": "const",
+                                            "definition": "const parsedData = JSON.parse(chars);",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "position": [
+                                                1264,
+                                                1301
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1108_CBUEND1202_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$characters_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/characters.js",
+                            "funcPosition": [
+                                1108,
+                                1202
+                            ],
+                            "funcDef": "(req, res) => {\n    console.log(req);\n    res.status(200).json(res.locals.deletedCharacter);\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/",
+        "routeMethods": {
+            "post": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART321_CBUEND1001_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$characterController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/characterController.js",
+                            "funcPosition": [
+                                321,
+                                1001
+                            ],
+                            "funcDef": "(req, res, next) => {\n    testNum++\n        const { name, height, birth_year, hair_color, skin_color, eye_color } = req.body\n        const charObj = {name, height, birth_year, hair_color, skin_color, eye_color}\n        // console.log(\"this is charObj: \", charObj)\n        for (const trait in charObj) {\n            // console.log(\"our trait is, \", charObj[trait]);\n            if (!charObj[trait]) next({message: {err: 'characterController.createCharacter -- Incorrect data type'}, log: 'Error inside characterController.createCharacter'})\n        }\n        res.locals.newCharacter = charObj;\n        // console.log(\"new char locals is : \", res.locals.newCharacter)\n    next();\n }"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1467_CBUEND3870_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$fileController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                            "funcPosition": [
+                                1467,
+                                3870
+                            ],
+                            "funcDef": "(req, res, next) => {\n  // check if the correct information is on res.locals\n  if (!res.locals.updates && !res.locals.newCharacter) {\n    return next(createErr({\n      method: 'saveCharacter',\n      type: 'previous middleware error',\n      err: 'incorrect info on res.locals',\n    }));\n  }\n  // read from characters file\n  fs.readFile(path.resolve(__dirname, '../data/characters.json'), 'UTF-8')\n    .then(data => {\n      let finalCharacter;\n      const parsedData = JSON.parse(data);\n      if (res.locals.updates) {\n        // if we are updating, grab info from res.locals\n        const { id, nickname, fav_food } = res.locals.updates;\n        // get the character from our array based off its id\n        const character = parsedData.results[id];\n        /** NOTE: these checks are in place of defining a delete route for deleting customizations.\n         * This was done to achieve simplicity in the steps of this unit \n         * and this pattern should NOT be replicated in production code. */\n        if (nickname !== 'keep') character.nickname = nickname;\n        if (nickname === 'delete') delete character.nickname;\n        if (fav_food !== 'keep') character.fav_food = fav_food;\n        if (fav_food === 'delete') delete character.fav_food;\n\n        finalCharacter = character;\n      } else if (res.locals.newCharacter) {\n        // if we are saving a new character, give it an id and custom prop\n        // & use what was stored on res.locals from previous middleware\n        finalCharacter = {\n          dbId: parsedData.results.length,\n          custom: true,\n          ...res.locals.newCharacter\n        } // push the new character into the character array\n        parsedData.results.push(finalCharacter);\n      } // write updated characters to file as json\n      fs.writeFile(path.resolve(__dirname, '../data/characters.json'), \n      JSON.stringify(parsedData), 'UTF-8')\n        .then(() => {\n          // save the newly created/updated character on res.locals\n          if (res.locals.updates) res.locals.updatedCharacter = finalCharacter;\n          else res.locals.newCharacter = finalCharacter;\n          return next();\n        }).catch(err => next(createErr({\n            method: 'saveCharacter', \n            type: 'writing file', \n            err,\n        })));\n    }).catch(err => next(createErr({\n      method: 'saveCharacter', \n      type: 'reading file', \n      err,\n    })));\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": [
+                                    {
+                                        "upVarName": "parsedData",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                        "upVarPosition": [
+                                            1921,
+                                            1931
+                                        ],
+                                        "location": [
+                                            1921,
+                                            1931
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "declaredName": "parsedData",
+                                            "type": "const",
+                                            "definition": "const parsedData = JSON.parse(chars);",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "position": [
+                                                1264,
+                                                1301
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "parsedData",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                        "upVarPosition": [
+                                            3331,
+                                            3341
+                                        ],
+                                        "location": [
+                                            3331,
+                                            3341
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "declaredName": "parsedData",
+                                            "type": "const",
+                                            "definition": "const parsedData = JSON.parse(chars);",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                            "position": [
+                                                1264,
+                                                1301
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART642_CBUEND766_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$characters_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/characters.js",
+                            "funcPosition": [
+                                642,
+                                766
+                            ],
+                            "funcDef": "(req, res) => {\n    console.log('got to post! char is: ', res.locals);\n     res.status(200).send(res.locals.newCharacter);\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART926_CBUEND1382_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$fileController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                            "funcPosition": [
+                                926,
+                                1382
+                            ],
+                            "funcDef": "(req, res, next) => {\n  testNum2++\n  console.log(\"inside getCharacters filecontroller\")\n  fsCallback.readFile(path.resolve(__dirname, '../data/characters.json'),\n    'UTF-8', \n    (err, chars) => {\n      if (err) return next(createErr({\n          method: 'getCharacters',\n          type: 'reading file',\n          err,\n        }));\n      const parsedData = JSON.parse(chars);\n      res.locals.characters = parsedData.results;\n      return next();\n    });\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART405_CBUEND525_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
+                            "funcPosition": [
+                                405,
+                                525
+                            ],
+                            "funcDef": "(req, res, next) => {\n    res.status(200).set('Content-Type', 'text/plain').json({characters : res.locals.characters})\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/more-characters",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART926_CBUEND1382_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$fileController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                            "funcPosition": [
+                                926,
+                                1382
+                            ],
+                            "funcDef": "(req, res, next) => {\n  testNum2++\n  console.log(\"inside getCharacters filecontroller\")\n  fsCallback.readFile(path.resolve(__dirname, '../data/characters.json'),\n    'UTF-8', \n    (err, chars) => {\n      if (err) return next(createErr({\n          method: 'getCharacters',\n          type: 'reading file',\n          err,\n        }));\n      const parsedData = JSON.parse(chars);\n      res.locals.characters = parsedData.results;\n      return next();\n    });\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART809_CBUEND2482_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$swapiController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/swapiController.js",
+                            "funcPosition": [
+                                809,
+                                2482
+                            ],
+                            "funcDef": "(req, res, next) => {\n    // // [error testing] [works]\n    // res.locals.characters = null\n    if (!res.locals.characters) next({ message : { err: \"error occurred in swapiController.getMoreCharacters\"}, log : \"ERROR: No res.locals.characters in swapiController.getMoreCharacters\" })\n    //grab the data from swapi\n    //grab our character JSON data from getCharacters controller (invoke before this)\n    let currentChars = res.locals.characters;\n    // console.log(currentChars);\n    let currentCharArray = [];\n    currentChars.forEach(el => currentCharArray.push(el.name))\n    \n    //make a list of all current character names\n    //iterate through swapi response\n    // // [error testing] [works]\n    // // fetch('https://swapi.dev/api/peop')\n    // // \n    fetch('https://swapi.dev/api/people/?page=3')\n        .then(response => response.json())\n        // .then((data) => console.log(data.results))\n        .then(data => {\n            data = data.results\n            const newChars = []\n            for (const char in data) {\n                if (!currentCharArray.includes(data[char].name)) {\n                    newChars.push(data[char])\n                }\n            }\n            return newChars;\n        })\n        .then((newChars) => res.locals.moreCharacters = newChars)\n        .then(() => next())\n        .catch(() => next({ message : { err: \"error occurred in swapiController.getMoreCharacters\"}, log : \"ERROR: error in fetch request in swapiController.getMoreCharacterData\" }))\n    \n        //if the name matches a name in currChars\n            //continue\n        //if not, its a new character\n            //create a new chracter with it on res.locals\n    \n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART2221_CBUEND2635_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$characterController_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/characterController.js",
+                            "funcPosition": [
+                                2221,
+                                2635
+                            ],
+                            "funcDef": "(req, res, next) => {\n    testNum--\n    if (!res.locals.moreCharacters) next({ message: { err: 'characterController.populateCharacterPhoots: ERROR: no list of characters received' }, log: 'ERROR: Incorrect Data Recieved in characterController.populateCharacterPhotos' })\n    res.locals.moreCharacters.forEach(el => {\n        let photoURL = convertToPhotoUrl(el.name)\n        el.photo = photoURL\n    })\n    next()\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART766_CBUEND919_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
+                            "funcPosition": [
+                                766,
+                                919
+                            ],
+                            "funcDef": "(req, res, next) => {\n    console.log('inside router get, new chars coming');\n    res.status(200).json({ moreCharacters : res.locals.moreCharacters });\n}"
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
 ]

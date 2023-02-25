@@ -3,6 +3,9 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { useDispatch, useSelector } from 'react-redux' 
 import { RootState, AppDispatch } from "../store"
 
+// const { ipcRenderer } = require('electron')
+
+
 const testUrl = 'http://10.0.11.26:6969/routes';
 
 export interface viewsState {
@@ -10,6 +13,7 @@ export interface viewsState {
 // TODO: update for all fetch methods
   routes: Array<{
     routeName: string,
+    setOfMw: any,
     routeMethods: {
       GET?: {
         middlewares: Array<{
@@ -102,6 +106,8 @@ export interface viewsState {
   curMiddleware: object,
   filepath: string,
   serverpath: string,
+  directoryProcessed : boolean,
+  mwLibrary: object,
 }
 
 const initialState: viewsState = {
@@ -114,7 +120,9 @@ const initialState: viewsState = {
   curMetric: "",
   curMiddleware: {},
   filepath: '',
-  serverpath: ''
+  serverpath: '',
+  directoryProcessed: false,
+  mwLibrary: {},
 }
 
 export const viewsSlice = createSlice({
@@ -126,6 +134,8 @@ export const viewsSlice = createSlice({
     update_routes: (state, action: PayloadAction<viewsState["routes"]>) => { 
       console.log('viewsSlice update_routes fired with ', action.payload)
       state.routes = action.payload;
+      //update directoryProcessed to true
+      state.directoryProcessed = true
     },
     update_method: (state, action: PayloadAction<{method: string, routeIndex: number}>) => {
       const {method, routeIndex} = action.payload;
@@ -146,6 +156,11 @@ export const viewsSlice = createSlice({
       const {path} = action.payload;
       state.serverpath = path;
     },
+    update_mwLibrary: (state, action: PayloadAction<{mwLib: object}>) => {
+      console.log('mwLib has been updated with ', action.payload);
+      const mwLib = action.payload
+      state.mwLibrary = mwLib
+    } 
   },
 });
 
@@ -174,14 +189,57 @@ export const fetchRoutes = () => {
     
 //     dispatch(update_routes(await response.json()));
 
+    // const response = await ipcRenderer.invoke('fetch-request', {
+    //   url: '/test',
+    //   method: 'POST',
+    //   body: {
+    //     filepath: getState().views.filepath,
+    //     serverpath: getState().views.filepath.concat('/').concat(getState().views.serverpath),
+    //   },
+    // });
+    // console.log('viewsSlice server responded with:', response);
+
+
+    // ipcRenderer.send('send-request', {
+    //   filepath: getState().views.filepath,
+    //   serverpath: getState().views.filepath.concat('/').concat(getState().views.serverpath),
+    // })
+
+    // ipcRenderer.on('request-response', (event, data) => {
+    //   console.log('viewsSlice server responded with:', data)
+    // })
+
+
+
 
     const newJSON = require('../exampleResponse.json')
     dispatch(update_routes(newJSON));
+
+    const funcLibrary = {}
+
+    //This function parses through the routes object to isolate the middlewares down to an object with routename, method, and functionname.
+    // function parseRoutes(){
+      const routesDict: object= {};
+      for(let i = 0; i < newJSON.length; i++){
+        const route: object = newJSON[i]
+        for(const key in route.routeMethods){
+          const middlewares = route.routeMethods[key].middlewares;
+          for(let j = 0; j < middlewares.length; j++){
+            let funcName = middlewares[j].functionInfo.funcName
+            if (!funcLibrary[funcName]) {
+              funcLibrary[funcName] = middlewares[j].functionInfo
+            }
+          }
+        }
+      }
+
+
+    dispatch(update_mwLibrary(funcLibrary))
   }
 }
 
 // Action creators are generated for each case reducer function
-export const { update_routes, update_method, update_dependency, update_filepath, update_serverpath } = viewsSlice.actions;
+export const { update_routes, update_method, update_dependency, update_filepath, update_serverpath, update_mwLibrary } = viewsSlice.actions;
 
 
 export default viewsSlice.reducer;

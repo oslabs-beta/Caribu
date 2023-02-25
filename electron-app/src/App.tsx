@@ -6,11 +6,71 @@
   import RouteExplorer from './views/RouteExplorer';
   import Purity from './views/PurityOverview';
   import Metrics from './views/Metrics';
+  import AppBar from '@mui/material/AppBar';
+  import Container from '@mui/material/Container';
+  import Typography from '@mui/material/Typography';
+  import MenuItem from '@mui/material/MenuItem';
+  import { useNavigate } from "react-router-dom";
+  import Toolbar from '@mui/material/Toolbar';
+
+
+
+
+
 
   export default function App() {
+    const navigate = useNavigate();
+
+    const navToRE = () => {
+      navigate("/rexplorer");
+    }
+
+    const navToPO = () => {
+      navigate('/purity');
+    }
+
+    const navToHome = () => {
+      navigate('/');
+    }
+
+
+
     return (
       <div>
-        <div>
+        <AppBar style={{backgroundColor : '#255858'}}>
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+              <Typography
+                variant="h5"
+                noWrap
+                component="a"
+                href=""
+                sx={{
+                  mr: 2,
+                  display: { xs: 'flex', md: 'none' },
+                  flexGrow: 1,
+                  fontFamily: 'arial',
+                  fontWeight: 700,
+                  letterSpacing: '.3rem',
+                  color: 'inherit',
+                  textDecoration: 'none',
+                }}
+              >
+                CARIBU
+              </Typography>
+              <MenuItem onClick={navToRE}>
+                <Typography textAlign="center">Route Explorer</Typography>
+              </MenuItem>
+              <MenuItem onClick={navToPO}>
+                <Typography textAlign="center">Purity Overview</Typography>
+              </MenuItem>
+              <MenuItem onClick={navToHome}>
+                <Typography textAlign="center">Home</Typography>
+              </MenuItem>
+            </Toolbar>
+          </Container>
+        </AppBar>
+        {/* <div>
           <Link to="/">Welcome page</Link>
         </div>
         <div>
@@ -21,7 +81,7 @@
         </div>
         <div>
           <Link to="/metrics">Metrics</Link>
-        </div>
+        </div> */}
         <Routes>
           <Route path='/' element={<WelcomePage/>}/>
           <Route path='/rexplorer' element={<RouteExplorer/>}/>
