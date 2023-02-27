@@ -10,10 +10,15 @@ const t = require("@babel/types");
 
 const addCloseExport = (req, res, next) => {
   console.log("INN ADD CLOSE EXPORT")
-  let copiedServerApp = fs.readFileSync('./process/copiedServer/server.js').toString()
+  const copiedServer = "./process/copiedServer";
+  console.log("serverPath: ", req.body.serverpath)
+  console.log(req.body.serverpath.replace(req.body.filepath, copiedServer))
+  let copiedServerApp = req.body.serverpath.replace(req.body.filepath, copiedServer)
+  console.log(copiedServerApp)
+  const codeToParse = fs.readFileSync(copiedServerApp).toString()
   // console.log(copiedServerApp)
   
-  const ast = parser.parse(copiedServerApp)
+  const ast = parser.parse(codeToParse)
 
   let appObjName = null
   traverse(ast, {
@@ -100,9 +105,9 @@ const addCloseExport = (req, res, next) => {
     // { sourceMaps: true }
   );
   
-  // console.log(code)
+  console.log(code)
 
-  fs.writeFileSync('./process/copiedServer/server.js', code)
+  fs.writeFileSync(copiedServerApp, code)
   next()
 }
 

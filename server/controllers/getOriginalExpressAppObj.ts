@@ -74,12 +74,50 @@ module.exports = (req, res, next) => {
     listAllEndpoints = (r: object) => {
       //make general endpoint obj
       const endpoints = {};
-      r.handle.stack.forEach((el) => {
-        // make endpoint-specific key in obj
-        endpoints[el.route.path] = {};
-        // make LLs of middleware functions for each specific endpoint
-        endpoints[el.route.path] = new middlewareLL(el.route);
-      });
+
+      const recursiveStackDive = (root, ogHandle) => {
+        console.log("root")
+        console.log(root)
+        console.log("root.handle")
+        console.log(root.handle)
+        console.log("ogHandle")
+        console.log(ogHandle)
+        root.handle.stack.forEach((el) => {
+          console.log("IN FOR EACH of HANDLE STACK")
+          console.log(el)
+          console.log(el.handle)
+          // console.log(el.handle)
+          if (el?.route?.stack.length === 1) {
+            endpoints[el.route.path] = {};
+            endpoints[el.route.path] = new middlewareLL(el.route);
+          } else if (!el?.route?.path) {
+              recursiveStackDive(el, el.handle)
+              // el = el.handle
+              // el.stack.forEach(subEl => {
+              //     console.log(subEl)
+              // }
+          // )
+          } else {
+            console.log("el.name")
+            console.log(el.name)
+            console.log("el.route?.stack")
+            console.log(el.route?.stack)
+            // make endpoint-specific key in obj
+            endpoints[el.route.path] = {};
+            // make LLs of middleware functions for each specific endpoint
+            endpoints[el.route.path] = new middlewareLL(el.route);
+          }
+        })
+      }
+      recursiveStackDive(r, 'NA')
+
+
+      // r.handle.stack.forEach((el) => {
+      //   // make endpoint-specific key in obj
+      //   endpoints[el.route.path] = {};
+      //   // make LLs of middleware functions for each specific endpoint
+      //   endpoints[el.route.path] = new middlewareLL(el.route);
+      // });
       // return
       return endpoints;
     };
@@ -196,6 +234,7 @@ module.exports = (req, res, next) => {
       if (error) throw error;
     }
   );
+  // setTimeout(() => next(), 5000)
   next();
 
   //

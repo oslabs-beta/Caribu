@@ -6,9 +6,14 @@ var traverse = require("@babel/traverse")["default"];
 var t = require("@babel/types");
 var addCloseExport = function (req, res, next) {
     console.log("INN ADD CLOSE EXPORT");
-    var copiedServerApp = fs.readFileSync('./process/copiedServer/server.js').toString();
+    var copiedServer = "./process/copiedServer";
+    console.log("serverPath: ", req.body.serverpath);
+    console.log(req.body.serverpath.replace(req.body.filepath, copiedServer));
+    var copiedServerApp = req.body.serverpath.replace(req.body.filepath, copiedServer);
+    console.log(copiedServerApp);
+    var codeToParse = fs.readFileSync(copiedServerApp).toString();
     // console.log(copiedServerApp)
-    var ast = parser.parse(copiedServerApp);
+    var ast = parser.parse(codeToParse);
     var appObjName = null;
     traverse(ast, {
         CallExpression: function (path) {
@@ -59,8 +64,8 @@ var addCloseExport = function (req, res, next) {
     var code = generate(ast
     // { sourceMaps: true }
     ).code;
-    // console.log(code)
-    fs.writeFileSync('./process/copiedServer/server.js', code);
+    console.log(code);
+    fs.writeFileSync(copiedServerApp, code);
     next();
 };
 // const res = {

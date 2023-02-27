@@ -94,6 +94,8 @@ const renameFuncs = (req, res, next) => {
           if (stat.isDirectory()) {
             if (oldFilePath.indexOf('/node_modules') !== -1) {
               console.log(`${oldFilePath} contains '/node_modules' when we have already copied the node modules. Continuing without copying. Location: ${oldFilePath.indexOf('/node_modules')}`)
+            } else if (oldFilePath.indexOf('/.git') !== -1) {
+              console.log(`${oldFilePath} contains '/.git' when don't want /.git stuff. Continuing without copying. Location: ${oldFilePath.indexOf('/node_modules')}`)
             } else {
               // if (!oldFilePath.indexOf(".git")) {
               console.log(oldFilePath + " is a directory");

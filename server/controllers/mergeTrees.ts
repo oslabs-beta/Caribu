@@ -669,9 +669,9 @@ const mergeTreesExport = (req, res, next) => {
         }
 
         route.routeMethods[method].middlewares[i] = newObj
-        console.log('NEW OBJ IN ROUTE: ', method)
-        console.log('IN FUNC: ', middleware.name)
-        console.log('ASSIGNED TO : ', middleware.funcInfo.assignedTo)
+        // console.log('NEW OBJ IN ROUTE: ', method)
+        // console.log('IN FUNC: ', middleware.name)
+        // console.log('ASSIGNED TO : ', middleware.funcInfo.assignedTo)
         // console.dir(newObj.deps, {depth : 4})
         // console.log(methodObj[method][i])
       })
