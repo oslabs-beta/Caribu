@@ -56,7 +56,7 @@ export default function REFVItem(props: REFVItemProps) {
         return funcName
     }
 
-    let { funcName, funcFile, funcDef, funcPosition } = props.middleware.functionInfo
+    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo } = props.middleware.functionInfo
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
     const vsCodeLink = `vscode://file${funcFile}`
@@ -85,7 +85,7 @@ export default function REFVItem(props: REFVItemProps) {
             {/* <Button variant="outlined" style={{textAlign : 'left', alignItems : "center", padding : '15px', display: 'flex', flexDirection : 'column', justifyContent:'center', maxWidth: '100%', wordBreak: 'break-word', backgroundColor : '#E0F0F5'}} onClick={selectFunction}> */}
                 {/* <Card> */}
                         <div style={{justifyContent : 'left', marginBottom : '5px'}}>
-                            <h3>{funcName}</h3>
+                            <h3>{funcAssignedTo || funcName}</h3>
                             <p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>
                             <a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>
                         </div>

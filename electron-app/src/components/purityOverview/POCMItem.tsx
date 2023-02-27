@@ -69,7 +69,7 @@ export default function POCMItem(props: POMItemProps) {
     //     }
 
     // }
-    let { funcName, funcFile, funcDef, funcPosition } = props.funcInfo
+    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo } = props.funcInfo
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
     const vsCodeLink = `vscode://file${funcFile}`
@@ -97,7 +97,7 @@ export default function POCMItem(props: POMItemProps) {
             {/* <Button variant="outlined" style={{textAlign : 'left', alignItems : "center", padding : '15px', display: 'flex', flexDirection : 'column', justifyContent:'center', maxWidth: '100%', wordBreak: 'break-word', backgroundColor : '#E0F0F5'}} onClick={selectFunction}> */}
                 {/* <Card> */}
                         <div style={{justifyContent : 'left', marginBottom : '5px'}}>
-                            <h3>{funcName}</h3>
+                            <h3>{funcAssignedTo || funcName}</h3>
                             <p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>
                             <a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>
                         </div>

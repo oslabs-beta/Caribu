@@ -12,7 +12,10 @@
   import MenuItem from '@mui/material/MenuItem';
   import { useNavigate } from "react-router-dom";
   import Toolbar from '@mui/material/Toolbar';
-
+  import { useSelector } from "react-redux";
+  import { RootState } from "./store";
+  import LoadingScreen from './views/LoadingScreen'
+  // import logospin from './assets/logocirclespin.gif'
 
 
 
@@ -20,7 +23,9 @@
 
   export default function App() {
     const navigate = useNavigate();
-
+    
+    const loading = useSelector((state: RootState) => state.views.loading);
+    
     const navToRE = () => {
       navigate("/rexplorer");
     }
@@ -33,7 +38,11 @@
       navigate('/');
     }
 
-
+    if (loading) return (
+      <div>
+        <LoadingScreen/>
+      </div>
+    )
 
     return (
       <div>

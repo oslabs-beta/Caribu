@@ -22,6 +22,7 @@ export interface viewsState {
             funcFile: string,
             funcPosition?: number[],
             funcDef?: string,
+            funcAssignedTo?: string,
           },
           deps?: {
             totalUpstreamDeps?: number,
@@ -108,6 +109,8 @@ export interface viewsState {
   serverpath: string,
   directoryProcessed : boolean,
   mwLibrary: object,
+  loading : boolean,
+  loadingMessage : string,
 }
 
 const initialState: viewsState = {
@@ -123,6 +126,8 @@ const initialState: viewsState = {
   serverpath: '',
   directoryProcessed: false,
   mwLibrary: {},
+  loading: false,
+  loadingMessage: 'Initializing...'
 }
 
 export const viewsSlice = createSlice({
@@ -160,7 +165,17 @@ export const viewsSlice = createSlice({
       console.log('mwLib has been updated with ', action.payload);
       const mwLib = action.payload
       state.mwLibrary = mwLib
-    } 
+    },
+    update_loading: (state, action: PayloadAction<{loading: boolean}>) => {
+      console.log('loading state is now ', action.payload);
+      const loading = action.payload
+      state.loading = loading
+    },
+    update_loadingMessage: (state, action: PayloadAction<{loadingMessage: string}>) => {
+      console.log('loading state is now ', action.payload);
+      const loadingMessage = action.payload
+      state.loadingMessage = loadingMessage
+    },
   },
 });
 
@@ -213,7 +228,11 @@ export const fetchRoutes = () => {
 
 
     const newJSON = require('../exampleResponse.json')
-    dispatch(update_routes(newJSON));
+    dispatch(update_loading(true))
+    setTimeout(() => {
+      dispatch(update_loading(false))
+      dispatch(update_routes(newJSON));
+    }, 20000)
 
     const funcLibrary = {}
 
@@ -239,7 +258,7 @@ export const fetchRoutes = () => {
 }
 
 // Action creators are generated for each case reducer function
-export const { update_routes, update_method, update_dependency, update_filepath, update_serverpath, update_mwLibrary } = viewsSlice.actions;
+export const { update_routes, update_method, update_dependency, update_filepath, update_serverpath, update_mwLibrary, update_loading, update_loadingMessage } = viewsSlice.actions;
 
 
 export default viewsSlice.reducer;
