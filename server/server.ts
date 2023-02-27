@@ -1,5 +1,3 @@
-//This is not the true backend, it is simply a server for front end testing.
-
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -9,7 +7,7 @@ const getOriginalExpressAppObj = require("./controllers/getOriginalExpressAppObj
 const getRenamedExpressAppObj = require("./controllers/getRenamedExpressAppObj");
 const mergeTrees = require('./controllers/mergeTrees')
 
-const PORT = 6969;
+const PORT = 3003;
 /**
  * handle parsing request body
  */
@@ -36,46 +34,6 @@ app.post('/routes', copyServer, renameFuncs, getOriginalExpressAppObj, getRename
   console.log('at end of server route')
   console.log(res.locals.tree)
   res.status(200).json(res.locals.tree)
-  // res.json(
-  //   {
-  //     routeName: '/character',
-  //     routeMethods: {
-  //       GET: {
-  //         middlewares: [{
-  //           functionInfo: {
-  //             funcName: 'getCharacters',
-  //             funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-  //             funcPosition: [6, 40],
-  //             funcDef: 'lorem ipsum dolor sit amet',
-  //           }
-  //         }]
-  //       },
-  //       POST: {
-  //         middlewares: [{
-  //           functionInfo: {
-  //             funcName: 'addCharacter',
-  //             funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-  //             funcPosition: [102, 119],
-  //             funcDef: 'tbh i dont know hehe',
-  //           }
-  //         }]
-  //       }
-  //     }
-  //   },
-  //   {
-  //     routeName: '/species',
-  //     routeMethods: {
-  //       GET: {
-  //         middlewares: [{
-  //           functionInfo: {
-  //             funcName: 'getCharacters',
-  //             funcFile: '/Users/melodyduany/Documents/Codesmith/unit-10-databases/server/controllers/starWarsController.js',
-  //             funcPosition: [6, 40]
-  //           }
-  //         }]
-  //       }
-  //     }
-  //   });
 });
 
 app.listen(PORT, (err) => {
