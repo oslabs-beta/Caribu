@@ -22,6 +22,7 @@ var mergeTreesExport = function (req, res, next) {
             this.depends = {};
             this.updates = {};
             this.location = path.node.loc;
+            this.line = this.getLine(path) || null;
             //???????? vvvvvvv
             this.allVars = this.listAllVars;
         }
@@ -57,6 +58,12 @@ var mergeTreesExport = function (req, res, next) {
             var paramArr = [];
             path.scope.block.params.forEach(function (el) { return paramArr.push(el.name); });
             return paramArr;
+        };
+        FuncObject.prototype.getLine = function (path) {
+            console.log("GET LINE INFO: ");
+            // console.dir(path.node.loc.start.line)
+            // console.dir(path.node.loc.start)
+            return [path.node.loc.start.line, path.node.loc.start.column];
         };
         FuncObject.prototype.getAssignedTo = function (path, code) {
             // console.log("IN ASSINGNED TO")
@@ -581,7 +588,8 @@ var mergeTreesExport = function (req, res, next) {
                     funcFile: middleware.filePath,
                     funcPosition: [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
                     funcDef: middleware.funcString,
-                    funcAssignedTo: middleware.funcInfo.assignedTo
+                    funcAssignedTo: middleware.funcInfo.assignedTo,
+                    funcLine: middleware.funcInfo.line
                 };
                 // console.log(middleware.funcInfo.depends)
                 newObj.deps = {
@@ -601,15 +609,15 @@ var mergeTreesExport = function (req, res, next) {
             _loop_1(method);
         }
     });
-    // const res = {
-    //   locals : {
-    //     tree : null
-    //   }
-    // }
-    // const next = () => {}
     res.locals.tree = finalObj;
     next();
 };
-// mergeTreesExport()
+// const res = {
+//   locals : {
+//     tree : null
+//   }
+// }
+// const next = () => {}
+// mergeTreesExport(null, res, next)
 // console.log("hi")
 module.exports = mergeTreesExport;

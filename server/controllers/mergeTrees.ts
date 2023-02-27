@@ -25,7 +25,8 @@ const mergeTreesExport = (req, res, next) => {
       this.returns = this.listReturns(path, code)
       this.depends = {}
       this.updates = {}
-      this.location = path.node.loc
+      this.location = path.node.loc 
+      this.line = this.getLine(path) || null
       //???????? vvvvvvv
       this.allVars = this.listAllVars
     }
@@ -64,6 +65,13 @@ const mergeTreesExport = (req, res, next) => {
       let paramArr = []
       path.scope.block.params.forEach(el => paramArr.push(el.name))
       return paramArr
+    }
+
+    getLine(path) {
+      console.log("GET LINE INFO: ")
+      // console.dir(path.node.loc.start.line)
+      // console.dir(path.node.loc.start)
+      return [path.node.loc.start.line, path.node.loc.start.column]
     }
 
     getAssignedTo (path, code) {
@@ -651,7 +659,8 @@ const mergeTreesExport = (req, res, next) => {
           funcFile : middleware.filePath,
           funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
           funcDef : middleware.funcString,
-          funcAssignedTo : middleware.funcInfo.assignedTo
+          funcAssignedTo : middleware.funcInfo.assignedTo,
+          funcLine : middleware.funcInfo.line
         }
         // console.log(middleware.funcInfo.depends)
         newObj.deps =  {
@@ -669,18 +678,20 @@ const mergeTreesExport = (req, res, next) => {
       // console.log(oneMethod)
     }
   })
-  // const res = {
-  //   locals : {
-  //     tree : null
-  //   }
-  // }
-
-  // const next = () => {}
+  
   res.locals.tree = finalObj;
   next()
 }
 
-// mergeTreesExport()
+// const res = {
+//   locals : {
+//     tree : null
+//   }
+// }
+
+// const next = () => {}
+
+// mergeTreesExport(null, res, next)
 // console.log("hi")
 
 module.exports = mergeTreesExport
