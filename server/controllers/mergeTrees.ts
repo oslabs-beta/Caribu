@@ -19,6 +19,7 @@ const mergeTreesExport = (req, res, next) => {
       this.filePath = filePath
       this.globalVars = this.listGlobals(ast, code, filePath)
       this.funcName = this.funcLabel(path) || `anonymous_function_at_${path.node.start}-${path.node.end}_in_${filePath}` // need oto fix to align better with rest of func naming
+      this.assignedTo = this.getAssignedTo(path, code) || null
       this.params = this.listParams(path, filePath)
       this.declares = this.listDeclares(path, filePath, code)
       this.returns = this.listReturns(path, code)
@@ -63,6 +64,16 @@ const mergeTreesExport = (req, res, next) => {
       let paramArr = []
       path.scope.block.params.forEach(el => paramArr.push(el.name))
       return paramArr
+    }
+
+    getAssignedTo (path, code) {
+      // console.log("IN ASSINGNED TO")
+      // console.log(code.slice(path.node.start, path.node.end))
+      if (path.parent.type === 'AssignmentExpression') {
+        // console.log(path.parent.left)
+        // console.log(code.slice(path.parent.left.start, path.parent.left.end))
+        return code.slice(path.parent.left.start, path.parent.left.end)
+      }
     }
 
     listUpdates () {
@@ -342,7 +353,7 @@ const mergeTreesExport = (req, res, next) => {
     }
 
     listReturns (path, code) {
-      console.log(path)
+      // console.log(path)
       let returnVal = []
 
       //if a is a one-liner that sends a response or otherwise calls a function, deal with it (eg. `(req, res) => json.status(200).json({obj:ect})`)
@@ -370,15 +381,15 @@ const mergeTreesExport = (req, res, next) => {
 
 
   function info (tree) {
-    console.log('**** TREE.ROUTERS **** {object}')
-    // console.log(tree)
-    console.log('**** TREE.ROUTERS **** [array]')
-    // console.log(tree.routers)
-    console.log('**** TREE.ROUTERS.STACK **** [array]')
-    // tree.routers.forEach(el => {
-    //   console.log(el)
-    // })
-    console.log('**** TREE.ROUTERS.STACK[i].endpoints{}.stack **** {obj}')
+    // console.log('**** TREE.ROUTERS **** {object}')
+    // // console.log(tree)
+    // console.log('**** TREE.ROUTERS **** [array]')
+    // // console.log(tree.routers)
+    // console.log('**** TREE.ROUTERS.STACK **** [array]')
+    // // tree.routers.forEach(el => {
+    // //   console.log(el)
+    // // })
+    // console.log('**** TREE.ROUTERS.STACK[i].endpoints{}.stack **** {obj}')
     // tree.routers.forEach(el => {
     //   for (let endpoint in el.endpoints) {
     //     console.log(el.endpoints[endpoint])
@@ -397,7 +408,7 @@ const mergeTreesExport = (req, res, next) => {
         break;
       }
     }
-    console.log("NUMBERS: ", numbers)
+    // console.log("NUMBERS: ", numbers)
     return numbers;
   }
 
@@ -405,9 +416,9 @@ const mergeTreesExport = (req, res, next) => {
     // const startIndex = string.indexOf('CBUPATH_$')+7 || string.indexOf('CBUPATH')+7
     const startIndex = string.indexOf('CBUPATH')+7
     let slicedString = string.slice(startIndex)
-    console.log("orignal path from name", slicedString)
+    // console.log("orignal path from name", slicedString)
     let parsedPath = slicedString.replaceAll('$', '/').replaceAll('_','.').replaceAll('Ü','-')
-    console.log("cleaned path from name", parsedPath)
+    // console.log("cleaned path from name", parsedPath)
     return parsedPath
   }
 
@@ -431,9 +442,9 @@ const mergeTreesExport = (req, res, next) => {
       for (let routerNum = 0; routerNum < oldTree.routers.length; routerNum++) {
         
         for (let endpoint in oldTree.routers[routerNum].endpoints) {
-          console.log('ENDPOINT', oldTree.routers[routerNum].endpoints[endpoint])
-          console.log('RENAMED ENDPOINT VVVVVVVVV')
-          console.log('RENAMED ENDPOINT', renamedTree.routers[routerNum].endpoints[endpoint])
+          // console.log('ENDPOINT', oldTree.routers[routerNum].endpoints[endpoint])
+          // console.log('RENAMED ENDPOINT VVVVVVVVV')
+          // console.log('RENAMED ENDPOINT', renamedTree.routers[routerNum].endpoints[endpoint])
           
           //loop through mw
           let currentMw = oldTree.routers[routerNum].endpoints[endpoint]['middlewareChain']
@@ -639,9 +650,10 @@ const mergeTreesExport = (req, res, next) => {
           funcName : middleware.name,
           funcFile : middleware.filePath,
           funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
-          funcDef : middleware.funcString
+          funcDef : middleware.funcString,
+          funcAssignedTo : middleware.funcInfo.assignedTo
         }
-        console.log(middleware.funcInfo.depends)
+        // console.log(middleware.funcInfo.depends)
         newObj.deps =  {
           upstream : { dependents : middleware.funcInfo.depends || []},
           downstream : { dependents : middleware.funcInfo.updates || []}
@@ -650,17 +662,25 @@ const mergeTreesExport = (req, res, next) => {
         route.routeMethods[method].middlewares[i] = newObj
         console.log('NEW OBJ IN ROUTE: ', method)
         console.log('IN FUNC: ', middleware.name)
+        console.log('ASSIGNED TO : ', middleware.funcInfo.assignedTo)
         // console.dir(newObj.deps, {depth : 4})
         // console.log(methodObj[method][i])
       })
       // console.log(oneMethod)
     }
   })
+  // const res = {
+  //   locals : {
+  //     tree : null
+  //   }
+  // }
 
+  // const next = () => {}
   res.locals.tree = finalObj;
   next()
 }
 
 // mergeTreesExport()
+// console.log("hi")
 
 module.exports = mergeTreesExport
