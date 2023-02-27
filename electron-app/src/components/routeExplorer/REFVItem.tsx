@@ -56,10 +56,10 @@ export default function REFVItem(props: REFVItemProps) {
         return funcName
     }
 
-    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo } = props.middleware.functionInfo
+    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
-    const vsCodeLink = `vscode://file${funcFile}`
+    const vsCodeLink = `vscode://file${funcFile}:${funcLine[0]}:${funcLine[1]}`
     // console.log('VS CODE LINK: ', vsCodeLink)
     const [start, end] = funcPosition
     // console.log(start, end)
