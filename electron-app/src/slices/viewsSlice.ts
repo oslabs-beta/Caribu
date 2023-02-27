@@ -167,6 +167,31 @@ export const fetchRoutes = () => {
   console.log("viewsSlice fetchRoutes fired");
   // return the thunk "action" funtion
   return async (dispatch: AppDispatch, getState: RootState) => {
+    // console.log('viewsSlice anonymous thunk func fired');
+    // console.log('fetching to /api/routes with filepath: ', getState().views.filepath);
+    // console.log('fetching to /api/routes with serverpath: ', getState().views.serverpath);
+//     const response = await fetch(testUrl, {
+//       method: 'POST',
+//       // add a header: URLSearchParams sets the header for us so having below was causing an error
+// /*       headers: {
+//         Content-Type: 'application/x-www-form-urlencoded;charset=UTF-8'
+//       }, */
+//       body: new URLSearchParams({
+//         filepath: getState().views.filepath,
+//         serverpath: getState().views.filepath.concat('/').concat(getState().views.serverpath),
+//       }),
+//     });
+//     console.log('viewsSlice server responded with :', response.body);
+
+    
+    
+//     dispatch(update_routes(await response.json()));
+
+
+    const newJSON = require('../exampleResponse.json')
+    dispatch(update_routes(newJSON));
+  }
+}
     console.log("viewsSlice anonymous thunk func fired");
     console.log(
       "fetching to /api/routes with filepath: ",
