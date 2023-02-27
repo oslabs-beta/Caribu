@@ -5,6 +5,8 @@ module.exports = (req, res, next) => {
   //require Express
   const e = require("express");
   const fs = require("fs");
+  const { appTreeFolder } = require("./serverDirPaths");
+  const path = require('path');
   //**** NEED TO MAKE THIS DYNAMIC ****
   const copiedServer = "../process/copiedServer";
   const expressApp: Express = require(copiedServer + req.body.serverpath.replace(req.body.filepath, ""));
@@ -187,10 +189,18 @@ module.exports = (req, res, next) => {
   //   //   console.log(elEnd.middlewareChain)
   //   // })
   // });
+
+  //clear out any existing copied server
+  if (fs.existsSync(appTreeFolder)) {
+    fs.rmSync(appTreeFolder, { recursive: true, force: true });
+  }
+  //make a new one
+  fs.mkdirSync(appTreeFolder);
+
   const originalAppTree = appTree;
   console.log('appTree before writeFileSync is ', originalAppTree);
   fs.writeFileSync(
-    "originalAppTree.json",
+    path.join(__dirname, "../process/appTrees/originalAppTree.json"),
     JSON.stringify(originalAppTree),
     (error) => {
       if (error) throw error;
