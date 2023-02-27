@@ -1,0 +1,237 @@
+[
+  {
+      "routeName": "/",
+      "routeMethods": {
+          "get": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART153_CBUEND1035_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
+                          "funcPosition": [
+                              153,
+                              1035
+                          ],
+                          "funcDef": "(req, res, next) => {\n  const awsObj = {}\n  awsObj.req = req.body\n  awsObj.res = res\n  console.log(\"in getCahr\")\n  fetch('https://5z7fvxgfqqjpyyyybl6uc2igxi0wmyqs.lambda-url.us-east-1.on.aws/')\n    .then(data => data.json())\n    // .then(data => data.body)\n    .then(data => console.log(\"data.body jsonified from AWS\", data))\n    .then(() => next())\n  // write code here\n  // const ourQuery =\n  // 'SELECT people.*, species.name AS species, planets.name AS Homeworld FROM people FULL OUTER JOIN species ON species._id = people.species_id FULL OUTER JOIN planets ON planets._id = people.homeworld_id';\n  // db.query(ourQuery)\n  //   .then((data) => data.rows)\n  //   .then((data) => (res.locals.characters = data))\n  //   .then(() => next())\n  //   .catch({\n  //     message: { err: 'ERROR - API call failed' },\n  //     log: 'ERROR in starWarsController.getCharacters',\n  //   });\n}"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART201_CBUEND258_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
+                          "funcPosition": [
+                              201,
+                              258
+                          ],
+                          "funcDef": "(req, res) => res.status(200).json(res.locals.characters)"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  },
+  {
+      "routeName": "/species",
+      "routeMethods": {
+          "get": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1070_CBUEND1696_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
+                          "funcPosition": [
+                              1070,
+                              1696
+                          ],
+                          "funcDef": "(req, res, next) => {\n  // write code here\n  const reqID = req.query.id;\n  const text = 'SELECT species._id, species.classification, species.average_height, species.average_lifespan, species.language, species.name, planets.name AS homeworld FROM species LEFT OUTER JOIN planets ON species.homeworld_id = planets._id WHERE species._id = $1;';\n  const values = [reqID];\n  db.query(text, values)\n    .then((data) => data.rows[0])\n    .then((data) => (res.locals.species = data))\n    .then(() => next())\n    .catch({\n      message: { err: 'ERROR - API call failed' },\n      log: 'ERROR in starWarsController.getSpecies',\n    });\n}"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART321_CBUEND461_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
+                          "funcPosition": [
+                              321,
+                              461
+                          ],
+                          "funcDef": "(req, res) => {\n    console.log(\"res.locals.species in the router: \", res.locals.species);\n    res.status(200).json(res.locals.species);\n  }"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  },
+  {
+      "routeName": "/homeworld",
+      "routeMethods": {
+          "get": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1733_CBUEND1788_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
+                          "funcPosition": [
+                              1733,
+                              1788
+                          ],
+                          "funcDef": "(req, res, next) => {\n  // write code here\n\n  next();\n}"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART528_CBUEND566_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
+                          "funcPosition": [
+                              528,
+                              566
+                          ],
+                          "funcDef": "(req, res) => res.status(200).json({})"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  },
+  {
+      "routeName": "/film",
+      "routeMethods": {
+          "get": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1820_CBUEND1875_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
+                          "funcPosition": [
+                              1820,
+                              1875
+                          ],
+                          "funcDef": "(req, res, next) => {\n  // write code here\n\n  next();\n}"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART623_CBUEND661_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
+                          "funcPosition": [
+                              623,
+                              661
+                          ],
+                          "funcDef": "(req, res) => res.status(200).json({})"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  },
+  {
+      "routeName": "/character",
+      "routeMethods": {
+          "post": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1912_CBUEND1967_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$starWarsController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/starWarsController.js",
+                          "funcPosition": [
+                              1912,
+                              1967
+                          ],
+                          "funcDef": "(req, res, next) => {\n  // write code here\n\n  next();\n}"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART729_CBUEND767_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api.js",
+                          "funcPosition": [
+                              729,
+                              767
+                          ],
+                          "funcDef": "(req, res) => res.status(200).json({})"
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  }
+]
