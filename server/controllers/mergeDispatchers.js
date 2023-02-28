@@ -377,12 +377,14 @@ var mergeDispatchersExport = function (req, res, next) {
         return parsedPath;
     }
     function isolateName(string) {
-        // console.log("starting name", string)
+        console.log("starting name", string);
         var startOfName = string.indexOf('CBUNAME_');
         var firstParen = string.indexOf('(', startOfName);
         var firstSpace = string.indexOf(' ', startOfName);
         var endOfName = Math.min(firstParen, firstSpace);
-        return string.slice(startOfName, endOfName);
+        console.log(startOfName, endOfName);
+        console.log("ending name", string.slice(startOfName, endOfName));
+        return string.slice(startOfName, endOfName).length;
     }
     function isolateType(string) {
         var nameStart = string.indexOf('CBUTYPE_') + 8;
@@ -394,12 +396,14 @@ var mergeDispatchersExport = function (req, res, next) {
     // create a function
     // it will take the old tree and the new tree
     function mergeTrees(oldTree, renamedTree) {
+        var _a, _b, _c, _d, _e, _f;
         // console.log(oldTree)
         // console.log(renamedTree)
         // iterate through new tree
         //tree (obj)
         //routers (v. bound dispatch) [arr of {obj}]
-        var _a, _b, _c, _d, _e, _f;
+        var thirdPartyMwLib = {};
+        var thirdPartyMwCounter = 0;
         for (var bdNum = 0; bdNum < oldTree.boundDispatchers.length; bdNum++) {
             for (var dispatcher in oldTree.boundDispatchers[bdNum]) {
                 // console.log(oldTree.boundDispatchers[bdNum].endpoints)
@@ -411,13 +415,29 @@ var mergeDispatchersExport = function (req, res, next) {
                 // let matchingMw = renamedTree.boundDispatchers[bdNum]?.endpoints?.middlewareChain?.middlewareChain
                 // console.log("currentMW", currentMw)
                 // console.log("matchingMW", matchingMw)
+                // console.log("route in question: ", oldTree.boundDispatchers[bdNum])
                 while (currentMw) {
-                    currentMw.name = isolateName(matchingMw.funcString);
-                    currentMw.type = isolateType(currentMw.name);
-                    currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name));
-                    currentMw.filePath = "/" + isolatePath(currentMw.name);
-                    // console.log(`filePath: ${currentMw.filePath} | startingPosition: ${currentMw.startingPosition} | type: ${currentMw.type}`)
-                    currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type);
+                    var name_1 = isolateName(matchingMw.funcString);
+                    console.log("this is name", name_1);
+                    if (name_1.length) {
+                        // console.log("matchinMw.funcString", matchingMw.funcString)
+                        currentMw.name = isolateName(matchingMw.funcString);
+                        currentMw.type = isolateType(currentMw.name);
+                        currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name));
+                        currentMw.filePath = "/" + isolatePath(currentMw.name);
+                        // console.log(`filePath: ${currentMw.filePath} | startingPosition: ${currentMw.startingPosition} | type: ${currentMw.type}`)
+                        currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type);
+                    }
+                    else {
+                        if (thirdPartyMwLib[matchingMw.funcString]) {
+                            currentMw.name = thirdPartyMwLib[matchingMw.funcString];
+                        }
+                        else {
+                            currentMw.name = thirdPartyMwLib[matchingMw.funcString] = "Imported Middleware ".concat(thirdPartyMwCounter);
+                            thirdPartyMwCounter++;
+                        }
+                        console.log(currentMw.name);
+                    }
                     currentMw = currentMw.nextFunc;
                     matchingMw = matchingMw.nextFunc;
                 }
@@ -528,12 +548,12 @@ var mergeDispatchersExport = function (req, res, next) {
     }
     var finalObj = [];
     mergedTree.boundDispatchers.forEach(function (bd) {
-        console.log("in final obje constrution");
-        console.log(bd.endpoints);
+        // console.log("in final obje constrution")
+        // console.log(bd.endpoints)
         var newObj = {};
         for (var key in bd.endpoints) {
             newObj.routeName = key;
-            console.log(bd.endpoints[key]);
+            // console.log(bd.endpoints[key])
             var methods = bd.endpoints[key].methods;
             newObj.routeMethods = {};
             // console.log(Object.keys(methods)[0])
@@ -555,6 +575,9 @@ var mergeDispatchersExport = function (req, res, next) {
                     upstream: { dependents: middleware.funcInfo.depends || [] },
                     downstream: { dependents: middleware.funcInfo.updates || [] }
                 };
+                console.log("DEP CHECK");
+                console.log("".concat(method, " ").concat(key, " ").concat(mwObj.funcName));
+                console.dir(mwObj.deps, { depth: 4 });
                 newObj.routeMethods[method].middlewares.push(mwObj);
                 middleware = middleware.nextFunc;
             }
@@ -668,12 +691,12 @@ var mergeDispatchersExport = function (req, res, next) {
     res.locals.tree = finalObj;
     next();
 };
-var res = {
-    locals: {
-        tree: null
-    }
-};
-var next = function () { };
-mergeDispatchersExport(null, res, next);
-console.log("hi");
+// const res = {
+//   locals : {
+//     tree : null
+//   }
+// }
+// const next = () => {}
+// mergeDispatchersExport(null, res, next)
+// console.log("hi")
 module.exports = mergeDispatchersExport;

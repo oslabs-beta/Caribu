@@ -7,6 +7,7 @@ var getOriginalExpressAppObj = require("./controllers/getOriginalExpressAppObj")
 var getRenamedExpressAppObj = require("./controllers/getRenamedExpressAppObj");
 var mergeTrees = require('./controllers/mergeTrees');
 var addClose = require('./controllers/addClose');
+var mergeDispatcher = require('./controllers/mergeDispatchers');
 var PORT = 3003;
 /**
  * handle parsing request body
@@ -25,7 +26,8 @@ app.use(function (req, res, next) {
 //clone the copied server to a renamed server
 //get the express app obj of both sevrers (might require a shell command)
 //run mergeTrees and send the finalObj back as a response
-app.post('/routes', copyServer, addClose, renameFuncs, getOriginalExpressAppObj, getRenamedExpressAppObj, mergeTrees, function (req, res) {
+// app.post('/routes', copyServer, addClose, renameFuncs, getOriginalExpressAppObj, getRenamedExpressAppObj, mergeTrees, (req, res) => {
+app.post('/routes', copyServer, addClose, renameFuncs, getOriginalExpressAppObj, getRenamedExpressAppObj, mergeDispatcher, function (req, res) {
     console.log('at end of server route');
     console.log(res.locals.tree);
     res.status(200).json(res.locals.tree);

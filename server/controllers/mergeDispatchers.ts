@@ -415,12 +415,14 @@ const mergeDispatchersExport = (req, res, next) => {
   }
 
   function isolateName (string) {
-    // console.log("starting name", string)
+    console.log("starting name", string)
     let startOfName = string.indexOf('CBUNAME_')
     let firstParen = string.indexOf('(', startOfName)
     let firstSpace = string.indexOf(' ' ,startOfName)
     let endOfName = Math.min(firstParen, firstSpace)
-    return string.slice(startOfName, endOfName)
+    console.log(startOfName, endOfName)
+    console.log("ending name", string.slice(startOfName, endOfName))
+    return string.slice(startOfName, endOfName).length
   }
 
   function isolateType (string) {
@@ -442,6 +444,8 @@ const mergeDispatchersExport = (req, res, next) => {
     // iterate through new tree
     //tree (obj)
     //routers (v. bound dispatch) [arr of {obj}]
+    const thirdPartyMwLib = {}
+    let thirdPartyMwCounter = 0
 
     for (let bdNum = 0; bdNum < oldTree.boundDispatchers.length; bdNum++) {
       for (let dispatcher in oldTree.boundDispatchers[bdNum]) {
@@ -454,13 +458,28 @@ const mergeDispatchersExport = (req, res, next) => {
         // let matchingMw = renamedTree.boundDispatchers[bdNum]?.endpoints?.middlewareChain?.middlewareChain
         // console.log("currentMW", currentMw)
         // console.log("matchingMW", matchingMw)
+        // console.log("route in question: ", oldTree.boundDispatchers[bdNum])
         while (currentMw) {
-          currentMw.name = isolateName(matchingMw.funcString)
-          currentMw.type = isolateType(currentMw.name)
-          currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-          currentMw.filePath = "/" + isolatePath(currentMw.name)
-          // console.log(`filePath: ${currentMw.filePath} | startingPosition: ${currentMw.startingPosition} | type: ${currentMw.type}`)
-          currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type)
+          let name = isolateName(matchingMw.funcString)
+          console.log("this is name", name)
+          if (name.length) {
+            // console.log("matchinMw.funcString", matchingMw.funcString)
+            currentMw.name = isolateName(matchingMw.funcString)
+            currentMw.type = isolateType(currentMw.name)
+            currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
+            currentMw.filePath = "/" + isolatePath(currentMw.name)
+            // console.log(`filePath: ${currentMw.filePath} | startingPosition: ${currentMw.startingPosition} | type: ${currentMw.type}`)
+            currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type)
+
+          } else {
+            if (thirdPartyMwLib[matchingMw.funcString]) {
+              currentMw.name = thirdPartyMwLib[matchingMw.funcString]
+            } else {
+              currentMw.name = thirdPartyMwLib[matchingMw.funcString] = `Imported Middleware ${thirdPartyMwCounter}`
+              thirdPartyMwCounter++
+            }
+            console.log(currentMw.name)
+          }
           currentMw = currentMw.nextFunc
           matchingMw = matchingMw.nextFunc
         }
@@ -590,12 +609,12 @@ const mergeDispatchersExport = (req, res, next) => {
   const finalObj = []
 
   mergedTree.boundDispatchers.forEach(bd => {
-    console.log("in final obje constrution")
-    console.log(bd.endpoints)
+    // console.log("in final obje constrution")
+    // console.log(bd.endpoints)
     let newObj = {}
     for (const key in bd.endpoints) {
       newObj.routeName = key
-      console.log(bd.endpoints[key])
+      // console.log(bd.endpoints[key])
       const methods = bd.endpoints[key].methods
       newObj.routeMethods = {}
       // console.log(Object.keys(methods)[0])
@@ -617,6 +636,9 @@ const mergeDispatchersExport = (req, res, next) => {
           upstream : { dependents : middleware.funcInfo.depends || []},
           downstream : { dependents : middleware.funcInfo.updates || []}
         }
+        console.log("DEP CHECK")
+        console.log(`${method} ${key} ${mwObj.funcName}`)
+        console.dir(mwObj.deps, {depth : 4})
 
         newObj.routeMethods[method].middlewares.push(mwObj)
         middleware = middleware.nextFunc
@@ -764,15 +786,15 @@ const mergeDispatchersExport = (req, res, next) => {
   next()
 }
 
-const res = {
-  locals : {
-    tree : null
-  }
-}
+// const res = {
+//   locals : {
+//     tree : null
+//   }
+// }
 
-const next = () => {}
+// const next = () => {}
 
-mergeDispatchersExport(null, res, next)
-console.log("hi")
+// mergeDispatchersExport(null, res, next)
+// console.log("hi")
 
 module.exports = mergeDispatchersExport
