@@ -422,7 +422,7 @@ const mergeDispatchersExport = (req, res, next) => {
     let endOfName = Math.min(firstParen, firstSpace)
     console.log(startOfName, endOfName)
     console.log("ending name", string.slice(startOfName, endOfName))
-    return string.slice(startOfName, endOfName).length
+    return string.slice(startOfName, endOfName)
   }
 
   function isolateType (string) {
@@ -464,6 +464,7 @@ const mergeDispatchersExport = (req, res, next) => {
           console.log("this is name", name)
           if (name.length) {
             // console.log("matchinMw.funcString", matchingMw.funcString)
+            currentMw.isThirdParty = false
             currentMw.name = isolateName(matchingMw.funcString)
             currentMw.type = isolateType(currentMw.name)
             currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
@@ -472,13 +473,14 @@ const mergeDispatchersExport = (req, res, next) => {
             currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type)
 
           } else {
-            if (thirdPartyMwLib[matchingMw.funcString]) {
-              currentMw.name = thirdPartyMwLib[matchingMw.funcString]
-            } else {
+            if (!thirdPartyMwLib[matchingMw.funcString]) {
               currentMw.name = thirdPartyMwLib[matchingMw.funcString] = `Imported Middleware ${thirdPartyMwCounter}`
               thirdPartyMwCounter++
             }
-            console.log(currentMw.name)
+            currentMw.isThirdParty = true
+            currentMw.name = thirdPartyMwLib[matchingMw.funcString]
+            currentMw.type = '3P'
+            console.log(currentMw)
           }
           currentMw = currentMw.nextFunc
           matchingMw = matchingMw.nextFunc
@@ -622,6 +624,7 @@ const mergeDispatchersExport = (req, res, next) => {
       newObj.routeMethods[method] = {middlewares : []}
       let middleware = bd.endpoints[key].middlewareChain.middlewareChain
       while (middleware) {
+        console.log(middleware)
         let mwObj = {}
         mwObj.functionInfo = {
           funcName : middleware.name,
@@ -632,6 +635,8 @@ const mergeDispatchersExport = (req, res, next) => {
           funcLine : middleware.funcInfo.line
         }
         // console.log(middleware.funcInfo.depends)
+        middleware.funcInfo.listDepends()
+        middleware.funcInfo.listUpdates()
         mwObj.deps =  {
           upstream : { dependents : middleware.funcInfo.depends || []},
           downstream : { dependents : middleware.funcInfo.updates || []}
@@ -649,6 +654,7 @@ const mergeDispatchersExport = (req, res, next) => {
   })
 
   console.log("FINAL OBJECT FOR RETURN", finalObj)
+
 
 
 

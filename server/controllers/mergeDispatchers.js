@@ -384,7 +384,7 @@ var mergeDispatchersExport = function (req, res, next) {
         var endOfName = Math.min(firstParen, firstSpace);
         console.log(startOfName, endOfName);
         console.log("ending name", string.slice(startOfName, endOfName));
-        return string.slice(startOfName, endOfName).length;
+        return string.slice(startOfName, endOfName);
     }
     function isolateType(string) {
         var nameStart = string.indexOf('CBUTYPE_') + 8;
@@ -421,6 +421,7 @@ var mergeDispatchersExport = function (req, res, next) {
                     console.log("this is name", name_1);
                     if (name_1.length) {
                         // console.log("matchinMw.funcString", matchingMw.funcString)
+                        currentMw.isThirdParty = false;
                         currentMw.name = isolateName(matchingMw.funcString);
                         currentMw.type = isolateType(currentMw.name);
                         currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name));
@@ -429,14 +430,14 @@ var mergeDispatchersExport = function (req, res, next) {
                         currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type);
                     }
                     else {
-                        if (thirdPartyMwLib[matchingMw.funcString]) {
-                            currentMw.name = thirdPartyMwLib[matchingMw.funcString];
-                        }
-                        else {
+                        if (!thirdPartyMwLib[matchingMw.funcString]) {
                             currentMw.name = thirdPartyMwLib[matchingMw.funcString] = "Imported Middleware ".concat(thirdPartyMwCounter);
                             thirdPartyMwCounter++;
                         }
-                        console.log(currentMw.name);
+                        currentMw.isThirdParty = true;
+                        currentMw.name = thirdPartyMwLib[matchingMw.funcString];
+                        currentMw.type = '3P';
+                        console.log(currentMw);
                     }
                     currentMw = currentMw.nextFunc;
                     matchingMw = matchingMw.nextFunc;
@@ -561,6 +562,7 @@ var mergeDispatchersExport = function (req, res, next) {
             newObj.routeMethods[method] = { middlewares: [] };
             var middleware = bd.endpoints[key].middlewareChain.middlewareChain;
             while (middleware) {
+                console.log(middleware);
                 var mwObj = {};
                 mwObj.functionInfo = {
                     funcName: middleware.name,
@@ -571,6 +573,8 @@ var mergeDispatchersExport = function (req, res, next) {
                     funcLine: middleware.funcInfo.line
                 };
                 // console.log(middleware.funcInfo.depends)
+                middleware.funcInfo.listDepends();
+                middleware.funcInfo.listUpdates();
                 mwObj.deps = {
                     upstream: { dependents: middleware.funcInfo.depends || [] },
                     downstream: { dependents: middleware.funcInfo.updates || [] }
