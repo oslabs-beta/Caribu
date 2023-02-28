@@ -1,6 +1,6 @@
 var mergeTreesExport = function (req, res, next) {
-    var originalTree = require('../originalAppTree.json');
-    var renamedTree = require('../renamedAppTree.json');
+    var originalTree = require('../process/appTrees/originalAppTree');
+    var renamedTree = require('../process/appTrees/renamedAppTree');
     var fs = require('fs');
     var parser = require('@babel/parser');
     var parse = require('@babel/core').parse;

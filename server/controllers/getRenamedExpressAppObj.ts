@@ -3,6 +3,8 @@ module.exports = (req, res, next) => {
   //require Express
   const e = require("express");
   const fs = require("fs");
+  const { appTreeFolder } = require("./serverDirPaths");
+  const path = require('path');
   //**** NEED TO MAKE THIS DYNAMIC ****
   const renamedServer = "../process/renamedServer";
   const expressApp = require(renamedServer + req.body.serverpath.replace(req.body.filepath, ""));
@@ -188,7 +190,7 @@ module.exports = (req, res, next) => {
   const originalAppTree = appTree;
   console.log('renamedappTree before writeFileSync is ', originalAppTree);
   fs.writeFileSync(
-    "renamedAppTree.json",
+    path.join(__dirname, "../process/appTrees/renamedAppTree.json"),
     JSON.stringify(originalAppTree),
     (error) => {
       if (error) throw error;
