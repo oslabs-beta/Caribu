@@ -5,7 +5,7 @@
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron-forge start && cd ../server && node server.js",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.2",
+    "concurrently": "^7.6.0",
     "electron-squirrel-startup": "^1.0.0",
     "fs": "^0.0.1-security",
     "react": "^18.2.0",

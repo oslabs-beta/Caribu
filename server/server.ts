@@ -36,7 +36,9 @@ app.post('/routes', copyServer, renameFuncs, getOriginalExpressAppObj, getRename
   res.status(200).json(res.locals.tree)
 });
 
-app.listen(PORT, (err) => {
-  if (err) console.log(err);
-  else console.log(`Listening to port: ${PORT}`);
-});
+// app.listen(PORT, (err) => {
+//   if (err) console.log(err);
+//   else console.log(`Listening to port: ${PORT}`);
+// });
+
+module.exports = app;
