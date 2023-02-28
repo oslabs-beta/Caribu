@@ -1,6 +1,7 @@
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import RERVItem from './RERVItem';
+import cariboxStyling from '../caribox'
 
 export default function RERouteViewer() {
 
@@ -22,12 +23,22 @@ export default function RERouteViewer() {
   }
   
   console.log('RERouteViewer routeItems after loop is ', routeItems);
-
   return (
-      <div>
+      <div style={cariboxStyling}>
         <span className='rerv-header'>Routes</span>
-        {routeItems}
-      </div>
+        <div style={{
+          backgroundImage: 'linear-gradient(#ABE0FF, rgba(171, 224, 255, 0.12))', 
+          borderColor : '#F1EDE0',
+          borderWidth : '2px',
+          borderStyle : 'solid',
+          borderRadius : '15px',
+          padding: '5px',
+          marginTop : '5px',
+          paddingBottom : '10px'
+        }}>
+         {routeItems}
+        </div>
 
+      </div>
   )
 }

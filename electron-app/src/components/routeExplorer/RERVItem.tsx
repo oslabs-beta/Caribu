@@ -1,5 +1,6 @@
 import { update_method, update_dependency} from "../../slices/viewsSlice";
 import { useDispatch } from "react-redux";
+import Button from '@mui/material/Button';
 
 interface RERVItemProps {
     method: string;
@@ -18,9 +19,14 @@ export default function RERVItem(props: RERVItemProps) {
 
     return (
         <div>
-            <button className="rerv-item" onClick={selectRoute}>
+            <Button style={{
+                color : '#255858'
+            }} onClick={selectRoute}>
                 {props.method}: {props.name}
-            </button>
+            </Button>
+            {/* <button className="rerv-item" onClick={selectRoute}>
+                {props.method}: {props.name}
+            </button> */}
         </div>
 
     )
