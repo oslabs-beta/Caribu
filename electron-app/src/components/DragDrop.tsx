@@ -11,7 +11,7 @@ import { FileUploader } from "react-drag-drop-files";
 
 export default function DragDrop() {
   const dispatch = useDispatch();
-  const handleChange = async (folder: object) => {
+  const handleChange = async (folder: { path: string }) => {
     console.log(folder);
     await dispatch(update_filepath({ path: folder.path }));
     // const reader = new FileReader();
