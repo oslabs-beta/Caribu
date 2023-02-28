@@ -1,4 +1,9 @@
-export default function POCDetails(props: object) {
+interface POCDetailsProps {
+  route: string,
+  methods: (...args: any[]) => any,
+}
+
+export default function POCDetails(props: POCDetailsProps) {
  
   const container = [];
   const methods = [];
