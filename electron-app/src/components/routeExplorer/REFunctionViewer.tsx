@@ -1,6 +1,7 @@
 import REFVItem from "./REFVItem";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
+import cariboxStyling from '../caribox'
 
 export default function REFunctionViewer(props: object) {
 
@@ -15,14 +16,14 @@ export default function REFunctionViewer(props: object) {
   if(method){
     const middlewares = routes[routeIndex].routeMethods[method].middlewares;
     for(let i = 0; i < middlewares.length; i++){
-      functions.push(<REFVItem middleware={middlewares[i]} />)
+      functions.push(<REFVItem middleware={middlewares[i]}/>)
     }
   }
 
   return (
-    <div>
+    <div style={cariboxStyling}>
       <span className='refv-header'>Functions</span>
-      {functions}
+      {functions || ''}
     </div>
 
   )

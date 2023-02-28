@@ -1,10 +1,42 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
+  /* margin: auto; */
+  /* max-width: 38rem; */
   padding: 2rem;
-  /* background-color: #1f1f23; */
+  background-color: #3E8A7F;
+  
+}
+
+.loading-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-logo {
+  /* display: flex; */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 240px;
+  height: 240px;
+  margin:-110px 0 0 -110px;
+  -webkit-animation:spin 4s linear infinite;
+  -moz-animation:spin 4s linear infinite;
+  animation:spin 4s linear infinite;
+}
+@-moz-keyframes spin { 
+  100% { -moz-transform: rotate(360deg); } 
+}
+@-webkit-keyframes spin { 
+  100% { -webkit-transform: rotate(360deg); } 
+}
+@keyframes spin { 
+  100% { 
+      -webkit-transform: rotate(360deg); 
+      transform:rotate(360deg); 
+  } 
 }
 
 /* key: re = RouteExplorer, po = PurityOverview, m = Metrics */
@@ -12,11 +44,11 @@ body {
 .re-main {
   display: flex;
 }
-
+/* 
 .re-routes {
   border: 1px solid;
   margin: 5px;
-}
+} */
 
 .rerv-header {
   font-size: 26px;
@@ -36,22 +68,23 @@ body {
 .rerv-item:active {
   background-color: orange;
 }
-
+/* 
 .re-functions {
   border: 1px solid;
   margin: 5px;
-}
+} */
 
 .refv-header {
   font-size: 26px;
   font-weight: 600;
 }
 
-.refv-item {
+.refv-item{
+  text-align: left;
   margin: 2px;
   border: 1px solid green;
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
   background-color: white;
 }
 .refv-item:hover {
@@ -98,7 +131,8 @@ body {
 .routes-container {
   display: flex;
   justify-content: center;
-  background-color: rgba(0, 226, 102, 0.86);
+  gap : 15px
+  /* background-color: rgba(0, 226, 102, 0.86); */
 }
 
 .poc-details {
@@ -116,7 +150,7 @@ body {
 
 .pocd-methods {
   display: flex;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   margin: 2px;
 }
 
@@ -127,7 +161,7 @@ body {
 .pocd-method {
   display: flex;
   justify-content: center;
-  border: 1px solid rgb(255, 0, 208);
+  /* border: 1px solid rgb(255, 0, 208); */
   margin: 2px;
   font-weight: 700;
 }

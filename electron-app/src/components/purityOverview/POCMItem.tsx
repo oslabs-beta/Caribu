@@ -12,24 +12,24 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import funcBoxStyling from "../funcBoxStyling";
 
 
-interface REFVItemProps {
+interface POMItemProps {
+    isShared: boolean,
+    funcInfo: object,
     middleware: object,
   }
 
-export default function REFVItem(props: REFVItemProps) {
+export default function POCMItem(props: POMItemProps) {
+
 
     const dispatch = useDispatch();
-
+    const conditionalFuncBoxStyling = {...funcBoxStyling}
+    if (props.isShared) conditionalFuncBoxStyling.backgroundColor = '#FFED92'
     // updates the redux state with the currently selected dependency on click of the function component.
-    function selectFunction(){
-        dispatch(update_dependency({middleware: props.middleware}));
-    }
+    // function selectFunction(){
+    //     dispatch(update_dependency({middleware: props.middleware}));
+    // }
 
-    // console.log(props.middleware)
-    console.log(props.middleware.functionInfo.funcName, props.middleware.deps.upstream.dependents)
-    console.log(props.middleware.functionInfo.funcName, props.middleware.deps.downstream.dependents)
-    // console.log(props.middleware.deps.downstream.dependents)
-    // console.log(props.middleware)
+    // console.log("POCMITEM funcINFO", props.funcInfo)
     // assigns function name to funcname variable to allow it to render in the refv item component.
     // const funcName = props.middleware.functionInfo.funcName
 
@@ -56,10 +56,23 @@ export default function REFVItem(props: REFVItemProps) {
         return funcName
     }
 
-    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
+
+    // //parse out a functions name data etc:
+    // const parseData = (funcName : string) => {
+
+    //     // let name = isolatePath(funcName)
+
+    //     let returnObj = {
+    //         name : isolateName(funcName),
+    //         path : isolatePath(funcName),
+    //         type : isolateType(funcName)
+    //     }
+
+    // }
+    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo } = props.funcInfo
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
-    const vsCodeLink = `vscode://file${funcFile}:${funcLine[0]}:${funcLine[1]}`
+    const vsCodeLink = `vscode://file${funcFile}`
     // console.log('VS CODE LINK: ', vsCodeLink)
     const [start, end] = funcPosition
     // console.log(start, end)
@@ -69,10 +82,9 @@ export default function REFVItem(props: REFVItemProps) {
         let newFuncName
         if (funcType === 'ARROWFUNCTION') {
             newFuncName = "Arrow Function"
-        } else if (funcType === "FUNCTIONEXPRESSION") {
+        }
+        if (funcType === "FUNCTIONEXPRESSION") {
             newFuncName = "Function Expression"
-        } else {
-            newFuncName = isolateName(funcName)
         }
         funcName = `Anonymous ${newFuncName} at position ${start}`
     } 
@@ -81,7 +93,7 @@ export default function REFVItem(props: REFVItemProps) {
     return (
         <div style={{margin : '5px'}}>
             {/* <Button variant="contained" className="refv-item" onClick={selectFunction}> */}
-            <div style={funcBoxStyling} onClick={selectFunction}>
+            <div style={conditionalFuncBoxStyling}>
             {/* <Button variant="outlined" style={{textAlign : 'left', alignItems : "center", padding : '15px', display: 'flex', flexDirection : 'column', justifyContent:'center', maxWidth: '100%', wordBreak: 'break-word', backgroundColor : '#E0F0F5'}} onClick={selectFunction}> */}
                 {/* <Card> */}
                         <div style={{justifyContent : 'left', marginBottom : '5px'}}>
@@ -99,8 +111,6 @@ export default function REFVItem(props: REFVItemProps) {
                         </Card>
                     </AccordionDetails>
                 </Accordion>
-                <br/>
-                <Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button>
                 {/* <div style={{backgroundColor:'lightgrey', whiteSpace: "pre-line"}}><p>{funcDef}</p></div> */}
                 {/* </Card> */}
             </div>
