@@ -242,6 +242,7 @@ var getRenamedObjExport = function (req, res, next) {
     }());
     // create app node
     var appTree = new AppTree(app);
+    var dispatcherArr = [];
     //pass in a router stack
     var routerRecur = function (router, type) {
         var _a;
@@ -266,6 +267,7 @@ var getRenamedObjExport = function (req, res, next) {
                     console.log(newBD.path, newBD.methods);
                     // console.log("new boudn dispatcher is; ", newBD)
                     appTree.boundDispatchers.push(newBD);
+                    dispatcherArr.push(newBD);
                 }
                 else if (stackEl.name === 'router') {
                     //if the element is a router
@@ -287,6 +289,7 @@ var getRenamedObjExport = function (req, res, next) {
                         // console.log("new boudn dispatcher is; ", newBD)
                         appTree.boundDispatchers.push(newBD);
                         console.log(newBD.path, newBD.methods);
+                        dispatcherArr.push(newBD);
                     }
                 }
             });
@@ -304,6 +307,7 @@ var getRenamedObjExport = function (req, res, next) {
                 // console.log("new boudn dispatcher is; ", newBD)
                 appTree.boundDispatchers.push(newBD);
                 console.log(newBD.path, newBD.methods);
+                dispatcherArr.push(newBD);
             }
         }
     };
@@ -371,6 +375,8 @@ var getRenamedObjExport = function (req, res, next) {
     //   //   console.log(elEnd.middlewareChain)
     //   // })
     // });
+    console.log("DISPATCHER ARR:");
+    console.log(dispatcherArr);
     var originalAppTree = appTree;
     // console.log('renamedappTree before writeFileSync is ', originalAppTree);
     fs.writeFileSync("renamedAppTree.json", JSON.stringify(originalAppTree), function (error) {

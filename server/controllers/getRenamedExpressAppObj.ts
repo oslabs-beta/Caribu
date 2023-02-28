@@ -274,7 +274,7 @@ const getRenamedObjExport = (req, res, next) => {
 
   // create app node
   const appTree: AppTree = new AppTree(app);
-
+  const dispatcherArr: object[] = []
 
   //pass in a router stack
   const routerRecur = (router, type) => {
@@ -300,6 +300,7 @@ const getRenamedObjExport = (req, res, next) => {
           console.log(newBD.path, newBD.methods)
           // console.log("new boudn dispatcher is; ", newBD)
           appTree.boundDispatchers.push(newBD);
+          dispatcherArr.push(newBD)
         } else if (stackEl.name === 'router') {
           //if the element is a router
           //update noRouter to false
@@ -319,6 +320,7 @@ const getRenamedObjExport = (req, res, next) => {
             // console.log("new boudn dispatcher is; ", newBD)
             appTree.boundDispatchers.push(newBD);
             console.log(newBD.path, newBD.methods)
+            dispatcherArr.push(newBD)
           }
         }
       })
@@ -334,6 +336,7 @@ const getRenamedObjExport = (req, res, next) => {
         // console.log("new boudn dispatcher is; ", newBD)
         appTree.boundDispatchers.push(newBD);
         console.log(newBD.path, newBD.methods)
+        dispatcherArr.push(newBD)
       }
     }
   }
@@ -408,6 +411,8 @@ const getRenamedObjExport = (req, res, next) => {
   //   //   console.log(elEnd.middlewareChain)
   //   // })
   // });
+  console.log("DISPATCHER ARR:")
+  console.log(dispatcherArr)
   const originalAppTree = appTree;
   // console.log('renamedappTree before writeFileSync is ', originalAppTree);
   fs.writeFileSync(

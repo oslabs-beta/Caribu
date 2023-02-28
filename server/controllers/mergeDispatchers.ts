@@ -1,4 +1,4 @@
-const mergeTreesExport = (req, res, next) => {
+const mergeDispatchersExport = (req, res, next) => {
   // console.log("in mergeTrees")
   const originalTree = require('../originalAppTree.json')
   const renamedTree = require('../renamedAppTree.json')
@@ -389,23 +389,6 @@ const mergeTreesExport = (req, res, next) => {
   }
 
 
-  function info (tree) {
-    // console.log('**** TREE.ROUTERS **** {object}')
-    // // console.log(tree)
-    // console.log('**** TREE.ROUTERS **** [array]')
-    // // console.log(tree.routers)
-    // console.log('**** TREE.ROUTERS.STACK **** [array]')
-    // // tree.routers.forEach(el => {
-    // //   console.log(el)
-    // // })
-    // console.log('**** TREE.ROUTERS.STACK[i].endpoints{}.stack **** {obj}')
-    // tree.routers.forEach(el => {
-    //   for (let endpoint in el.endpoints) {
-    //     console.log(el.endpoints[endpoint])
-    //   }
-    // })
-    // stack.forEach(el => console.log(el))
-  }
 
   function isolateNumbers(string) {
     const startIndex = string.indexOf('CBUSTART') + 8;
@@ -431,6 +414,15 @@ const mergeTreesExport = (req, res, next) => {
     return parsedPath
   }
 
+  function isolateName (string) {
+    // console.log("starting name", string)
+    let startOfName = string.indexOf('CBUNAME_')
+    let firstParen = string.indexOf('(', startOfName)
+    let firstSpace = string.indexOf(' ' ,startOfName)
+    let endOfName = Math.min(firstParen, firstSpace)
+    return string.slice(startOfName, endOfName)
+  }
+
   function isolateType (string) {
     const nameStart = string.indexOf('CBUTYPE_')+8
     const firstUnder = string.indexOf('_', nameStart + 12)
@@ -445,44 +437,36 @@ const mergeTreesExport = (req, res, next) => {
   // create a function
   // it will take the old tree and the new tree
   function mergeTrees (oldTree, renamedTree) {
+    // console.log(oldTree)
+    // console.log(renamedTree)
     // iterate through new tree
     //tree (obj)
     //routers (v. bound dispatch) [arr of {obj}]
 
-    for (let routerNum = 0; routerNum < oldTree.routers.length; routerNum++) {
-        
-      for (let endpoint in oldTree.routers[routerNum].endpoints) {
-        // console.log('ENDPOINT', oldTree.routers[routerNum].endpoints[endpoint])
-        // console.log('RENAMED ENDPOINT VVVVVVVVV')
-        // console.log('RENAMED ENDPOINT', renamedTree.routers[routerNum].endpoints[endpoint])
-        
-        //loop through mw
-        let currentMw = oldTree.routers[routerNum].endpoints[endpoint]['middlewareChain']
-        let matchingMw = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain']
-        //iterate through ll
+    for (let bdNum = 0; bdNum < oldTree.boundDispatchers.length; bdNum++) {
+      for (let dispatcher in oldTree.boundDispatchers[bdNum]) {
+        // console.log(oldTree.boundDispatchers[bdNum].endpoints)
+        // console.log(renamedTree.boundDispatchers[bdNum].endpoints)
+        let currentMw = Object.values(oldTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        let matchingMw = Object.values(renamedTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        // let currentMw = Object.values(oldTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        // let matchingMw = Object.values(renamedTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        // let matchingMw = renamedTree.boundDispatchers[bdNum]?.endpoints?.middlewareChain?.middlewareChain
+        // console.log("currentMW", currentMw)
+        // console.log("matchingMW", matchingMw)
         while (currentMw) {
-          // console.log("matchingMW", matchingMw)
-          // matchingMw.name = isolateName(matchingMw.funcString)
-          // currentMw.name = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain'].name
-          currentMw.name = matchingMw.name
+          currentMw.name = isolateName(matchingMw.funcString)
           currentMw.type = isolateType(currentMw.name)
-          // console.log("CURRENT MW:",  currentMw)
-          // console.log("MATCHING MW:",  matchingMw)
           currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-          // currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-          // currentMw.filePath = "." + isolatePath(currentMw.name)
           currentMw.filePath = "/" + isolatePath(currentMw.name)
-          // currentMw.filePath = isolatePath(currentMw.name)
+          // console.log(`filePath: ${currentMw.filePath} | startingPosition: ${currentMw.startingPosition} | type: ${currentMw.type}`)
           currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type)
-
           currentMw = currentMw.nextFunc
           matchingMw = matchingMw.nextFunc
         }
+
+        // let currentMw = oldTree.boundDispatchers[bdNum].endpoints
       }
-    }
-
-
-    // for (let bdNum = 0; bdNum < oldTree.boundDispatchers.length; bdNum++) {
         
     //   for (let endpoint in oldTree.boundDispatchers[bdNum].endpoints) {
     //     // console.log('ENDPOINT', oldTree.boundDispatchers[bdNum].endpoints[endpoint])
@@ -512,15 +496,18 @@ const mergeTreesExport = (req, res, next) => {
           
     //     }
     //   }
-    // }
+    }
 
 
     
     //
     
     // return the old tree with name properties on its middleware chain nodes
+    console.log("OLD TREE:", oldTree)
     return oldTree
   }
+
+  
 
   const mergedTree = mergeTrees(originalTree, renamedTree)
 
@@ -602,51 +589,96 @@ const mergeTreesExport = (req, res, next) => {
 
   const finalObj = []
 
+  mergedTree.boundDispatchers.forEach(bd => {
+    console.log("in final obje constrution")
+    console.log(bd.endpoints)
+    let newObj = {}
+    for (const key in bd.endpoints) {
+      newObj.routeName = key
+      console.log(bd.endpoints[key])
+      const methods = bd.endpoints[key].methods
+      newObj.routeMethods = {}
+      // console.log(Object.keys(methods)[0])
+      let method = Object.keys(methods)[0]
+      newObj.routeMethods[method] = {middlewares : []}
+      let middleware = bd.endpoints[key].middlewareChain.middlewareChain
+      while (middleware) {
+        let mwObj = {}
+        mwObj.functionInfo = {
+          funcName : middleware.name,
+          funcFile : middleware.filePath,
+          funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
+          funcDef : middleware.funcString,
+          funcAssignedTo : middleware.funcInfo.assignedTo,
+          funcLine : middleware.funcInfo.line
+        }
+        // console.log(middleware.funcInfo.depends)
+        mwObj.deps =  {
+          upstream : { dependents : middleware.funcInfo.depends || []},
+          downstream : { dependents : middleware.funcInfo.updates || []}
+        }
+
+        newObj.routeMethods[method].middlewares.push(mwObj)
+        middleware = middleware.nextFunc
+      }
+
+    }
+    finalObj.push(newObj)
+  })
+
+  console.log("FINAL OBJECT FOR RETURN", finalObj)
+
+
+
+
+
+
+
   // console.log(mergedTree)
   // console.log(mergedTree.routers)
-  mergedTree.routers.forEach(route => {
-    // console.log(route.endpoints)
-    for (let endpoint in route.endpoints) {
-      let routeObj = {}
-      //save path to a variable
-      let endpointPath = route.endpoints[endpoint].path
+  // mergedTree.routers.forEach(route => {
+  //   // console.log(route.endpoints)
+  //   for (let endpoint in route.endpoints) {
+  //     let routeObj = {}
+  //     //save path to a variable
+  //     let endpointPath = route.endpoints[endpoint].path
     
-      //save methods to a variable (may need to fix later for multiple endpoints on single route?)
-      let endpointMethod = Object.keys(route.endpoints[endpoint].methods)[0]
+  //     //save methods to a variable (may need to fix later for multiple endpoints on single route?)
+  //     let endpointMethod = Object.keys(route.endpoints[endpoint].methods)[0]
     
-      // console.log(endpointPath, endpointMethod)
+  //     // console.log(endpointPath, endpointMethod)
       
-      //check if endpoint exists, if not, make it and an array for its methods
-      if (!routeObj[endpointPath]) {
-        // console.log("didnt exist")
-        routeObj.routeName = endpointPath
-        routeObj.routeMethods = {}
-        routeObj.routeMethods[endpointMethod] = {}
-      }
+  //     //check if endpoint exists, if not, make it and an array for its methods
+  //     if (!routeObj[endpointPath]) {
+  //       // console.log("didnt exist")
+  //       routeObj.routeName = endpointPath
+  //       routeObj.routeMethods = {}
+  //       routeObj.routeMethods[endpointMethod] = {}
+  //     }
       
-      // routeObj.routeMethods[endpointMethod] = {}
+  //     // routeObj.routeMethods[endpointMethod] = {}
 
-      //this keeps the mwChain as a linkedList
-      // routeObj.routeMethods[endpointMethod].middlewareChain = route.endpoints[endpoint].middlewareChain
+  //     //this keeps the mwChain as a linkedList
+  //     // routeObj.routeMethods[endpointMethod].middlewareChain = route.endpoints[endpoint].middlewareChain
 
-      //this will make it into an array
-      routeObj.routeMethods[endpointMethod].middlewares = []
+  //     //this will make it into an array
+  //     routeObj.routeMethods[endpointMethod].middlewares = []
       
-      let current = route.endpoints[endpoint].middlewareChain
-      while (current) {
-        // console.log("THIS IS CURRENT:", current)
-        current.funcInfo.listUpdates()
-        current.funcInfo.listDepends()
-        current.funcInfo.deletePath()
-        routeObj.routeMethods[endpointMethod].middlewares.push(current)
-        current = current.nextFunc
-      }
+  //     let current = route.endpoints[endpoint].middlewareChain
+  //     while (current) {
+  //       // console.log("THIS IS CURRENT:", current)
+  //       current.funcInfo.listUpdates()
+  //       current.funcInfo.listDepends()
+  //       current.funcInfo.deletePath()
+  //       routeObj.routeMethods[endpointMethod].middlewares.push(current)
+  //       current = current.nextFunc
+  //     }
 
 
-      // console.log(route.endpoints[endpoint].middlewareChain)
-      finalObj.push(routeObj)
-    }
-  })
+  //     // console.log(route.endpoints[endpoint].middlewareChain)
+  //     finalObj.push(routeObj)
+  //   }
+  // })
 
 
   // //Upstream dependencies:
@@ -683,52 +715,64 @@ const mergeTreesExport = (req, res, next) => {
   //   console.log(el.routeMethods?.delete?.middlewares[0].funcInfo)
   //   console.log(el.routeMethods?.delete?.middlewares[1].funcInfo)
   // })
-  finalObj.forEach(route => {
-    let methodObj = route.routeMethods
-    // console.log(methodObj)
-    for (const method in methodObj) {
-      let oneMethod = methodObj[method]
-      // console.log(oneMethod)
-      oneMethod.middlewares.forEach((middleware, i) => {
-        let newObj = {}
-        newObj.functionInfo = {
-          funcName : middleware.name,
-          funcFile : middleware.filePath,
-          funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
-          funcDef : middleware.funcString,
-          funcAssignedTo : middleware.funcInfo.assignedTo,
-          funcLine : middleware.funcInfo.line
-        }
-        // console.log(middleware.funcInfo.depends)
-        newObj.deps =  {
-          upstream : { dependents : middleware.funcInfo.depends || []},
-          downstream : { dependents : middleware.funcInfo.updates || []}
-        }
 
-        route.routeMethods[method].middlewares[i] = newObj
-        // console.log('NEW OBJ IN ROUTE: ', method)
-        // console.log('IN FUNC: ', middleware.name)
-        // console.log('ASSIGNED TO : ', middleware.funcInfo.assignedTo)
-        // console.dir(newObj.deps, {depth : 4})
-        // console.log(methodObj[method][i])
-      })
-      // console.log(oneMethod)
-    }
-  })
   
+  // finalObj.forEach(route => {
+  //   let methodObj = route.routeMethods
+  //   // console.log(methodObj)
+  //   for (const method in methodObj) {
+  //     let oneMethod = methodObj[method]
+  //     // console.log(oneMethod)
+  //     oneMethod.middlewares.forEach((middleware, i) => {
+  //       let newObj = {}
+  //       newObj.functionInfo = {
+  //         funcName : middleware.name,
+  //         funcFile : middleware.filePath,
+  //         funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
+  //         funcDef : middleware.funcString,
+  //         funcAssignedTo : middleware.funcInfo.assignedTo,
+  //         funcLine : middleware.funcInfo.line
+  //       }
+  //       // console.log(middleware.funcInfo.depends)
+  //       newObj.deps =  {
+  //         upstream : { dependents : middleware.funcInfo.depends || []},
+  //         downstream : { dependents : middleware.funcInfo.updates || []}
+  //       }
+
+  //       route.routeMethods[method].middlewares[i] = newObj
+  //       // console.log('NEW OBJ IN ROUTE: ', method)
+  //       // console.log('IN FUNC: ', middleware.name)
+  //       // console.log('ASSIGNED TO : ', middleware.funcInfo.assignedTo)
+  //       // console.dir(newObj.deps, {depth : 4})
+  //       // console.log(methodObj[method][i])
+  //     })
+  //     // console.log(oneMethod)
+  //   }
+  // })
+
+  fs.writeFileSync(
+    "./bdTest.json",
+    JSON.stringify(finalObj),
+    (error) => {
+      if (error) throw error;
+    }
+  );
+
+
+
   res.locals.tree = finalObj;
   next()
 }
 
-// const res = {
-//   locals : {
-//     tree : null
-//   }
-// }
+const res = {
+  locals : {
+    tree : null
+  }
+}
 
-// const next = () => {}
+const next = () => {}
 
-// mergeTreesExport(null, res, next)
-// console.log("hi")
+mergeDispatchersExport(null, res, next)
+console.log("hi")
 
-module.exports = mergeTreesExport
+module.exports = mergeDispatchersExport
