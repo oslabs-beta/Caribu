@@ -9,18 +9,24 @@ import {
   update_nodepath,
 } from "../slices/viewsSlice";
 import DragDrop from "./DragDrop";
+
 import logo from "./../../assets/text_logo.svg"
+
 
 const WelcomePage = (props: object) => {
   const dispatch = useDispatch();
   const views = useSelector((state: RootState) => state.views);
   return (
+
     <div className="welcomePage" style={{marginTop : '8%', color : '#F1EDE0'}}>
       <img src={logo} alt="Logo" />
       <div style={{marginTop : '10%'}} className="wp-header">Welcome To Caribu</div>
+
       <div className="wp-instructions">
-        To get started, drop the server folder for your application into the dropzone. <br></br>
-        Then simply specify the absolute paths to your server file and node modules folder, and submit!{" "}
+        To get started, drop the server folder for your application into the
+        dropzone. <br></br>
+        Then simply specify the absolute paths to your server file and node
+        modules folder, and submit!{" "}
       </div>
       <div>
         <DragDrop />
