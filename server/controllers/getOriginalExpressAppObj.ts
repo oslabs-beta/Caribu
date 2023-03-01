@@ -208,16 +208,16 @@ const routerRecur = (router, type, path = '') => {
         stackEl.route.stack.forEach(bdStackEl => {
         })
         //call boundDisaptcher creator
-        console.log("regexPath", regexPath)
-        console.log("newPath", newPath)
-        console.log("stackEl.route.path", stackEl.route.path)
+        // console.log("regexPath", regexPath)
+        // console.log("newPath", newPath)
+        // console.log("stackEl.route.path", stackEl.route.path)
         let bdPath = `${newPath}/${stackEl.route.path}/`
-        console.log(bdPath.indexOf('//'))
+        // console.log(bdPath.indexOf('//'))
         while (bdPath.indexOf('//') >= 0) {
-          console.log(bdPath)
+          // console.log(bdPath)
           bdPath = bdPath.replace('//', '/')
         }
-        console.log("new bd path********************************************************************\n", bdPath)
+        // console.log("new bd path********************************************************************\n", bdPath)
         const newBD: object = new BoundDispatcher(stackEl, bdPath);
         appTree.boundDispatchers.push(newBD);
         dispatcherArr.push(newBD)
