@@ -242,7 +242,8 @@ export const fetchRoutes = () => {
 
     // const newJSON = require('../exampleResponse.json')
     // const newJSON = require('../exampleResponseUs.json')
-    const newJSON = require('../dispatchResponse_dep.json')
+    // const newJSON = require('../dispatchResponse_dep.json')
+    const newJSON = require('../betterDeps.json')
     dispatch(update_loading(true))
 
     setTimeout(() => {
@@ -273,9 +274,9 @@ export const fetchRoutes = () => {
           }
         }
       }
+      dispatch(update_mwLibrary(funcLibrary));
     }
 
-    dispatch(update_mwLibrary(funcLibrary));
   };
 // };
 //     console.log("viewsSlice anonymous thunk func fired");

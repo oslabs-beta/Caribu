@@ -70,7 +70,7 @@ export default function REFVItem(props: REFVItemProps) {
     }
 
     let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
-    // console.log("funcinfo from mwLibrary:", mwLibrary[funcName].deps)
+    console.log("funcinfo from mwLibrary:", mwLibrary[funcName]?.deps)
     console.log("functionInfo:", props.middleware.functionInfo)
     const [userFilePath, relativeFilePath] = convertToUserFilePath(funcFile)
     console.log("this is input serverpath:", filePath)
