@@ -233,12 +233,14 @@ export const fetchRoutes = () => {
 
 
 
-    const newJSON = require('../exampleResponse.json')
+    // const newJSON = require('../exampleResponse.json')
+    // const newJSON = require('../exampleResponseUs.json')
+    const newJSON = require('../dispatchResponse_dep.json')
     dispatch(update_loading(true))
     setTimeout(() => {
       dispatch(update_loading(false))
       dispatch(update_routes(newJSON));
-    }, 20000)
+    }, 2000)
 
     const funcLibrary = {}
 

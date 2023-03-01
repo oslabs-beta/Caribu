@@ -131,7 +131,8 @@ body {
 .routes-container {
   display: flex;
   justify-content: center;
-  gap : 15px
+  gap : 15px;
+  overflow-x: auto
   /* background-color: rgba(0, 226, 102, 0.86); */
 }
 

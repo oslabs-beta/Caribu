@@ -1,7 +1,11 @@
 import { ReactElement } from "react";
 import POCDetails from "./POCDetails";
 import cariboxStyling from "../caribox";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
+const newCariboxStyling = {...cariboxStyling, minHeight : '5vh'}
 interface POContainerProps {
   funcLibrary : any,
   sharedRoutes: Set<string>,
@@ -59,17 +63,24 @@ export default function POContainer(props: POContainerProps) {
     // console.log("sharedObj", sharedObj)
     // if props.functions.has(props.reducedRoutes[el])
     routeContainer.push(
-      <div>
-        <POCDetails route={el} methods={props.reducedRoutes[el]} funcLibrary={props.funcLibrary} sharedObj={sharedObj}/>
-      </div>
+      // <Accordion style={{width : '100%'}}>
+      // <AccordionSummary>See Code</AccordionSummary>
+      // <AccordionDetails>
+      <POCDetails route={el} methods={props.reducedRoutes[el]} funcLibrary={props.funcLibrary} sharedObj={sharedObj}/>
+      // </AccordionDetails>
+      // </Accordion>
+
+      // <div>
+      //   <POCDetails route={el} methods={props.reducedRoutes[el]} funcLibrary={props.funcLibrary} sharedObj={sharedObj}/>
+      // </div>
     )
   })
 
   return (
-      <div style={cariboxStyling}>
+      // <div style={newCariboxStyling}>
         <div className="routes-container">
           {routeContainer}
         </div>
-      </div>
+      // </div>
   )
 }

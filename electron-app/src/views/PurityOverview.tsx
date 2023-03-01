@@ -4,6 +4,12 @@ import POContainer from "../components/purityOverview/POContainer";
 import { ReactElement } from "react";
 import e from "express";
 import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import cariboxStyling from "../components/caribox";
+
+const newCariboxStyling = {...cariboxStyling, minHeight : '5vh'}
 
 
 
@@ -161,9 +167,26 @@ function generateContainers(){
 
   // pushes each individual container with props for its route, sharedroutes and functions
   for(let i = 0; i < sharedMiddlewares.length; i++){
-    console.log('HSAREd I:', sharedMiddlewares[i])
+    console.log('HSAREd I:', sharedMiddlewares[i], reducedRoutes)
+    let listOfRoutes = ''
+    
+    sharedMiddlewares[i].routes.forEach(el => {listOfRoutes += `${el}, `})
+    listOfRoutes = listOfRoutes.slice(0, listOfRoutes.length-2)
+
     containers.push(
-      <POContainer funcLibrary={funcLibrary} reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
+      <div>
+      <Accordion style={newCariboxStyling}>
+      <AccordionSummary>
+        <div>
+        <b>{`Group ${i+1}:`} <i>{listOfRoutes}</i></b>  
+        </div>
+      </AccordionSummary>
+      <AccordionDetails>
+        <POContainer funcLibrary={funcLibrary} reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
+      </AccordionDetails>
+      </Accordion>
+      <br/>
+      </div>
     );
   }
   return containers;
@@ -172,11 +195,12 @@ function generateContainers(){
 const containers = generateContainers();
 
   return (
-    <div className="po-main">
+    <div className="po-main" style={{marginTop : '5%'}}>
       <div className="po-header">
         Route dependency Breakdowns
       </div>
-      <div className="po-containers">
+      {/* <div className="po-containers"> */}
+      <div>
         {containers}
       </div>
     </div>
