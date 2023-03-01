@@ -59,7 +59,7 @@ app.on('activate', () => {
 // run bash script to start node express server in the main process
 ipcMain.on('runScript', () => {
   // MacOS & Linux bash script
-  const script = spawn('bash', ['/Users/melodyduany/Documents/Codesmith/projects/Caribu/electron-app/src/server.sh']);
+  const script = spawn('bash', ['electron-app/src/server.sh']);
   console.log('PID: ' + script.pid);
 
   script.stdout.on('data', (data) => {
