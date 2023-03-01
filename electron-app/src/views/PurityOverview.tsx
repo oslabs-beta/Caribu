@@ -9,7 +9,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import cariboxStyling from "../components/caribox";
 
-const newCariboxStyling = {...cariboxStyling, minHeight : '5vh'}
+const newCariboxStyling = {...cariboxStyling, minHeight : '5vh', width: '80vw'}
 
 
 
@@ -62,12 +62,33 @@ const routes = useSelector((state: RootState) => state.views.routes);
 const funcLibrary = {}
 
 //This function parses through the routes object to isolate the middlewares down to an object with routename, method, and functionname.
+// function parseRoutes(){
+//   const routesDict: object= {};
+//   for(let i = 0; i < routes.length; i++){
+//     const route: object = routes[i]
+//     routesDict[route.routeName] = {};
+    
+//     for(const key in route.routeMethods){
+//       const middlewares = route.routeMethods[key].middlewares;
+//       routesDict[route.routeName][key] = [];
+//       for(let j = 0; j < middlewares.length; j++){
+//         let funcName = middlewares[j].functionInfo.funcName
+//         if (!funcLibrary[funcName]) {
+//           funcLibrary[funcName] = middlewares[j].functionInfo
+//         }
+//         routesDict[route.routeName][key].push(middlewares[j].functionInfo.funcName);
+//       }
+//     }
+//   }
+//   console.log("routesDict", routesDict)
+//   return routesDict;
+// }
+
 function parseRoutes(){
   const routesDict: object= {};
   for(let i = 0; i < routes.length; i++){
     const route: object = routes[i]
-    routesDict[route.routeName] = {};
-    
+    if(!routesDict[route.routeName]) routesDict[route.routeName] = {};
     for(const key in route.routeMethods){
       const middlewares = route.routeMethods[key].middlewares;
       routesDict[route.routeName][key] = [];
@@ -161,6 +182,7 @@ function generateContainers(){
 
   // sharedMiddlewares is a set with Node objects that contain their unique shared route lists and related functions.
   const sharedMiddlewares: Array<Node> = groupSharedMiddlewares(isoFuncs);
+  sharedMiddlewares.sort((a, b) => {b.routes.size - a.routes.size})
   console.log('shared', sharedMiddlewares);
 
   const containers: ReactElement[] = [];
@@ -195,11 +217,9 @@ function generateContainers(){
 const containers = generateContainers();
 
   return (
-    <div className="po-main" style={{marginTop : '5%'}}>
-      <div className="po-header">
-        Route dependency Breakdowns
-      </div>
-      {/* <div className="po-containers"> */}
+  <div style={{display : 'flex', flexDirection : 'column' , alignItems : 'center', color : '#F1EDE0', marginTop : '5%'}}>
+
+      <h1 >Purity Overview</h1>
       <div>
         {containers}
       </div>

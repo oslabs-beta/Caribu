@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store";
 import { update_dependency } from "../../slices/viewsSlice";
 import { startTransition } from "react";
@@ -20,6 +20,7 @@ interface POMItemProps {
 
 export default function POCMItem(props: POMItemProps) {
 
+    const filePath = useSelector((state: RootState) => state.views.filepath);
 
     const dispatch = useDispatch();
     const conditionalFuncBoxStyling = {...funcBoxStyling}
@@ -56,6 +57,16 @@ export default function POCMItem(props: POMItemProps) {
         return funcName
     }
 
+    const convertToUserFilePath = (str : string):string => {
+        const copiedServerIndex = str.indexOf('copiedServer')
+        const relativeFilePath = funcFile.slice(copiedServerIndex + 12)
+        let newFilePath = filePath + relativeFilePath
+        // const relativeFilePath = funcFile.replace(serverPath, '')
+        console.log("Fixed VSCode link:", newFilePath)
+        return newFilePath
+    }
+
+
 
     // //parse out a functions name data etc:
     // const parseData = (funcName : string) => {
@@ -69,10 +80,11 @@ export default function POCMItem(props: POMItemProps) {
     //     }
 
     // }
-    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo } = props.funcInfo
+    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.funcInfo
+    const userFilePath = convertToUserFilePath(funcFile)
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
-    const vsCodeLink = `vscode://file${funcFile}`
+    const vsCodeLink = `vscode://file${userFilePath}:${funcLine[0]}:${funcLine[1]}`
     // console.log('VS CODE LINK: ', vsCodeLink)
     const [start, end] = funcPosition
     // console.log(start, end)

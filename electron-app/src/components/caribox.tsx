@@ -10,7 +10,7 @@ const cariboxStyling = {
       minHeight : '70vh',
       maxHeight : '70vh',
       overflow: 'scroll',
-      marginTop: '5px'
+      marginTop: '5px',
 }
 
 export default cariboxStyling

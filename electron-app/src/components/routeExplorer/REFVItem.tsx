@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store";
 import { update_dependency } from "../../slices/viewsSlice";
 import { startTransition } from "react";
@@ -24,6 +24,9 @@ export default function REFVItem(props: REFVItemProps) {
     function selectFunction(){
         dispatch(update_dependency({middleware: props.middleware}));
     }
+
+
+    const filePath = useSelector((state: RootState) => state.views.filepath);
 
     // console.log(props.middleware)
     console.log(props.middleware.functionInfo.funcName, props.middleware.deps.upstream.dependents)
@@ -56,10 +59,21 @@ export default function REFVItem(props: REFVItemProps) {
         return funcName
     }
 
+    const convertToUserFilePath = (str : string):string => {
+        const copiedServerIndex = str.indexOf('copiedServer')
+        const relativeFilePath = funcFile.slice(copiedServerIndex + 12)
+        let newFilePath = filePath + relativeFilePath
+        // const relativeFilePath = funcFile.replace(serverPath, '')
+        console.log("Fixed VSCode link:", newFilePath)
+        return newFilePath
+    }
+
     let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
+    const userFilePath = convertToUserFilePath(funcFile)
+    console.log("this is input serverpath:", filePath)
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
-    const vsCodeLink = `vscode://file${funcFile}:${funcLine[0]}:${funcLine[1]}`
+    const vsCodeLink = `vscode://file${userFilePath}:${funcLine[0]}:${funcLine[1]}`
     // console.log('VS CODE LINK: ', vsCodeLink)
     const [start, end] = funcPosition
     // console.log(start, end)
@@ -74,7 +88,7 @@ export default function REFVItem(props: REFVItemProps) {
         } else {
             newFuncName = isolateName(funcName)
         }
-        funcName = `Anonymous ${newFuncName} at position ${start}`
+        funcName = `Anonymous ${newFuncName} at line ${funcLine[0]}`
     } 
     
 

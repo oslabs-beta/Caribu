@@ -34,7 +34,7 @@
       }
   },
   {
-      "routeName": "/apicharacters/:id/",
+      "routeName": "/api/characters/:id/",
       "routeMethods": {
           "get": {
               "middlewares": [
@@ -93,7 +93,7 @@
       }
   },
   {
-      "routeName": "/apicharacters/",
+      "routeName": "/api/characters/",
       "routeMethods": {
           "post": {
               "middlewares": [
@@ -224,7 +224,7 @@
       }
   },
   {
-      "routeName": "/apicharacters/:id/",
+      "routeName": "/api/characters/:id/",
       "routeMethods": {
           "patch": {
               "middlewares": [
@@ -355,7 +355,7 @@
       }
   },
   {
-      "routeName": "/apicharacters/:id/",
+      "routeName": "/api/characters/:id/",
       "routeMethods": {
           "delete": {
               "middlewares": [
