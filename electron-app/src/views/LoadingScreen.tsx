@@ -20,14 +20,6 @@ const LoadingScreen = (props: object) => {
   }, 10000)
 
   console.log(props);
-<<<<<<< HEAD
-  return (
-      <div class="loading-page">
-        <h2 style={{color : '#F1EDE0'}}>{loadingMessage}</h2>
-        <img class="loading-logo" src={logoCircleSpin} alt="LogoCircleSpin" />
-      </div>
-  );
-=======
   if(!views.directoryProcessed) {
     return (
         <div class="loading-page">
@@ -46,7 +38,6 @@ const LoadingScreen = (props: object) => {
 //     </div>
 // );
   
->>>>>>> dev
 }
 
 export default LoadingScreen
