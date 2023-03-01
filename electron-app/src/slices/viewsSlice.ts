@@ -278,7 +278,7 @@ export const fetchRoutes = () => {
 
     dispatch(update_mwLibrary(funcLibrary));
   };
-};
+// };
 //     console.log("viewsSlice anonymous thunk func fired");
 //     console.log(
 //       "fetching to /api/routes with filepath: ",
