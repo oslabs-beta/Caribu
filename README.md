@@ -1,4 +1,4 @@
-![alt text](./electron-app/assets/6.png)
+![alt text](./electron-app/assets/7.png)
 
 # Caribu
 
@@ -21,7 +21,7 @@ Then specify the absolute route to both your node modules folder and main server
 
 Once your application has been parsed by Caribu, you will be able to view the applications functionality in the Route Explorer and Purity Overview.
 
-The Route explorer tab displays all of the individual routes in your application, which when clicked, will display all the functions in that specific route. Each function is also able to be individually clicked which will then display a list of dependencies for that specific function
+The Route explorer tab displays all of the individual routes in your application. When a route is clicked, it will display all the functions in that specific route. Each function is also able to be individually clicked which will then display a list of dependencies for that specific function.
 
 <!-- Picture of route explorer in use -->
 <img src="https://media.giphy.com/media/2BRQC0mqAYrmqLksXI/giphy.gif" width="70%" height="70%"/>
