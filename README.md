@@ -22,7 +22,7 @@ And your node modules absolute path might look like: /Users/<your-username>/Desk
 
 <!-- Picture of welcome page pointing at drop folder, and inputs -->
 
-![alt text](./electron-app/assets/caribu-welcome-page.gif)
+![til](./electron-app/assets/caribu-welcome-page.gif)
 
 Once your application has been parsed by Caribu, you will be able to view the applications functionality in the Route Explorer and Purity Overview.
 
@@ -30,13 +30,13 @@ The Route explorer tab displays all of the individual routes in your application
 
 <!-- Picture of route explorer in use -->
 
-![alt text](./electron-app/assets/caribu-route-explorer.gif)
+![til](./electron-app/assets/caribu-route-explorer.gif)
 
 The Purity Overview tab displays the smallest possible breakdown of your applications routes. Each route will display its corresponding middleware and highlight middleware that is not pure.
 
 <!-- Picture of Purity Overview -->
 
-![alt text](./electron-app/assets/caribu-purity-overview.gif)
+![til](./electron-app//assets/caribu-purity-overview.gif)
 
 ## Contributing
 
