@@ -237,26 +237,40 @@ export const fetchRoutes = () => {
     //   console.log('viewsSlice server responded with:', data)
     // })
 
-    const newJSON = require("../exampleResponse.json");
-    dispatch(update_loading(true));
+
+
+
+
+    // const newJSON = require('../exampleResponse.json')
+    // const newJSON = require('../exampleResponseUs.json')
+    const newJSON = require('../dispatchResponse_dep.json')
+    dispatch(update_loading(true))
+
     setTimeout(() => {
       dispatch(update_loading(false));
       dispatch(update_routes(newJSON));
-    }, 20000);
+
+    }, 2000)
+
 
     const funcLibrary = {};
 
     //This function parses through the routes object to isolate the middlewares down to an object with routename, method, and functionname.
     // function parseRoutes(){
-    const routesDict: object = {};
-    for (let i = 0; i < newJSON.length; i++) {
-      const route: object = newJSON[i];
-      for (const key in route.routeMethods) {
-        const middlewares = route.routeMethods[key].middlewares;
-        for (let j = 0; j < middlewares.length; j++) {
-          let funcName = middlewares[j].functionInfo.funcName;
-          if (!funcLibrary[funcName]) {
-            funcLibrary[funcName] = middlewares[j].functionInfo;
+
+      const routesDict: object= {};
+      for(let i = 0; i < newJSON.length; i++){
+        const route: object = newJSON[i]
+        for(const key in route.routeMethods){
+          const middlewares = route.routeMethods[key].middlewares;
+          for(let j = 0; j < middlewares.length; j++){
+            let funcName = middlewares[j].functionInfo.funcName
+            if (!funcLibrary[funcName]) {
+              funcLibrary[funcName] = {
+                functionInfo : middlewares[j].functionInfo, 
+                deps : middlewares[j].deps}
+            }
+
           }
         }
       }
