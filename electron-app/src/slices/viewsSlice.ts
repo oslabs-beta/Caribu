@@ -111,6 +111,12 @@ export interface viewsState {
   mwLibrary: object;
   loading: boolean;
   loadingMessage: string;
+  filters: Array<tag>;
+}
+
+type tag = {
+  id: string,
+  text: string,
 }
 
 const initialState: viewsState = {
@@ -129,6 +135,7 @@ const initialState: viewsState = {
   mwLibrary: {},
   loading: false,
   loadingMessage: "Initializing...",
+  filters: [],
 };
 
 export const viewsSlice = createSlice({
@@ -191,6 +198,11 @@ export const viewsSlice = createSlice({
       console.log("loading state is now ", action.payload);
       const loadingMessage = action.payload;
       state.loadingMessage = loadingMessage;
+    },
+    update_filters: (state, action: PayloadAction<{ filters: Array<tag> }>) => {
+      console.log("viewsSlice update_N=updateFilters fired with ", action.payload);
+      const { filters } = action.payload;
+      state.filters = filters;
     },
   },
 });
@@ -313,6 +325,7 @@ export const {
   update_loading,
   update_loadingMessage,
   update_nodepath,
+  update_filters,
 } = viewsSlice.actions;
 
 export default viewsSlice.reducer;
