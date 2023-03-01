@@ -1,4 +1,4 @@
-![alt text](./electron-app/assets/6.png)
+![alt text](./electron-app/assets/7.png)
 
 # Caribu
 
@@ -16,24 +16,27 @@ To use our application you would begin by dropping in your applications server f
 
 Then specify the absolute route to both your node modules folder and main server file.
 
+For instance, your server absolute path might look like: /Users/<your-username>/Desktop/myApp/server/server.js
+
+And your node modules absolute path might look like: /Users/<your-username>/Desktop/myApp/node_modules
+
 <!-- Picture of welcome page pointing at drop folder, and inputs -->
 
-Once your application has been parsed by Caribu, you will be able to view the applications functionality in the Route Explorer, Metrics, and Purity Overview.
+![alt text](./electron-app/assets/caribu-welcome-page.gif)
+
+Once your application has been parsed by Caribu, you will be able to view the applications functionality in the Route Explorer and Purity Overview.
 
 The Route explorer tab displays all of the individual routes in your application, which when clicked, will display all the functions in that specific route. Each function is also able to be individually clicked which will then display a list of dependencies for that specific function
 
 <!-- Picture of route explorer in use -->
 
-The Metrics tab allows you to display a graph of either all the controllers or API's in your application.
-For instance if we chose controllers, the graph would display the amount of external dependencies, the amount of enclosed variables, and finally a percentage of how pure the functions is, for each and every controller.
-
-Each controller is also clickable rendering a tab which will offer suggestions on how to refractor that controller into a pure function.
-
-<!-- Picture of metrics tab in use -->
+![alt text](./electron-app/assets/caribu-route-explorer.gif)
 
 The Purity Overview tab displays the smallest possible breakdown of your applications routes. Each route will display its corresponding middleware and highlight middleware that is not pure.
 
 <!-- Picture of Purity Overview -->
+
+![alt text](./electron-app/assets/caribu-purity-overview.gif)
 
 ## Contributing
 
