@@ -4,6 +4,7 @@ import POContainer from "../components/purityOverview/POContainer";
 import { ReactElement } from "react";
 import e from "express";
 import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
+import {Navigate, useLocation} from "react-router-dom"
 
 
 
@@ -51,7 +52,12 @@ const Purity = () => {
 
 // gets routes from the state object.
 const routes = useSelector((state: RootState) => state.views.routes);
+const views = useSelector((state: RootState) => state.views);
 
+if(!views.directoryProcessed) {
+  console.log("USER NOT PROCESSED")
+  return <Navigate to="/"/>
+}
 
 const funcLibrary = {}
 
