@@ -43,11 +43,13 @@ const mergeDispatchersExport = (req, res, next) => {
       ast.program.body.forEach((bodyNode) => {
         if (bodyNode.type === 'VariableDeclaration') {
           bodyNode.declarations.forEach(declaration => {
+            // console.log("bodyNode.declaration", declaration)
             let declarationObj = {}
             declarationObj.declaredName = declaration.id.name
             declarationObj.type = bodyNode.kind
             declarationObj.definition = code.slice(bodyNode.start, bodyNode.end)
             declarationObj.position = [bodyNode.start, bodyNode.end] 
+            declarationObj.line = [bodyNode.loc.start.line, bodyNode.loc.end.line] 
             fileVars[filePath].globalDeclarations[declaration.id.name] = declarationObj
           })
         }
@@ -107,9 +109,9 @@ const mergeDispatchersExport = (req, res, next) => {
         //for variable in globals
         for (let declaration in fileVars[filePath].globalDeclarations) {
           //if declaredName matchesVarName
-          if (declaration.declaredName === varName) {
+          if (fileVars[filePath].globalDeclarations[declaration].declaredName === varName) {
             // originalDeclaration = globals[variable]
-            originalDeclaration = declaration
+            originalDeclaration = fileVars[filePath].globalDeclarations[declaration]
           }
         }
         // loop through functionDeclarations to make sure it doesnt appear in there
@@ -201,7 +203,7 @@ const mergeDispatchersExport = (req, res, next) => {
 
       path.traverse(assignmentChecker)
       path.traverse(updateChecker)
-
+      console.log(updatesArr)
       this.updates = updatesArr
     }
 
@@ -255,7 +257,7 @@ const mergeDispatchersExport = (req, res, next) => {
         //for variable in globals
         for (let declaration in fileVars[filePath].globalDeclarations) {
           //if declaredName matchesVarName
-          if (varName === 'testNum') console.log(fileVars[filePath].globalDeclarations[declaration], varName)
+          // if (varName === 'testNum') console.log(fileVars[filePath].globalDeclarations[declaration], varName)
           if (fileVars[filePath].globalDeclarations[declaration].declaredName === varName) {
             // originalDeclaration = globals[variable]
             originalDeclaration = fileVars[filePath].globalDeclarations[declaration]
@@ -263,7 +265,7 @@ const mergeDispatchersExport = (req, res, next) => {
             // return originalDeclaration
           }
         }
-        if (varName === 'testNum') console.log(originalDeclaration)
+        // if (varName === 'testNum') console.log(originalDeclaration)
         // loop through functionDeclarations to make sure it doesnt appear in there
         let varNotAlreadyDeclared = true
         fileVars[filePath].functionLevelDeclarations.forEach(declaration => {
@@ -276,7 +278,7 @@ const mergeDispatchersExport = (req, res, next) => {
         //   if (funcName)
         // })
         //foreach declaration in functiondelcattion
-        if (varName === 'testNum') console.log(originalDeclaration)
+        // if (varName === 'testNum') console.log(originalDeclaration)
 
         if (varNotAlreadyDeclared) {
           fileVars[filePath].functionLevelDeclarations.forEach(declaration => {
@@ -287,6 +289,7 @@ const mergeDispatchersExport = (req, res, next) => {
         }
         
         // if (varName === 'testNum') console.log(originalDeclaration)
+        // console.log(originalDeclaration)
         return originalDeclaration
       }   
 
@@ -317,6 +320,7 @@ const mergeDispatchersExport = (req, res, next) => {
             // if (path.node.name === 'testNum') console.log("FOUND TEST NUM")
             if (originalDeclaration) {
               // console.log("made it to original declaration with ")
+              // console.log(path.node)
               let dependsVar = {
                 upVarName : path.node.name,
                 upVarFile : filePath,
@@ -325,11 +329,17 @@ const mergeDispatchersExport = (req, res, next) => {
                 location : [path.node.start, path.node.end],
                 originalDeclaration
               }
+              // console.log(originalDeclaration)
               dependsList.push(dependsVar)
             }
           }
         }
       })
+
+      
+
+
+
       // console.log("this.declares", this.declares)
       dependsList = dependsList.filter(dep => {
         let check = true
@@ -562,8 +572,8 @@ const mergeDispatchersExport = (req, res, next) => {
             funcLine : middleware.funcInfo.line,
             isThirdParty : false
           }
-          middleware.funcInfo.listUpdates()
           middleware.funcInfo.listDepends()
+          middleware.funcInfo.listUpdates()
           mwObj.deps =  {
             upstream : { dependents : middleware.funcInfo.depends || []},
             downstream : { dependents : middleware.funcInfo.updates || []}
@@ -613,15 +623,15 @@ const mergeDispatchersExport = (req, res, next) => {
   next()
 }
 
-const res = {
-  locals : {
-    tree : null
-  }
-}
+// const res = {
+//   locals : {
+//     tree : null
+//   }
+// }
 
-const next = () => {}
+// const next = () => {}
 
-mergeDispatchersExport(null, res, next)
-console.log("hi")
+// mergeDispatchersExport(null, res, next)
+// console.log("hi")
 
 module.exports = mergeDispatchersExport

@@ -37,11 +37,13 @@ var mergeDispatchersExport = function (req, res, next) {
             ast.program.body.forEach(function (bodyNode) {
                 if (bodyNode.type === 'VariableDeclaration') {
                     bodyNode.declarations.forEach(function (declaration) {
+                        // console.log("bodyNode.declaration", declaration)
                         var declarationObj = {};
                         declarationObj.declaredName = declaration.id.name;
                         declarationObj.type = bodyNode.kind;
                         declarationObj.definition = code.slice(bodyNode.start, bodyNode.end);
                         declarationObj.position = [bodyNode.start, bodyNode.end];
+                        declarationObj.line = [bodyNode.loc.start.line, bodyNode.loc.end.line];
                         fileVars[filePath].globalDeclarations[declaration.id.name] = declarationObj;
                     });
                 }
@@ -96,9 +98,9 @@ var mergeDispatchersExport = function (req, res, next) {
                 //for variable in globals
                 for (var declaration in fileVars[filePath].globalDeclarations) {
                     //if declaredName matchesVarName
-                    if (declaration.declaredName === varName) {
+                    if (fileVars[filePath].globalDeclarations[declaration].declaredName === varName) {
                         // originalDeclaration = globals[variable]
-                        originalDeclaration = declaration;
+                        originalDeclaration = fileVars[filePath].globalDeclarations[declaration];
                     }
                 }
                 // loop through functionDeclarations to make sure it doesnt appear in there
@@ -186,6 +188,7 @@ var mergeDispatchersExport = function (req, res, next) {
             };
             path.traverse(assignmentChecker);
             path.traverse(updateChecker);
+            console.log(updatesArr);
             this.updates = updatesArr;
         };
         FuncObject.prototype.listDeclares = function (path, filePath, code) {
@@ -233,8 +236,7 @@ var mergeDispatchersExport = function (req, res, next) {
                 //for variable in globals
                 for (var declaration in fileVars[filePath].globalDeclarations) {
                     //if declaredName matchesVarName
-                    if (varName === 'testNum')
-                        console.log(fileVars[filePath].globalDeclarations[declaration], varName);
+                    // if (varName === 'testNum') console.log(fileVars[filePath].globalDeclarations[declaration], varName)
                     if (fileVars[filePath].globalDeclarations[declaration].declaredName === varName) {
                         // originalDeclaration = globals[variable]
                         originalDeclaration = fileVars[filePath].globalDeclarations[declaration];
@@ -242,8 +244,7 @@ var mergeDispatchersExport = function (req, res, next) {
                         // return originalDeclaration
                     }
                 }
-                if (varName === 'testNum')
-                    console.log(originalDeclaration);
+                // if (varName === 'testNum') console.log(originalDeclaration)
                 // loop through functionDeclarations to make sure it doesnt appear in there
                 var varNotAlreadyDeclared = true;
                 fileVars[filePath].functionLevelDeclarations.forEach(function (declaration) {
@@ -255,8 +256,7 @@ var mergeDispatchersExport = function (req, res, next) {
                 //   if (funcName)
                 // })
                 //foreach declaration in functiondelcattion
-                if (varName === 'testNum')
-                    console.log(originalDeclaration);
+                // if (varName === 'testNum') console.log(originalDeclaration)
                 if (varNotAlreadyDeclared) {
                     fileVars[filePath].functionLevelDeclarations.forEach(function (declaration) {
                         if (declaration.declaredName === varName) {
@@ -265,6 +265,7 @@ var mergeDispatchersExport = function (req, res, next) {
                     });
                 }
                 // if (varName === 'testNum') console.log(originalDeclaration)
+                // console.log(originalDeclaration)
                 return originalDeclaration;
             }
             //
@@ -293,6 +294,7 @@ var mergeDispatchersExport = function (req, res, next) {
                         // if (path.node.name === 'testNum') console.log("FOUND TEST NUM")
                         if (originalDeclaration) {
                             // console.log("made it to original declaration with ")
+                            // console.log(path.node)
                             var dependsVar = {
                                 upVarName: path.node.name,
                                 upVarFile: filePath,
@@ -301,6 +303,7 @@ var mergeDispatchersExport = function (req, res, next) {
                                 location: [path.node.start, path.node.end],
                                 originalDeclaration: originalDeclaration
                             };
+                            // console.log(originalDeclaration)
                             dependsList.push(dependsVar);
                         }
                     }
@@ -509,8 +512,8 @@ var mergeDispatchersExport = function (req, res, next) {
                         funcLine: middleware.funcInfo.line,
                         isThirdParty: false
                     };
-                    middleware.funcInfo.listUpdates();
                     middleware.funcInfo.listDepends();
+                    middleware.funcInfo.listUpdates();
                     mwObj.deps = {
                         upstream: { dependents: middleware.funcInfo.depends || [] },
                         downstream: { dependents: middleware.funcInfo.updates || [] }
@@ -548,12 +551,12 @@ var mergeDispatchersExport = function (req, res, next) {
     res.locals.tree = finalObj;
     next();
 };
-var res = {
-    locals: {
-        tree: null
-    }
-};
-var next = function () { };
-mergeDispatchersExport(null, res, next);
-console.log("hi");
+// const res = {
+//   locals : {
+//     tree : null
+//   }
+// }
+// const next = () => {}
+// mergeDispatchersExport(null, res, next)
+// console.log("hi")
 module.exports = mergeDispatchersExport;
