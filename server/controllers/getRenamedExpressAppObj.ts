@@ -412,7 +412,12 @@ const getRenamedObjExport = (req, res, next) => {
   //   // })
   // });
   console.log("DISPATCHER ARR:")
-  console.log(dispatcherArr)
+  // console.log(dispatcherArr)
+  dispatcherArr.forEach(el => {
+    el.stack.forEach(stackEl => {
+      console.log(stackEl.handle)
+    })
+  })
   const originalAppTree = appTree;
   // console.log('renamedappTree before writeFileSync is ', originalAppTree);
   fs.writeFileSync(

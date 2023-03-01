@@ -376,7 +376,12 @@ var getRenamedObjExport = function (req, res, next) {
     //   // })
     // });
     console.log("DISPATCHER ARR:");
-    console.log(dispatcherArr);
+    // console.log(dispatcherArr)
+    dispatcherArr.forEach(function (el) {
+        el.stack.forEach(function (stackEl) {
+            console.log(stackEl.handle);
+        });
+    });
     var originalAppTree = appTree;
     // console.log('renamedappTree before writeFileSync is ', originalAppTree);
     fs.writeFileSync("renamedAppTree.json", JSON.stringify(originalAppTree), function (error) {
