@@ -19,16 +19,20 @@ const RouteExplorer = (props: object) => {
 
   if(!views.directoryProcessed) {
     console.log("USER NOT PROCESSED")
-    return <Navigate to="/WelcomePage"/>
+    return <Navigate to="/"/>
   }
 
 
   console.log(props);
   return (
+<<<<<<< HEAD
     <div style={{display : 'flex', flexDirection : 'column' , alignItems : 'center', color : '#F1EDE0', marginTop : '5%'}}>
 
     <h1 >Route Explorer</h1>
     <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+=======
+    <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 4, sm: 8, md: 12 }} style={{marginTop : '5%'}}>
+>>>>>>> dev
       <Grid item xs={2} sm={4} md={4}>
         {/* <div className='re-routes'> */}
           <RERouteViewer/>

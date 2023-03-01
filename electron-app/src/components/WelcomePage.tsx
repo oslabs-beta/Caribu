@@ -15,12 +15,17 @@ const WelcomePage = (props: object) => {
   const dispatch = useDispatch();
   const views = useSelector((state: RootState) => state.views);
   return (
+<<<<<<< HEAD
     <div className="welcomePage" style={{marginTop : '8%', color : '#F1EDE0'}}>
       <img src={logo} alt="Logo" />
+=======
+    <div className="welcomePage">
+      <img className="welcome-logo" src={logo} alt="Logo" />
+>>>>>>> dev
       <div style={{marginTop : '10%'}} className="wp-header">Welcome To Caribu</div>
       <div className="wp-instructions">
-        To get started, drop the server folder for your application into the dropzone, then simply specify
-        the absolute paths to your server file and node modules folder, and submit!{" "}
+        To get started, drop the server folder for your application into the dropzone. <br></br>
+        Then simply specify the absolute paths to your server file and node modules folder, and submit!{" "}
       </div>
       <div>
         <DragDrop />

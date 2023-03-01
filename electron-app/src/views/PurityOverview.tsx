@@ -4,12 +4,16 @@ import POContainer from "../components/purityOverview/POContainer";
 import { ReactElement } from "react";
 import e from "express";
 import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
+<<<<<<< HEAD
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import cariboxStyling from "../components/caribox";
 
 const newCariboxStyling = {...cariboxStyling, minHeight : '5vh', width: '80vw'}
+=======
+import {Navigate, useLocation} from "react-router-dom"
+>>>>>>> dev
 
 
 
@@ -57,7 +61,12 @@ const Purity = () => {
 
 // gets routes from the state object.
 const routes = useSelector((state: RootState) => state.views.routes);
+const views = useSelector((state: RootState) => state.views);
 
+if(!views.directoryProcessed) {
+  console.log("USER NOT PROCESSED")
+  return <Navigate to="/"/>
+}
 
 const funcLibrary = {}
 

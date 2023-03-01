@@ -141,6 +141,7 @@ export const viewsSlice = createSlice({
       state.routes = action.payload;
       //update directoryProcessed to true
       state.directoryProcessed = true
+      // console.log(getState.views.directoryProcessed ,'directoryProcessed now true')
     },
     update_method: (
       state,
