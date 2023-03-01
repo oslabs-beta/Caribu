@@ -89,5 +89,7 @@ typings/
 # Electron-Forge
 out/
 
-# backend copy stuff
+# node express server process
 ../server/process/
+../package-lock.json
+../node_modules/

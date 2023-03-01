@@ -3,10 +3,10 @@ import { RootState } from "../../store";
 import REDVItem from "./REDVItem";
 
 
-export default function REDependencyViewer(props: object) {
+export default function REDependencyViewer() {
 
   // get state for routes, currently selected middleware.
-  const routes = useSelector((state: RootState) => state.views.routes);
+  // const routes = useSelector((state: RootState) => state.views.routes);
   const middleware = useSelector((state: RootState) => state.views.curMiddleware);
 
   // assign depency tree to a variable for easier reference in code.

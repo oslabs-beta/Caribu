@@ -1,7 +1,7 @@
 import "../../src/index.css";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { RootState, AppDispatch } from "../store";
 import {
   fetchRoutes,
   update_filepath,
@@ -10,8 +10,8 @@ import {
 } from "../slices/viewsSlice";
 import DragDrop from "./DragDrop";
 
-const WelcomePage = (props: object) => {
-  const dispatch = useDispatch();
+const WelcomePage = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const views = useSelector((state: RootState) => state.views);
   return (
     <div className="welcomePage">

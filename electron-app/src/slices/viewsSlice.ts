@@ -1,105 +1,133 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "../store";
+import { RootState, AppDispatch, AppThunk } from "../store";
 
 const testUrl = "http://localhost:3003/routes";
 
 export interface viewsState {
   // TODO: confirm with backend which properties are optional
   // TODO: update for all fetch methods
-  routes: Array<{
-    routeName: string;
-    routeMethods: {
-      GET?: {
-        middlewares: Array<{
-          functionInfo: {
-            funcName: string;
-            funcFile: string;
-            funcPosition?: number[];
-            funcDef?: string;
-          };
-          deps?: {
-            totalUpstreamDeps?: number;
-            totalDownstreamDeps?: number;
-            upstream?: {
-              upVarName: string;
-              upVarFile: string;
-              upVarPosition?: number[];
-              upVarDef?: string;
-              upVarUseInFunc?: string;
-            };
-            downstream?: {
-              dependentFuncName: string;
-              dependentFuncFile: string;
-              dependentFuncPosition?: number[];
-              dependentFuncDef?: string;
-            };
-          };
-        }>;
-      };
-      POST?: {
-        middlewares: Array<{
-          functionInfo: {
-            funcName: string;
-            funcFile: string;
-            funcPosition?: number[];
-            funcDef?: string;
-          };
-          deps?: {
-            totalUpstreamDeps?: number;
-            totalDownstreamDeps?: number;
-            upstream?: {
-              upVarName: string;
-              upVarFile: string;
-              upVarPosition?: number[];
-              upVarDef?: string;
-              upVarUseInFunc?: string;
-            };
-            downstream?: {
-              dependentFuncName: string;
-              dependentFuncFile: string;
-              dependentFuncPosition?: number[];
-              dependentFuncDef?: string;
-            };
-          };
-        }>;
-      };
-      DELETE?: {
-        middlewares: Array<{
-          functionInfo: {
-            funcName: string;
-            funcFile: string;
-            funcPosition?: number[];
-            funcDef?: string;
-          };
-          deps?: {
-            totalUpstreamDeps?: number;
-            totalDownstreamDeps?: number;
-            upstream?: {
-              upVarName: string;
-              upVarFile: string;
-              upVarPosition?: number[];
-              upVarDef?: string;
-              upVarUseInFunc?: string;
-            };
-            downstream?: {
-              dependentFuncName: string;
-              dependentFuncFile: string;
-              dependentFuncPosition?: number[];
-              dependentFuncDef?: string;
-            };
-          };
-        }>;
-      };
-    };
-  }>;
+  routes: any // REVERT WHEN PUSHING
+  // Array<{
+  //   routeName: string;
+  //   routeMethods: {
+  //     GET?: {
+  //       middlewares: Array<{
+  //         functionInfo: {
+  //           funcName: string;
+  //           funcFile: string;
+  //           funcPosition?: number[];
+  //           funcDef?: string;
+  //         };
+  //         deps?: {
+  //           totalUpstreamDeps?: number;
+  //           totalDownstreamDeps?: number;
+  //           upstream?: {
+  //             upVarName: string;
+  //             upVarFile: string;
+  //             upVarPosition?: number[];
+  //             upVarDef?: string;
+  //             upVarUseInFunc?: string;
+  //           };
+  //           downstream?: {
+  //             dependentFuncName: string;
+  //             dependentFuncFile: string;
+  //             dependentFuncPosition?: number[];
+  //             dependentFuncDef?: string;
+  //           };
+  //         };
+  //       }>;
+  //     };
+  //     POST?: {
+  //       middlewares: Array<{
+  //         functionInfo: {
+  //           funcName: string;
+  //           funcFile: string;
+  //           funcPosition?: number[];
+  //           funcDef?: string;
+  //         };
+  //         deps?: {
+  //           totalUpstreamDeps?: number;
+  //           totalDownstreamDeps?: number;
+  //           upstream?: {
+  //             upVarName: string;
+  //             upVarFile: string;
+  //             upVarPosition?: number[];
+  //             upVarDef?: string;
+  //             upVarUseInFunc?: string;
+  //           };
+  //           downstream?: {
+  //             dependentFuncName: string;
+  //             dependentFuncFile: string;
+  //             dependentFuncPosition?: number[];
+  //             dependentFuncDef?: string;
+  //           };
+  //         };
+  //       }>;
+  //     };
+  //     DELETE?: {
+  //       middlewares: Array<{
+  //         functionInfo: {
+  //           funcName: string;
+  //           funcFile: string;
+  //           funcPosition?: number[];
+  //           funcDef?: string;
+  //         };
+  //         deps?: {
+  //           totalUpstreamDeps?: number;
+  //           totalDownstreamDeps?: number;
+  //           upstream?: {
+  //             upVarName: string;
+  //             upVarFile: string;
+  //             upVarPosition?: number[];
+  //             upVarDef?: string;
+  //             upVarUseInFunc?: string;
+  //           };
+  //           downstream?: {
+  //             dependentFuncName: string;
+  //             dependentFuncFile: string;
+  //             dependentFuncPosition?: number[];
+  //             dependentFuncDef?: string;
+  //           };
+  //         };
+  //       }>;
+  //     };
+  //   };
+  // }>
+  ;
   controllers: object[];
   apis: object[];
   curMethod: string;
   routeIndex: number;
   curMetric: string;
-  curMiddleware: object;
+  curMiddleware: any
+  // {
+  //   functionInfo?: {
+  //     funcName: string;
+  //     funcFile: string;
+  //     funcPosition?: number[];
+  //     funcDef?: string;
+  //   };
+  //   deps?: {
+  //     totalUpstreamDeps?: number;
+  //     totalDownstreamDeps?: number;
+  //     upstream?: {
+  //       upVarName: string;
+  //       upVarFile: string;
+  //       upVarPosition?: number[];
+  //       upVarDef?: string;
+  //       upVarUseInFunc?: string;
+  //     };
+  //     downstream?: {
+  //       dependentFuncName: string;
+  //       dependentFuncFile: string;
+  //       dependentFuncPosition?: number[];
+  //       dependentFuncDef?: string;
+  //     };
+  //   };
+  // }
+  ;
   filepath: string;
   serverpath: string;
   nodepath: string;
@@ -163,10 +191,10 @@ export const viewsSlice = createSlice({
 });
 
 // Thunk action creator for fetching /api/routes
-export const fetchRoutes = () => {
+export const fetchRoutes = (): AppThunk => {
   console.log("viewsSlice fetchRoutes fired");
   // return the thunk "action" funtion
-  return async (dispatch: AppDispatch, getState: RootState) => {
+  return async (dispatch, getState) => {
     console.log("viewsSlice anonymous thunk func fired");
     console.log(
       "fetching to /api/routes with filepath: ",

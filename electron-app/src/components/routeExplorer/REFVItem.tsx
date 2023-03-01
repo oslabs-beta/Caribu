@@ -3,7 +3,8 @@ import { RootState } from "../../store";
 import { update_dependency } from "../../slices/viewsSlice";
 
 interface REFVItemProps {
-    middleware: object,
+    // TODO: define type when properties are finalized
+    middleware: any,
   }
 
 export default function REFVItem(props: REFVItemProps) {

@@ -52,7 +52,7 @@ const Purity = () => {
   function parseRoutes(){
     const routesDict: object= {};
     for(let i = 0; i < routes.length; i++){
-      const route: object = routes[i]
+      const route: any /**update type when finalized */= routes[i]
       routesDict[route.routeName] = {};
       
       for(const key in route.routeMethods){
