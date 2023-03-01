@@ -1,11 +1,23 @@
+import { expressionToDeclaration } from "./pluginPaths";
+
 const renameFuncs = (req, res, next) => {
   console.log("IN RENAME FUNCS");
   const fs = require("fs");
   const { copiedServer, renamedServer } = require("./serverDirPaths");
 
   //plugin paths
-  const { arrowToNamed, declarationToNewDeclaration, expressionToDeclaration } = require("./pluginPaths");
-  
+  const path = require("path");
+  const {
+    arrowToNamed,
+    declarationToNewDeclaration,
+    expressionToDeclaration,
+  } = require("./pluginPaths");
+  // const { arrowToNamed } = require("./arrowToNamed");
+  // const {
+  //   declarationToNewDeclaration,
+  // } = require("./declarationToNewDeclaration");
+  // const { expressionToDeclaration } = require("./expressionToDeclaration");
+
   // babel modules
   const parser = require("@babel/parser");
   const generate = require("@babel/generator").default;
@@ -15,7 +27,6 @@ const renameFuncs = (req, res, next) => {
   // const _traverse = require("@babel/traverse");
   // const traverse = _traverse.default;
   const traverse = require("@babel/traverse").default;
-
 
   // this is the main transform function. It takes code, parses it, renames all its arrow functions, transforms it back into code, and returns it
   const babelTransform = (code: string, filePath: string): string => {
@@ -61,7 +72,7 @@ const renameFuncs = (req, res, next) => {
   // });
   //process the directory recursively
   const processDirectory = (oldDirectoryPath: string) => {
-      //if error, give error
+    //if error, give error
     fs.readdir(oldDirectoryPath, (error: any, files: any) => {
       if (error) {
         console.error(`Error reading directory: ${error}`);
@@ -90,10 +101,15 @@ const renameFuncs = (req, res, next) => {
             return;
           }
           console.log("before dir Check");
+          console.log("she said do you love me i told her only partly");
           //if it's a directory (folder) and not a file, then we want to recursively process the files/folders in it
           if (stat.isDirectory()) {
-            if (oldFilePath.indexOf('/node_modules') !== -1) {
-              console.log(`${oldFilePath} contains '/node_modules' when we have already copied the node modules. Continuing without copying. Location: ${oldFilePath.indexOf('/node_modules')}`)
+            if (oldFilePath.indexOf("/node_modules") !== -1) {
+              console.log(
+                `${oldFilePath} contains '/node_modules' when we have already copied the node modules. Continuing without copying. Location: ${oldFilePath.indexOf(
+                  "/node_modules"
+                )}`
+              );
             } else {
               // if (!oldFilePath.indexOf(".git")) {
               console.log(oldFilePath + " is a directory");
@@ -123,7 +139,7 @@ const renameFuncs = (req, res, next) => {
               let cleanFilePath: string = oldFilePath
                 .replaceAll("/", "$")
                 .replaceAll(".", "_");
-                //maybe add umlaut thing
+              //maybe add umlaut thing
               cleanFilePath = cleanFilePath.slice(1);
 
               //invoke the transform and give the result to modified code
@@ -152,4 +168,4 @@ const renameFuncs = (req, res, next) => {
 
 // renameFuncs()
 
-module.exports = renameFuncs
+module.exports = renameFuncs;
