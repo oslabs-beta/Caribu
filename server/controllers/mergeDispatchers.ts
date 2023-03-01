@@ -1,11 +1,4 @@
 const mergeDispatchersExport = (req, res, next) => {
-  console.log("****************************************************************************************************************")
-  console.log("****************************************************************************************************************")
-  console.log("******************************************************IN MGERGETREES**********************************************************")
-  console.log("****************************************************************************************************************")
-  console.log("****************************************************************************************************************")
-  console.log("****************************************************************************************************************")
-  console.log("****************************************************************************************************************")
   const originalTree = require('../originalAppTree.json')
   const renamedTree = require('../renamedAppTree.json')
   const fs = require('fs')
@@ -504,15 +497,16 @@ const mergeDispatchersExport = (req, res, next) => {
 
   mergedTree.boundDispatchers.forEach(bd => {
     let newObj = {}
+    newObj.routeName = bd.path
     for (const key in bd.endpoints) {
-      newObj.routeName = key
+      // newObj.routeName = key
       const methods = bd.endpoints[key].methods
       newObj.routeMethods = {}
       let method = Object.keys(methods)[0]
       newObj.routeMethods[method] = {middlewares : []}
       let middleware = bd.endpoints[key].middlewareChain.middlewareChain
       while (middleware) {
-        console.log(middleware)
+        // console.log(middleware)
         let mwObj = {}
         if (!middleware.isThirdParty) {
           mwObj.functionInfo = {

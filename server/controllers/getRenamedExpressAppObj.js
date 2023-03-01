@@ -8,8 +8,6 @@ var getRenamedObjExport = function (req, res, next) {
     //**** NEED TO MAKE THIS DYNAMIC ****
     var renamedServer = "../process/renamedServer";
     var expressApp = require(renamedServer + req.body.serverpath.replace(req.body.filepath, ""));
-    // const expressApp = require("../renamedServer/app.js");
-    // const expressApp = require('../copiedServerNamed/server.js')
     var app = expressApp;
     //NODES NEEDED
     // CLASS DEFINITIONS
@@ -32,7 +30,7 @@ var getRenamedObjExport = function (req, res, next) {
     // // })
     // //
     var BoundDispatcher = /** @class */ (function () {
-        function BoundDispatcher(boundDispatch) {
+        function BoundDispatcher(boundDispatch, fullPath) {
             this.path = "";
             this.bd = {};
             this.methods = null;
@@ -45,8 +43,6 @@ var getRenamedObjExport = function (req, res, next) {
             this.listAllBDEndpoints = function (r) {
                 //make general endpoint obj
                 var endpoints = {};
-                // console.log("in list all BOUND DISPATCH endpoints with folloring r:")
-                // console.log(r)
                 var newMWLL = new middlewareLL(r.route);
                 var newEndpoint = {};
                 newEndpoint[r.route.path] = {};
@@ -54,19 +50,10 @@ var getRenamedObjExport = function (req, res, next) {
                 newEndpoint[r.route.path]['path'] = r.route.path;
                 newEndpoint[r.route.path]['stack'] = r.route.stack;
                 newEndpoint[r.route.path]['middlewareChain'] = newMWLL;
-                // console.log('new BD endpoint')
-                // console.log(newEndpoint)
-                // r.route.stack.forEach((el) => {
-                //   console.log("stackEl", el)
-                //   // make endpoint-specific key in obj
-                //   endpoints[el?.route?.path] = {};
-                //   // make LLs of middleware functions for each specific endpoint
-                //   endpoints[el?.route?.path] = new middlewareLL(el.route);
-                // });
-                // return endpoints;
                 return newEndpoint;
             };
-            this.path = boundDispatch.route.path;
+            // this.path = boundDispatch.route.path;
+            this.path = fullPath || '/';
             this.router = boundDispatch;
             this.methods = boundDispatch.route.methods;
             this.stack = boundDispatch.route.stack;
@@ -86,81 +73,6 @@ var getRenamedObjExport = function (req, res, next) {
             this.listAllEndpoints = function (r) {
                 //make general endpoint obj
                 var endpoints = {};
-                // console.log("in list all endpoints with folloring r:")
-                // console.log(r)
-                // const recurseiveStackDive = (parentStack) => {
-                //   //if the parent has a stack, log all the children of the stack
-                //   if (parentStack?.stack) {
-                //     console.log("parentStack exists")
-                //     parentStack.stack.forEach(childStack => {
-                //       console.log("Child Stack Element:")
-                //       console.log(childStack)
-                //     })
-                //   }
-                // }
-                // recurseiveStackDive(r)
-                // const recursiveStackDive = (root, ogHandle) => {
-                //   console.log("root")
-                //   console.log(root)
-                //   if (root?.handle?.stack || root?.stack) {
-                //     let noRouter = true
-                //     root.handle.stack.forEach(stackEl => {
-                //       if (stackEl.name === 'bound dispatch' || stackEl.name === 'router') {
-                //         console.log("bd or router found")
-                //         noRouter = false
-                //         recursiveStackDive(stackEl, root)
-                //       }
-                //     })
-                //     if (noRouter) {
-                //       console.log("root.route.path", root.route.path)
-                //       endpoints[root.route.path] = new middlewareLL(root.route);
-                //     }
-                //   }
-                //   //check if there is a stack
-                //   //if there not
-                //   //if there is
-                //     //set a noRouter to true
-                //     //iterate through it
-                //       //if the el is a router or bound dispatcher
-                //         //set noRouter to false
-                //         //recursively call this function
-                //     //if noRouter is true
-                //       //this is a final endppoint, make a mw chain from its stack
-                //   // console.log("root")
-                //   // console.log(root)
-                //   // console.log("root.handle")
-                //   // console.log(root.handle)
-                //   // console.log("ogHandle")
-                //   // console.log(ogHandle)
-                //   // root.handle.stack.forEach((el) => {
-                //   //   console.log("IN FOR EACH of HANDLE STACK")
-                //   //   console.log(el)
-                //   //   console.log(el.handle)
-                //   //   // console.log(el.handle)
-                //   //   //if el does not have a path route
-                //   //   if (!el?.route?.path) {
-                //   //       //check to see if it is 
-                //   //       //recur until it does
-                //   //       recursiveStackDive(el, el.handle)
-                //   //       // el = el.handle
-                //   //       // el.stack.forEach(subEl => {
-                //   //       //     console.log(subEl)
-                //   //       // }
-                //   //   // )
-                //   //   } else {
-                //   //     //if it does
-                //   //     console.log("el.name")
-                //   //     console.log(el.name)
-                //   //     console.log("el.route?.stack")
-                //   //     console.log(el.route?.stack)
-                //   //     // make endpoint-specific key in obj
-                //   //     endpoints[el.route.path] = {};
-                //   //     // make LLs of middleware functions for each specific endpoint
-                //   //     endpoints[el.route.path] = new middlewareLL(el.route);
-                //   //   }
-                //   // })
-                // }
-                // recursiveStackDive(r, 'NA')
                 r.handle.stack.forEach(function (el) {
                     var _a, _b;
                     // make endpoint-specific key in obj
@@ -208,15 +120,10 @@ var getRenamedObjExport = function (req, res, next) {
                 var indexInChain = 0;
                 // iterate through ll and log the fucnction position, route, and function definition
                 while (current) {
-                    // console.log(
-                    //   `\n Function #${indexInChain} in ${this.path}:`.bold.green,
-                    //   `\n ${current.funcString} \n`
-                    // );
                     indexInChain++;
                     current = current.nextFunc;
                 }
             };
-            // console.log("in middlewreLL with subroute:", subRoute)
             //this method is HTTP method, not js method
             this.methods = subRoute.methods;
             //this is currently always indefined
@@ -243,29 +150,45 @@ var getRenamedObjExport = function (req, res, next) {
     // create app node
     var appTree = new AppTree(app);
     var dispatcherArr = [];
+    var regexToPath = function (regex) {
+        var newArr = regex.split('');
+        var filteredArr = newArr.filter(function (el) { return el.toUpperCase() !== el.toLowerCase() || el === ":"; });
+        return filteredArr.join('');
+    };
     //pass in a router stack
-    var routerRecur = function (router, type) {
+    var routerRecur = function (router, type, path) {
         var _a;
+        if (path === void 0) { path = ''; }
         //make a noRouters thign equal to true
         var noRouters = true;
-        // console.log("routerREcur with type ", type, " and router :", router)
+        var regexPath = '';
+        var newPath = path;
+        if ((router === null || router === void 0 ? void 0 : router.regexp) && path.length === 0) {
+            regexPath = regexToPath(router.regexp.source);
+            newPath = "".concat(path, "/").concat(regexPath, "/");
+        }
         if ((_a = router === null || router === void 0 ? void 0 : router.handle) === null || _a === void 0 ? void 0 : _a.stack) {
             //for each element in the router stack
             router.handle.stack.forEach(function (stackEl) {
                 //if element is a bound Dispatcher
                 if (stackEl.name === 'bound dispatch') {
-                    // console.log("founstackEl bd")
                     //update noRouter to false
                     noRouters = false;
                     // routerRecur(stackEl, 'bd')
                     stackEl.route.stack.forEach(function (bdStackEl) {
-                        // console.log("bdStackEl:", bdStackEl)
                     });
                     //call boundDisaptcher creator
-                    // console.log("bound dispatch router", stackEl)
-                    var newBD = new BoundDispatcher(stackEl);
-                    console.log(newBD.path, newBD.methods);
-                    // console.log("new boudn dispatcher is; ", newBD)
+                    console.log("regexPath", regexPath);
+                    console.log("newPath", newPath);
+                    console.log("stackEl.route.path", stackEl.route.path);
+                    var bdPath = "".concat(newPath, "/").concat(stackEl.route.path, "/");
+                    console.log(bdPath.indexOf('//'));
+                    while (bdPath.indexOf('//') >= 0) {
+                        console.log(bdPath);
+                        bdPath = bdPath.replace('//', '/');
+                    }
+                    console.log("new bd path********************************************************************\n", bdPath);
+                    var newBD = new BoundDispatcher(stackEl, bdPath);
                     appTree.boundDispatchers.push(newBD);
                     dispatcherArr.push(newBD);
                 }
@@ -274,21 +197,17 @@ var getRenamedObjExport = function (req, res, next) {
                     //update noRouter to false
                     noRouters = false;
                     //recursively call this function
-                    routerRecur(stackEl, 'router');
+                    routerRecur(stackEl, 'router', newPath);
                 }
                 if (noRouters) {
                     if (type === 'router') {
                         var newRouter = new Router(router);
-                        // console.log('newRouter is ', newRouter);
                         appTree.routers.push(newRouter);
-                        console.log(newRouter.path, newRouter.methods);
+                        // console.log(newRouter.path, newRouter.methods)
                     }
                     else if (type === 'bd') {
-                        // console.log("bound dispatch router", router)
                         var newBD = new BoundDispatcher(router);
-                        // console.log("new boudn dispatcher is; ", newBD)
                         appTree.boundDispatchers.push(newBD);
-                        console.log(newBD.path, newBD.methods);
                         dispatcherArr.push(newBD);
                     }
                 }
@@ -297,93 +216,27 @@ var getRenamedObjExport = function (req, res, next) {
         else {
             if (type === 'router') {
                 var newRouter = new Router(router);
-                // console.log('newRouter is ', newRouter);
                 appTree.routers.push(newRouter);
-                console.log(newRouter.path, newRouter.methods);
             }
             else if (type === 'bd') {
-                // console.log("bound dispatch router", router)
                 var newBD = new BoundDispatcher(router);
-                // console.log("new boudn dispatcher is; ", newBD)
                 appTree.boundDispatchers.push(newBD);
-                console.log(newBD.path, newBD.methods);
                 dispatcherArr.push(newBD);
             }
         }
     };
-    //if noRouter is true
-    //const newRouter: object = new Router(router);
-    //console.log('newRouter is ', newRouter);
-    //appTree.routers.push(newRouter);
-    //pass in an element in a router stack
-    //if element is a bound Dispatcher
-    //call boundDisaptcher creator
-    //if the element is a router
-    //recursively call this function
-    //if element is neither
-    //
-    //recur down routers
-    // const recursiveStackDive = (parentStack) => {
-    // //if the parent has a stack, log all the children of the stack
-    // if (parentStack?.stack) {
-    //   console.log("parentStack exists")
-    //   parentStack.stack.forEach(childStack => {
-    //     console.log("Child Stack Element:")
-    //     console.log(childStack)
-    //   })
-    //   }
-    // }
-    // recursiveStackDive(r)
     // look at the routers stack
     appTree.app._router.stack.forEach(function (router) {
-        // console.log('router is ', router);
-        // console.log('router name is ', router.name);
-        // console.log('router is ', router);
         // if route is a bound dispatcher, create a new boundDispatcher
         if (router.name === "bound dispatch") {
             routerRecur(router, 'bd');
-            // console.log("found bound dispatcher")
-            // const newBD: object = new BoundDispatcher(router);
-            // appTree.boundDispatchers.push(newBD);
         }
         // if the route is a router, create a new router
         if (router.name === "router") {
             routerRecur(router, 'router');
-            // console.log("router handle stack:")
-            // console.log(router.handle.stack)
-            // console.log("router handle stack[0].handle.stack:")
-            // console.log(router.handle.stack[0].handle.stack)
-            // console.log("router handle stack.[0].handle.stack[0].handle.stack")
-            // console.log(router.handle.stack[0].handle.stack[0].handle.stack[0])
-            // console.log(router.handle.stack[0].handle.stack[0].handle.stack[1])
-            // console.log(router.handle.stack[0].handle.stack[0].handle.stack[2])
-            // console.log(router.handle.stack[0].handle.stack[0].handle.stack[3])
-            // const newRouter: object = new Router(router);
-            // console.log('newRouter is ', newRouter);
-            // appTree.routers.push(newRouter);
         }
     });
-    // //no apptree.boundDispatchers yet
-    // // console.log(appTree);
-    // appTree.routers.forEach((el) => {
-    //   for (let endpoint in el.endpoints) {
-    //     // console.log(el.endpoints[endpoint].stack)
-    //     // console.log("THIS IS ENDPOINT: ", endpoint);
-    //     // console.log("THIS IS ENDPOINT MW STACK: ", el.endpoints[endpoint].stack);
-    //   }
-    //   // // el.endpoints.forEach(elEnd => {
-    //   //   console.log(elEnd.middlewareChain)
-    //   // })
-    // });
-    console.log("DISPATCHER ARR:");
-    // console.log(dispatcherArr)
-    dispatcherArr.forEach(function (el) {
-        el.stack.forEach(function (stackEl) {
-            console.log(stackEl.handle);
-        });
-    });
     var originalAppTree = appTree;
-    // console.log('renamedappTree before writeFileSync is ', originalAppTree);
     fs.writeFileSync("renamedAppTree.json", JSON.stringify(originalAppTree), function (error) {
         if (error)
             throw error;

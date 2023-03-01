@@ -1,11 +1,4 @@
 var mergeDispatchersExport = function (req, res, next) {
-    console.log("****************************************************************************************************************");
-    console.log("****************************************************************************************************************");
-    console.log("******************************************************IN MGERGETREES**********************************************************");
-    console.log("****************************************************************************************************************");
-    console.log("****************************************************************************************************************");
-    console.log("****************************************************************************************************************");
-    console.log("****************************************************************************************************************");
     var originalTree = require('../originalAppTree.json');
     var renamedTree = require('../renamedAppTree.json');
     var fs = require('fs');
@@ -448,15 +441,16 @@ var mergeDispatchersExport = function (req, res, next) {
     var finalObj = [];
     mergedTree.boundDispatchers.forEach(function (bd) {
         var newObj = {};
+        newObj.routeName = bd.path;
         for (var key in bd.endpoints) {
-            newObj.routeName = key;
+            // newObj.routeName = key
             var methods = bd.endpoints[key].methods;
             newObj.routeMethods = {};
             var method = Object.keys(methods)[0];
             newObj.routeMethods[method] = { middlewares: [] };
             var middleware = bd.endpoints[key].middlewareChain.middlewareChain;
             while (middleware) {
-                console.log(middleware);
+                // console.log(middleware)
                 var mwObj = {};
                 if (!middleware.isThirdParty) {
                     mwObj.functionInfo = {
