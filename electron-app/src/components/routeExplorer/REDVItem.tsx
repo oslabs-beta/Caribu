@@ -39,15 +39,19 @@ export default function REDVItem(props: REDVItemProps) {
   console.log(props.depInfo)
   if (props.upOrDown === 'up') {
     const { upVarName, upVarFile, originalDeclaration } = props.depInfo
-    const { definition, position, funcName } = originalDeclaration
+    const { definition, position, funcName, line } = originalDeclaration
     console.log("original def name: ", funcName)
     // console.log(middleware.functionInfo.funcDef)
     // console.log(middleware.functionInfo.funcDef.replace(upVarName, `<mark>${upVarName}</mark>`))
     console.log("mwLib[funcName]", mwLibrary[funcName])
     console.log("originalDeclaration.position", position)
     const [userFilePath, relativeFilePath] = convertToUserFilePath(upVarFile)
-    const vsCodeLink = `vscode://file${userFilePath}:${position[0]}:${position[1]}`
-    console.log("newVSCodeLink", vsCodeLink)
+    let linkEl = null
+    if (line) {
+      const vsCodeLink = `vscode://file${userFilePath}:${line[0]}:${line[1]}`
+      console.log("newVSCodeLink", vsCodeLink)
+      linkEl = <a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>
+    }
 
     return (
 
@@ -56,7 +60,7 @@ export default function REDVItem(props: REDVItemProps) {
               <div style={{justifyContent : 'left', marginBottom : '5px'}}>
                   <h3>{upVarName}</h3>
                   <p style={{fontSize : '0.7em'}}><i>Originally Declared In:{"\n"}{upVarFile}</i></p>
-                  <a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>
+                  {linkEl}
               </div>
             <Accordion style={{width : '100%'}}>
                 <AccordionSummary>Original Definition</AccordionSummary>
