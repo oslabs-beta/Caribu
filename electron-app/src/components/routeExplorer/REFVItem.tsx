@@ -81,9 +81,10 @@ export default function REFVItem(props: REFVItemProps) {
     const [start, end] = funcPosition
     // console.log(start, end)
     // console.log(funcDef)
+    
 
     let button = []
-    if (mwLibrary[funcName].deps.upstream.dependents.length || mwLibrary[funcName].deps.downstream.dependents.length) {
+    if (mwLibrary[funcName]?.deps?.upstream?.dependents.length || mwLibrary[funcName]?.deps?.downstream?.dependents.length) {
         button.push(<Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button>)
     }
 

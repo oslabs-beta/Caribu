@@ -240,7 +240,6 @@ export const fetchRoutes = () => {
 
 
 
-
     // const newJSON = require('../exampleResponse.json')
     // const newJSON = require('../exampleResponseUs.json')
     const newJSON = require('../dispatchResponse_dep.json')
@@ -278,7 +277,7 @@ export const fetchRoutes = () => {
 
     dispatch(update_mwLibrary(funcLibrary));
   };
-};
+// };
 //     console.log("viewsSlice anonymous thunk func fired");
 //     console.log(
 //       "fetching to /api/routes with filepath: ",
