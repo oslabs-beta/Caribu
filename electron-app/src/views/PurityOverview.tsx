@@ -56,23 +56,35 @@ const routes = useSelector((state: RootState) => state.views.routes);
 const funcLibrary = {}
 
 //This function parses through the routes object to isolate the middlewares down to an object with routename, method, and functionname.
-function parseRoutes(){
+function parseRoutes(strs: string[] = ['']){
+  strs = strs.filter((el) => el.length);
+
   const routesDict: object= {};
   for(let i = 0; i < routes.length; i++){
-    const route: object = routes[i]
-    routesDict[route.routeName] = {};
+    const route: object = routes[i];
+    if(!routesDict[route.routeName]) routesDict[route.routeName] = {};
     
     for(const key in route.routeMethods){
       const middlewares = route.routeMethods[key].middlewares;
       routesDict[route.routeName][key] = [];
+      // if string is in function name at all, be sure to skip over that function.
+      // assume it comes from a value in the store.
+      // if string not provided, leave string empty
+      // be sure to make sure that string.length is > 0 for the includes method in this.
+      // think of maybe maing it an array of string for multiple options.
       for(let j = 0; j < middlewares.length; j++){
-        let funcName = middlewares[j].functionInfo.funcName
+        const funcName = middlewares[j].functionInfo.funcName;
+        if(strs.map((el: string) => funcName.toLowerCase().includes(el.toLowerCase())).reduce((acc: boolean, el: boolean) => el || acc, false)) continue;
+        if(middlewares[j].functionInfo.funcAssignedTo)
+          if(strs.map((el: string) => middlewares[j].functionInfo.funcAssignedTo.toLowerCase().includes(el.toLowerCase())).reduce((acc: boolean, el: boolean) => el || acc, false)) continue;
         if (!funcLibrary[funcName]) {
           funcLibrary[funcName] = middlewares[j].functionInfo
         }
         routesDict[route.routeName][key].push(middlewares[j].functionInfo.funcName);
       }
+      if(routesDict[route.routeName][key].length === 0) delete routesDict[route.routeName][key];
     }
+    if(Object.keys(routesDict[route.routeName]).length === 0) delete routesDict[route.routeName];
   }
   console.log("routesDict", routesDict)
   return routesDict;
@@ -148,10 +160,13 @@ function generateContainers(){
   }
 
   // routes object to => { routes: { methods : [functions] } }
+  console.log(routes)
   const reducedRoutes = parseRoutes();
+  console.log('reducedRoutes', reducedRoutes)
 
   // reducedRoutes object to => {routes: Set(functions) }
   const isoFuncs: object = isolateRouteFunctions();
+  console.log('isofuncs', isoFuncs)
 
   // sharedMiddlewares is a set with Node objects that contain their unique shared route lists and related functions.
   const sharedMiddlewares: Array<Node> = groupSharedMiddlewares(isoFuncs);
