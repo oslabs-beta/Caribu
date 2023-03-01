@@ -1,10 +1,15 @@
 const fs = require("fs");
-const { copiedServer, renamedServer, node_modules, processFolder } = require("./serverDirPaths");
+const { copiedServer, renamedServer, node_modules, processFolder, appTreeFolder } = require("./serverDirPaths");
 const copyServer = (req, res, next) => {
   console.log("IN COPYSERVER");
   //make sure process folder exists
   if (!fs.existsSync(processFolder)) { // The fs.existsSync() method is used to synchronously check if a file already exists in the given path or not. It returns a boolean value which indicates the presence of a file.
     fs.mkdirSync(processFolder) // The fs.mkdirSync() method is an inbuilt application programming interface of fs module which provides an API for interacting with the file system in a manner closely modeled around standard POSIX functions.
+    fs.mkdirSync(appTreeFolder)
+  } else {
+    fs.rmSync(processFolder, { recursive: true, force: true })
+    fs.mkdirSync(processFolder)
+    fs.mkdirSync(appTreeFolder)
   }
 
   //clear out any existing copied server

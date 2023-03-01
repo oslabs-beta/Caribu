@@ -20,25 +20,47 @@ interface REDVItemProps {
 
 export default function REDVItem(props: REDVItemProps) {
   const mwLibrary = useSelector((state: RootState) => state.views.mwLibrary);
+  const filePath = useSelector((state: RootState) => state.views.filepath);
+  console.log('filePAth:', filePath)
   console.log(mwLibrary)
   const {middleware} = props
   console.log(middleware)
   
+
+  const convertToUserFilePath = (str : string):string[] => {
+    const copiedServerIndex = str.indexOf('copiedServer')
+    const relativeFilePath = str.slice(copiedServerIndex + 12)
+    let userFilePath = filePath + relativeFilePath
+    // const relativeFilePath = funcFile.replace(serverPath, '')
+    // console.log("Fixed VSCode link:", userFilePath)
+    return [userFilePath, relativeFilePath]
+}
+
   console.log(props.depInfo)
   if (props.upOrDown === 'up') {
     const { upVarName, upVarFile, originalDeclaration } = props.depInfo
-    const { definition, position, funcName } = originalDeclaration
+    const { definition, position, funcName, line } = originalDeclaration
     console.log("original def name: ", funcName)
     // console.log(middleware.functionInfo.funcDef)
     // console.log(middleware.functionInfo.funcDef.replace(upVarName, `<mark>${upVarName}</mark>`))
-    console.log(mwLibrary[funcName])
+    console.log("mwLib[funcName]", mwLibrary[funcName])
+    console.log("originalDeclaration.position", position)
+    const [userFilePath, relativeFilePath] = convertToUserFilePath(upVarFile)
+    let linkEl = null
+    if (line) {
+      const vsCodeLink = `vscode://file${userFilePath}:${line[0]}:${line[1]}`
+      console.log("newVSCodeLink", vsCodeLink)
+      linkEl = <a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>
+    }
+
     return (
 
       <div style={{margin : '5px'}}>
         <div style={funcBoxStyling}>
               <div style={{justifyContent : 'left', marginBottom : '5px'}}>
                   <h3>{upVarName}</h3>
-                  <p style={{fontSize : '0.7em'}}><i>Originally Declared In:{"\n"}{funcName}</i></p>
+                  <p style={{fontSize : '0.7em'}}><i>Originally Declared In:{"\n"}{upVarFile}</i></p>
+                  {linkEl}
               </div>
             <Accordion style={{width : '100%'}}>
                 <AccordionSummary>Original Definition</AccordionSummary>

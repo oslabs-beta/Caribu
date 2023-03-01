@@ -1,5 +1,4 @@
-const mergeTreesExport = (req, res, next) => {
-  // console.log("in mergeTrees")
+const mergeDispatchersExport = (req, res, next) => {
   const originalTree = require('../originalAppTree.json')
   const renamedTree = require('../renamedAppTree.json')
   const fs = require('fs')
@@ -16,6 +15,7 @@ const mergeTreesExport = (req, res, next) => {
 
   class FuncObject {
     constructor (path, filePath, code, ast) {
+      this.code = code
       this.path = path
       this.filePath = filePath
       this.globalVars = this.listGlobals(ast, code, filePath)
@@ -44,11 +44,13 @@ const mergeTreesExport = (req, res, next) => {
       ast.program.body.forEach((bodyNode) => {
         if (bodyNode.type === 'VariableDeclaration') {
           bodyNode.declarations.forEach(declaration => {
+            // console.log("bodyNode.declaration", declaration)
             let declarationObj = {}
             declarationObj.declaredName = declaration.id.name
             declarationObj.type = bodyNode.kind
             declarationObj.definition = code.slice(bodyNode.start, bodyNode.end)
             declarationObj.position = [bodyNode.start, bodyNode.end] 
+            declarationObj.line = [bodyNode.loc.start.line, bodyNode.loc.end.line] 
             fileVars[filePath].globalDeclarations[declaration.id.name] = declarationObj
           })
         }
@@ -69,18 +71,11 @@ const mergeTreesExport = (req, res, next) => {
     }
 
     getLine(path) {
-      console.log("GET LINE INFO: ")
-      // console.dir(path.node.loc.start.line)
-      // console.dir(path.node.loc.start)
       return [path.node.loc.start.line, path.node.loc.start.column]
     }
 
     getAssignedTo (path, code) {
-      // console.log("IN ASSINGNED TO")
-      // console.log(code.slice(path.node.start, path.node.end))
       if (path.parent.type === 'AssignmentExpression') {
-        // console.log(path.parent.left)
-        // console.log(code.slice(path.parent.left.start, path.parent.left.end))
         return code.slice(path.parent.left.start, path.parent.left.end)
       }
     }
@@ -109,22 +104,15 @@ const mergeTreesExport = (req, res, next) => {
       const updatesArr = []
 
       function findOriginalDeclaration (varName, filePath, funcName) {
-        // console.log(varName)
-        // console.log(fileVars[filePath])
         let originalDeclaration = false
         // go to fileVars[filePath]
         // loop through globals
         //for variable in globals
-        // console.log("varName", varName)
-        // console.log("filePath", filePath)
-        // console.log("fileVars[filePath]", fileVars[filePath])
-        
-        // console.log(fileVars[filePath])
         for (let declaration in fileVars[filePath].globalDeclarations) {
           //if declaredName matchesVarName
-          if (declaration.declaredName === varName) {
+          if (fileVars[filePath].globalDeclarations[declaration].declaredName === varName) {
             // originalDeclaration = globals[variable]
-            originalDeclaration = declaration
+            originalDeclaration = fileVars[filePath].globalDeclarations[declaration]
           }
         }
         // loop through functionDeclarations to make sure it doesnt appear in there
@@ -138,10 +126,7 @@ const mergeTreesExport = (req, res, next) => {
 
         if (varNotAlreadyDeclared) {
           fileVars[filePath].functionLevelDeclarations.forEach(declaration => {
-            // console.log('PLEASEEEEEEEEEE')
               if (declaration.declaredName === varName) {
-                // console.log(funcName, declaration.funcName)
-                // console.log(declaration)
                 originalDeclaration = declaration
               }
           })
@@ -162,34 +147,24 @@ const mergeTreesExport = (req, res, next) => {
             updatePosition : [],
             originallyDeclared : false
           }
-          // console.log("ASSINGMENT EXPRESSION LEFT")
-            // console.log(path)
-            // console.log(path.node.left)
             if (path.node.left.type === 'MemberExpression') {
-              // console.log('dependency - object / memberExpression: ', code.slice(path.node.left.start, path.node.left.end))
               newUpdateObj.dependentFuncName = newUpdateObj.updateName = code.slice(path.node.left.start, path.node.left.end)
               newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
               newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
             if (path.node.left.type === 'Identifier') {
-              // console.log("dependency - identifier: ", path.node.left.name)
               newUpdateObj.dependentFuncName = newUpdateObj.updateName = path.node.left.name
               newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
               newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
-            // console.log("3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n NEW UPDATE OBJ \n 3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n")
             if (newUpdateObj.originallyDeclared) {
-              // console.log("VALID UPDATE:")
-              // console.log(newUpdateObj)
               updatesArr.push(newUpdateObj)
             } else {
-              // console.log("INVALID UPDATE (not pushed):")
-              // console.log(newUpdateObj)
+              //do nothing
             }
             
-            // console.log("path.expression.args:" , path.expression.arguments)
         }
       }
 
@@ -206,40 +181,30 @@ const mergeTreesExport = (req, res, next) => {
             updatePosition : [],
             originallyDeclared : false
           }
-          // console.log("ASSINGMENT EXPRESSION LEFT")
-            // console.log(path)
-            // console.log(path.node.left)
             if (path.node.argument === 'MemberExpression') {
-              // console.log('dependency - object / memberExpression: ', code.slice(path.node.left.start, path.node.left.end))
               newUpdateObj.dependentFuncName = newUpdateObj.updateName = code.slice(path.node.argument.start, path.node.argument.end)
               newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
               newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
             if (path.node.argument === 'Identifier') {
-              // console.log("dependency - identifier: ", path.node.left.name)
               newUpdateObj.dependentFuncName = newUpdateObj.updateName = path.node.argument.name
               newUpdateObj.dependentFuncDef = newUpdateObj.updateDefinition = code.slice(path.node.start, path.node.end)
               newUpdateObj.dependentFuncPosition = newUpdateObj.updatePosition = [path.node.start, path.node.end]
               newUpdateObj.originallyDeclared = findOriginalDeclaration(newUpdateObj.updateName, filePath)
             }
-            // console.log("3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n NEW UPDATE OBJ \n 3824628957w389456w489553824628957w389456w489553824628957w389456w48955\n")
             if (newUpdateObj.originallyDeclared) {
-              // console.log("VALID UPDATE:")
-              // console.log(newUpdateObj)
               updatesArr.push(newUpdateObj)
             } else {
-              // console.log("INVALID UPDATE (not pushed):")
-              // console.log(newUpdateObj)
+              //do nothing
             }
             
-            // console.log("path.expression.args:" , path.expression.arguments)
         }
       }
 
       path.traverse(assignmentChecker)
       path.traverse(updateChecker)
-
+      console.log(updatesArr)
       this.updates = updatesArr
     }
 
@@ -247,21 +212,10 @@ const mergeTreesExport = (req, res, next) => {
     listDeclares (path, filePath, code) {
       const funcName = this.funcName
 
-
-      //any variables that 
-        //other functions declare
-        //or ar declared in a global scope
-        //that appear in the function
-        //and are not updated
-
-      // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n IN LIST DECLARES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%%%%%%%%%%%%%%%%%%%%%%%%%%')
-      // console.log(path)
       const declaresArr = []
       const nestedVisitor = {
         VariableDeclaration(path) {
           //*******NEED TO CONTROL FOR FOROF AND FORIN STATEMENTS (eg. const char of characters)
-          // console.log(path)
-          // console.log(path.node.declarations)
           path.node.declarations.forEach(declaration => {
             let declarationObj = {}
             declarationObj.funcName = funcName
@@ -271,7 +225,6 @@ const mergeTreesExport = (req, res, next) => {
             declarationObj.definition = code.slice(path.node.start, path.node.end)
             declarationObj.filePath = filePath
             declarationObj.position = [path.node.start, path.node.end] 
-            // console.log(declarationObj)
             declaresArr.push(declarationObj)
         })
 
@@ -289,30 +242,32 @@ const mergeTreesExport = (req, res, next) => {
       let code = fs.readFileSync(filePath).toString()
       const funcName = this.funcName
       let dependsList = []
+      code = this.code
         //a dependency is an identifier...
         //that appears in the global/func variables list for its given file that is...
           //any identifier whose direct parent is neither: assignment expression, update, expression, or member expression
           //any member expression whose direct parent is neither: assignment, update expression, or member expression
 
       function findOriginalDeclaration (varName, filePath, funcName) {
-        // console.log(varName)
-        // console.log(fileVars[filePath])
+        // if (varName === 'testNum') {
+        //   console.log("in FIND ORIGIALN DEC WITH TESTNUM")
+        //   console.log(fileVars[filePath].globalDeclarations)
+        // }
         let originalDeclaration = false
         // go to fileVars[filePath]
         // loop through globals
         //for variable in globals
-        // console.log("varName", varName)
-        // console.log("filePath", filePath)
-        // console.log("fileVars[filePath]", fileVars[filePath])
-        
-        // console.log(fileVars[filePath])
         for (let declaration in fileVars[filePath].globalDeclarations) {
           //if declaredName matchesVarName
-          if (declaration.declaredName === varName) {
+          // if (varName === 'testNum') console.log(fileVars[filePath].globalDeclarations[declaration], varName)
+          if (fileVars[filePath].globalDeclarations[declaration].declaredName === varName) {
             // originalDeclaration = globals[variable]
-            originalDeclaration = declaration
+            originalDeclaration = fileVars[filePath].globalDeclarations[declaration]
+            // console.log("hit!!")
+            // return originalDeclaration
           }
         }
+        // if (varName === 'testNum') console.log(originalDeclaration)
         // loop through functionDeclarations to make sure it doesnt appear in there
         let varNotAlreadyDeclared = true
         fileVars[filePath].functionLevelDeclarations.forEach(declaration => {
@@ -320,30 +275,38 @@ const mergeTreesExport = (req, res, next) => {
             varNotAlreadyDeclared = false
           }
         })
+        
+        // this.declares.forEach(declaration => {
+        //   if (funcName)
+        // })
         //foreach declaration in functiondelcattion
+        // if (varName === 'testNum') console.log(originalDeclaration)
 
         if (varNotAlreadyDeclared) {
           fileVars[filePath].functionLevelDeclarations.forEach(declaration => {
-            // console.log('PLEASEEEEEEEEEE')
               if (declaration.declaredName === varName) {
-                // console.log(funcName, declaration.funcName)
-                // console.log(declaration)
                 originalDeclaration = declaration
               }
           })
         }
+        
+        // if (varName === 'testNum') console.log(originalDeclaration)
+        // console.log(originalDeclaration)
         return originalDeclaration
       }   
 
 
+
       // NEED A MEMBER EXPRESSION VERSION OF THIS TRAVERSAL
+
       path.traverse({
         Identifier(path) {
-          // console.log("PARENT OF IDENTIFIER IN LIST DEPENDS")
           if (path.parent.type !== 'MemberExpression' && path.parent.type !== 'UpdateExpression' && path.parent.type !== 'AssignmentExpression') {
-            // console.log(path)
             let originalDeclaration = findOriginalDeclaration(path.node.name, filePath, funcName)
+            // if (path.node.name === 'testNum') console.log("FOUND TEST NUM")
             if (originalDeclaration) {
+              // console.log("made it to original declaration with ")
+              // console.log(path.node)
               let dependsVar = {
                 upVarName : path.node.name,
                 upVarFile : filePath,
@@ -352,17 +315,29 @@ const mergeTreesExport = (req, res, next) => {
                 location : [path.node.start, path.node.end],
                 originalDeclaration
               }
+              // console.log(originalDeclaration)
               dependsList.push(dependsVar)
-              // console.log(dependsVar)
             }
           }
         }
       })
+
+
+
+
+      // console.log("this.declares", this.declares)
+      dependsList = dependsList.filter(dep => {
+        let check = true
+        this.declares.forEach(dec => {
+          if (dec.declaredName === dep.upVarName) check = false
+        })
+        return check
+      })
       this.depends = dependsList
+      // console.log("this.depends", this.depends)
     }
 
     listReturns (path, code) {
-      // console.log(path)
       let returnVal = []
 
       //if a is a one-liner that sends a response or otherwise calls a function, deal with it (eg. `(req, res) => json.status(200).json({obj:ect})`)
@@ -386,26 +361,13 @@ const mergeTreesExport = (req, res, next) => {
     deletePath () {
       delete this.path
     }
+
+    deleteCode () {
+      delete this.code
+    }
   }
 
 
-  function info (tree) {
-    // console.log('**** TREE.ROUTERS **** {object}')
-    // // console.log(tree)
-    // console.log('**** TREE.ROUTERS **** [array]')
-    // // console.log(tree.routers)
-    // console.log('**** TREE.ROUTERS.STACK **** [array]')
-    // // tree.routers.forEach(el => {
-    // //   console.log(el)
-    // // })
-    // console.log('**** TREE.ROUTERS.STACK[i].endpoints{}.stack **** {obj}')
-    // tree.routers.forEach(el => {
-    //   for (let endpoint in el.endpoints) {
-    //     console.log(el.endpoints[endpoint])
-    //   }
-    // })
-    // stack.forEach(el => console.log(el))
-  }
 
   function isolateNumbers(string) {
     const startIndex = string.indexOf('CBUSTART') + 8;
@@ -417,7 +379,6 @@ const mergeTreesExport = (req, res, next) => {
         break;
       }
     }
-    // console.log("NUMBERS: ", numbers)
     return numbers;
   }
 
@@ -425,10 +386,19 @@ const mergeTreesExport = (req, res, next) => {
     // const startIndex = string.indexOf('CBUPATH_$')+7 || string.indexOf('CBUPATH')+7
     const startIndex = string.indexOf('CBUPATH')+7
     let slicedString = string.slice(startIndex)
-    // console.log("orignal path from name", slicedString)
     let parsedPath = slicedString.replaceAll('$', '/').replaceAll('_','.').replaceAll('Ü','-')
-    // console.log("cleaned path from name", parsedPath)
     return parsedPath
+  }
+
+  function isolateName (string) {
+    // console.log("starting name", string)
+    let startOfName = string.indexOf('CBUNAME_')
+    let firstParen = string.indexOf('(', startOfName)
+    let firstSpace = string.indexOf(' ' ,startOfName)
+    let endOfName = Math.min(firstParen, firstSpace)
+    // console.log(startOfName, endOfName)
+    // console.log("ending name", string.slice(startOfName, endOfName))
+    return string.slice(startOfName, endOfName)
   }
 
   function isolateType (string) {
@@ -448,103 +418,76 @@ const mergeTreesExport = (req, res, next) => {
     // iterate through new tree
     //tree (obj)
     //routers (v. bound dispatch) [arr of {obj}]
+    const thirdPartyMwLib = {}
+    let thirdPartyMwCounter = 0
 
-    for (let routerNum = 0; routerNum < oldTree.routers.length; routerNum++) {
-        
-      for (let endpoint in oldTree.routers[routerNum].endpoints) {
-        // console.log('ENDPOINT', oldTree.routers[routerNum].endpoints[endpoint])
-        // console.log('RENAMED ENDPOINT VVVVVVVVV')
-        // console.log('RENAMED ENDPOINT', renamedTree.routers[routerNum].endpoints[endpoint])
-        
-        //loop through mw
-        let currentMw = oldTree.routers[routerNum].endpoints[endpoint]['middlewareChain']
-        let matchingMw = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain']
-        //iterate through ll
+    for (let bdNum = 0; bdNum < oldTree.boundDispatchers.length; bdNum++) {
+      for (let dispatcher in oldTree.boundDispatchers[bdNum]) {
+        let currentMw = Object.values(oldTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        let matchingMw = Object.values(renamedTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        // let currentMw = Object.values(oldTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        // let matchingMw = Object.values(renamedTree.boundDispatchers[bdNum]?.endpoints)[0]?.middlewareChain?.middlewareChain
+        // let matchingMw = renamedTree.boundDispatchers[bdNum]?.endpoints?.middlewareChain?.middlewareChain
         while (currentMw) {
-          // console.log("matchingMW", matchingMw)
-          // matchingMw.name = isolateName(matchingMw.funcString)
-          // currentMw.name = renamedTree.routers[routerNum].endpoints[endpoint]['middlewareChain'].name
-          currentMw.name = matchingMw.name
-          currentMw.type = isolateType(currentMw.name)
-          // console.log("CURRENT MW:",  currentMw)
-          // console.log("MATCHING MW:",  matchingMw)
-          currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-          // currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-          // currentMw.filePath = "." + isolatePath(currentMw.name)
-          currentMw.filePath = "/" + isolatePath(currentMw.name)
-          // currentMw.filePath = isolatePath(currentMw.name)
-          currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type)
+          let name = isolateName(matchingMw.funcString)
+          // console.log("this is name", name)
+          // console.log("this is name.length", name.length)
+          if (name.length) {
+            currentMw.isThirdParty = false
+            currentMw.name = isolateName(matchingMw.funcString)
+            currentMw.type = isolateType(currentMw.name)
+            currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
+            currentMw.filePath = "/" + isolatePath(currentMw.name)
+            // console.log(`filePath: ${currentMw.filePath} | startingPosition: ${currentMw.startingPosition} | type: ${currentMw.type}`)
+            currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type)
 
+          } else {
+            if (!thirdPartyMwLib[matchingMw.funcString]) {
+              currentMw.name = thirdPartyMwLib[matchingMw.funcString] = `CBUNAME_IMPORTEDMIDDLEWARE_${thirdPartyMwCounter}`
+              thirdPartyMwCounter++
+            }
+            currentMw.isThirdParty = true
+            currentMw.name = thirdPartyMwLib[matchingMw.funcString]
+            currentMw.type = '3P'
+            // console.log(currentMw)
+          }
           currentMw = currentMw.nextFunc
           matchingMw = matchingMw.nextFunc
         }
+
+        // let currentMw = oldTree.boundDispatchers[bdNum].endpoints
       }
+        
     }
-
-
-    // for (let bdNum = 0; bdNum < oldTree.boundDispatchers.length; bdNum++) {
-        
-    //   for (let endpoint in oldTree.boundDispatchers[bdNum].endpoints) {
-    //     // console.log('ENDPOINT', oldTree.boundDispatchers[bdNum].endpoints[endpoint])
-    //     // console.log('RENAMED ENDPOINT VVVVVVVVV')
-    //     // console.log('RENAMED ENDPOINT', renamedTree.boundDispatchers[bdNum].endpoints[endpoint])
-        
-    //     //loop through mw
-    //     let currentMw = oldTree.boundDispatchers[bdNum].endpoints[endpoint]['middlewareChain']['middlewareChain']
-    //     let matchingMw = renamedTree.boundDispatchers[bdNum].endpoints[endpoint]['middlewareChain']['middlewareChain']
-    //     //iterate through ll
-    //     while (currentMw) {
-    //       console.log("bd matching", matchingMw)
-    //       // matchingMw.name = isolateName(matchingMw.funcString)
-    //       // currentMw.name = renamedTree.boundDispatchers[bdNum].endpoints[endpoint]['middlewareChain'].name
-    //       currentMw.name = matchingMw.name
-    //       currentMw.type = isolateType(currentMw.name)
-    //       // console.log("CURRENT MW:",  currentMw)
-    //       // console.log("MATCHING MW:",  matchingMw)
-    //       currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-    //       // currentMw.startingPosition = parseInt(isolateNumbers(currentMw.name))
-    //       // currentMw.filePath = "." + isolatePath(currentMw.name)
-    //       currentMw.filePath = "/" + isolatePath(currentMw.name)
-    //       // currentMw.filePath = isolatePath(currentMw.name)
-    //       currentMw.funcInfo = getFuncInfo(currentMw.filePath, currentMw.startingPosition, currentMw.type)
-    //       currentMw = currentMw.nextFunc
-    //       matchingMw = matchingMw.nextFunc
-          
-    //     }
-    //   }
-    // }
 
 
     
     //
     
     // return the old tree with name properties on its middleware chain nodes
+    // console.log("OLD TREE:", oldTree)
     return oldTree
   }
+
+  
 
   const mergedTree = mergeTrees(originalTree, renamedTree)
 
   function getFuncInfo (filePath, startingIndex, funcType) {
-    // console.log("filepath in getFuncInfo:" , filePath)
     const code = fs.readFileSync(filePath).toString()
     let funcInfo = null
     const ast = parser.parse(code)
-    // console.log(funcType)
-    // console.log(ast)
     if (funcType === 'FUNCTIONDECLARATION') {
       traverse(ast, {
         //functions with names 
         FunctionDeclaration(path) {
-          // console.log("IN TRAVERSAL")
           // given that I have the info about the function in the AST, how can I access the location and pass it in?
           const start = path.node.loc.start.index;
           // check if the line number of interest is within the start and end lines of the function definition
             if (startingIndex === start) {
-              // console.log(`Function Named ${path.node.id.name}` , path.node);
               // stop the traversal once we have found the information we are looking for
               // because we are only interested in the first function definition that matches line number
               let newFuncInfo = new FuncObject(path, filePath, code, ast)
-              // console.log(newFuncInfo);
               funcInfo = newFuncInfo
               // path.stop();
             }
@@ -557,16 +500,13 @@ const mergeTreesExport = (req, res, next) => {
       traverse(ast, {
         //functions with names 
         FunctionExpression(path) {
-          // console.log("IN TRAVERSAL")
           // given that I have the info about the function in the AST, how can I access the location and pass it in?
           const start = path.node.loc.start.index;
           // check if the line number of interest is within the start and end lines of the function definition
             if (startingIndex === start) {
-              // console.log(`Function Named ${path.node.id.name}` , path.node);
               // stop the traversal once we have found the information we are looking for
               // because we are only interested in the first function definition that matches line number
               let newFuncInfo = new FuncObject(path, filePath, code, ast)
-              // console.log(newFuncInfo);
               funcInfo = newFuncInfo
               // path.stop();
             }
@@ -579,16 +519,13 @@ const mergeTreesExport = (req, res, next) => {
       traverse(ast, {
         //functions with names 
         ArrowFunctionExpression(path) {
-          // console.log("IN TRAVERSAL")
           // given that I have the info about the function in the AST, how can I access the location and pass it in?
           const start = path.node.loc.start.index;
           // check if the line number of interest is within the start and end lines of the function definition
             if (startingIndex === start) {
-              // console.log(`Function Named ${path.node.id.name}` , path.node);
               // stop the traversal once we have found the information we are looking for
               // because we are only interested in the first function definition that matches line number
               let newFuncInfo = new FuncObject(path, filePath, code, ast)
-              // console.log(newFuncInfo);
               funcInfo = newFuncInfo
               // path.stop();
             }
@@ -596,126 +533,82 @@ const mergeTreesExport = (req, res, next) => {
         
       });
     }
-    // console.log(funcInfo)
     return funcInfo
   } 
 
   const finalObj = []
 
-  // console.log(mergedTree)
-  // console.log(mergedTree.routers)
-  mergedTree.routers.forEach(route => {
-    // console.log(route.endpoints)
-    for (let endpoint in route.endpoints) {
-      let routeObj = {}
-      //save path to a variable
-      let endpointPath = route.endpoints[endpoint].path
-    
-      //save methods to a variable (may need to fix later for multiple endpoints on single route?)
-      let endpointMethod = Object.keys(route.endpoints[endpoint].methods)[0]
-    
-      // console.log(endpointPath, endpointMethod)
-      
-      //check if endpoint exists, if not, make it and an array for its methods
-      if (!routeObj[endpointPath]) {
-        // console.log("didnt exist")
-        routeObj.routeName = endpointPath
-        routeObj.routeMethods = {}
-        routeObj.routeMethods[endpointMethod] = {}
+  mergedTree.boundDispatchers.forEach(bd => {
+    let newObj = {}
+    newObj.routeName = bd.path
+    for (const key in bd.endpoints) {
+      // newObj.routeName = key
+      const methods = bd.endpoints[key].methods
+      newObj.routeMethods = {}
+      let method = Object.keys(methods)[0]
+      newObj.routeMethods[method] = {middlewares : []}
+      let middleware = bd.endpoints[key].middlewareChain.middlewareChain
+      while (middleware) {
+        // console.log(middleware)
+        let mwObj = {}
+        if (!middleware.isThirdParty) {
+          mwObj.functionInfo = {
+            funcName : middleware.name,
+            funcFile : middleware.filePath,
+            funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
+            funcDef : middleware.funcString,
+            funcAssignedTo : middleware.funcInfo.assignedTo,
+            funcLine : middleware.funcInfo.line,
+            isThirdParty : false
+          }
+          middleware.funcInfo.listDepends()
+          middleware.funcInfo.listUpdates()
+          middleware.funcInfo.deleteCode()
+          mwObj.deps =  {
+            upstream : { dependents : middleware.funcInfo.depends || []},
+            downstream : { dependents : middleware.funcInfo.updates || []}
+          }
+        } else {
+          mwObj.functionInfo = {
+            funcName : middleware.name,
+            funcFile : '',
+            funcPosition : [0,0],
+            funcDef : middleware.funcString,
+            funcAssignedTo : '',
+            funcLine : [0,0],
+            isThirdParty : true
+          }
+          mwObj.deps = {
+            upstream : { dependents : []},
+            downstream : { dependents : []}
+          }
+        }
+        // console.log("DEP CHECK")
+        // console.log(`${method} ${key} ${mwObj.funcName}`)
+        // console.dir(mwObj.deps, {depth : 4})
+
+        newObj.routeMethods[method].middlewares.push(mwObj)
+        middleware = middleware.nextFunc
       }
-      
-      // routeObj.routeMethods[endpointMethod] = {}
 
-      //this keeps the mwChain as a linkedList
-      // routeObj.routeMethods[endpointMethod].middlewareChain = route.endpoints[endpoint].middlewareChain
-
-      //this will make it into an array
-      routeObj.routeMethods[endpointMethod].middlewares = []
-      
-      let current = route.endpoints[endpoint].middlewareChain
-      while (current) {
-        // console.log("THIS IS CURRENT:", current)
-        current.funcInfo.listUpdates()
-        current.funcInfo.listDepends()
-        current.funcInfo.deletePath()
-        routeObj.routeMethods[endpointMethod].middlewares.push(current)
-        current = current.nextFunc
-      }
-
-
-      // console.log(route.endpoints[endpoint].middlewareChain)
-      finalObj.push(routeObj)
     }
+    finalObj.push(newObj)
   })
 
+  // console.log("FINAL OBJECT FOR RETURN", finalObj)
 
-  // //Upstream dependencies:
-  // let upDep : any = {
-  //   name : "varName",
-  //   file : "varFile",
-  //   positionUsedInFunc : 69,
-  //   definition : 'stringOfDefinition'
-  // }
 
-  // let interDep : any = {
-  //   name : "varName",
-  //   file : "varFile",
-  //   positionMutatedInFunc : [69],
-  //   definition : ['maybe this and posMutatedInFunc should be the same?'],
-  //   expressionsThatUse : [{
-  //     expressionType : 'variable or function?',
-  //     expressionName : 'variable or function name (or anonymous func) ((might be cool to associate with specific MW))',
-  //     expressionFile : 'expFile',
-  //     positionUsedInExpression : 69,
-  //     updatesOrDepends : ['updates' || 'depends']
-  //   }]
-  // }
 
-  // finalObj.forEach(el => {
-  //   console.log(el.routeMethods)
-  //   console.log('\n\nBREAK\n\n')
-  //   console.log(el.routeMethods?.post?.middlewares[0].funcInfo)
-  //   console.log(el.routeMethods?.post?.middlewares[1].funcInfo)
-  //   console.log('\n\nBREAK\n\n')
-  //   console.log(el.routeMethods?.get?.middlewares[0].funcInfo)
-  //   console.log(el.routeMethods?.get?.middlewares[1].funcInfo)
-  //   console.log('\n\nBREAK\n\n')
-  //   console.log(el.routeMethods?.delete?.middlewares[0].funcInfo)
-  //   console.log(el.routeMethods?.delete?.middlewares[1].funcInfo)
-  // })
-  finalObj.forEach(route => {
-    let methodObj = route.routeMethods
-    // console.log(methodObj)
-    for (const method in methodObj) {
-      let oneMethod = methodObj[method]
-      // console.log(oneMethod)
-      oneMethod.middlewares.forEach((middleware, i) => {
-        let newObj = {}
-        newObj.functionInfo = {
-          funcName : middleware.name,
-          funcFile : middleware.filePath,
-          funcPosition : [middleware.funcInfo.location.start.index, middleware.funcInfo.location.end.index],
-          funcDef : middleware.funcString,
-          funcAssignedTo : middleware.funcInfo.assignedTo,
-          funcLine : middleware.funcInfo.line
-        }
-        // console.log(middleware.funcInfo.depends)
-        newObj.deps =  {
-          upstream : { dependents : middleware.funcInfo.depends || []},
-          downstream : { dependents : middleware.funcInfo.updates || []}
-        }
-
-        route.routeMethods[method].middlewares[i] = newObj
-        // console.log('NEW OBJ IN ROUTE: ', method)
-        // console.log('IN FUNC: ', middleware.name)
-        // console.log('ASSIGNED TO : ', middleware.funcInfo.assignedTo)
-        // console.dir(newObj.deps, {depth : 4})
-        // console.log(methodObj[method][i])
-      })
-      // console.log(oneMethod)
+  fs.writeFileSync(
+    "./bdTest.json",
+    JSON.stringify(finalObj),
+    (error) => {
+      if (error) throw error;
     }
-  })
-  
+  );
+
+
+
   res.locals.tree = finalObj;
   next()
 }
@@ -728,7 +621,7 @@ const mergeTreesExport = (req, res, next) => {
 
 // const next = () => {}
 
-// mergeTreesExport(null, res, next)
+// mergeDispatchersExport(null, res, next)
 // console.log("hi")
 
-module.exports = mergeTreesExport
+module.exports = mergeDispatchersExport

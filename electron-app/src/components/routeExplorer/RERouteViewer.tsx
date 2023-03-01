@@ -4,7 +4,8 @@ import RERVItem from './RERVItem';
 import cariboxStyling from '../caribox'
 
 export default function RERouteViewer() {
-
+  const routeIndex = useSelector((state: RootState) => state.views.routeIndex);
+  console.log("ROUTEINDEX:", routeIndex)
   // grabs the route object from the redux state
   const routes = useSelector((state: RootState) => state.views.routes); // routes is an array of objects
   console.log('RERouteViewer routes state is ', routes);
@@ -18,7 +19,7 @@ export default function RERouteViewer() {
 
     for(let j = 0; j < methods.length; j++)
       routeItems.push(
-        <RERVItem method={methods[j]} name={name} index={i} key={name + i}/>
+        <RERVItem method={methods[j]} name={name} index={i} key={name + i} highlight={i === routeIndex}/>
       );
   }
   

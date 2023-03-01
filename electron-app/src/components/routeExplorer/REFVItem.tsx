@@ -11,6 +11,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 
 import funcBoxStyling from "../funcBoxStyling";
 
+let newFuncBoxStyling
 
 interface REFVItemProps {
     middleware: object,
@@ -25,6 +26,13 @@ export default function REFVItem(props: REFVItemProps) {
         dispatch(update_dependency({middleware: props.middleware}));
     }
 
+    const curMiddleware = useSelector((state: RootState) => state.views.curMiddleware)
+    console.log(curMiddleware?.functionInfo?.funcName === props?.middleware?.functionInfo?.funcName)
+    if(curMiddleware?.functionInfo?.funcName === props?.middleware?.functionInfo?.funcName) {
+        newFuncBoxStyling = {...funcBoxStyling, borderStyle : 'dashed', borderColor : '#025959', borderWidth : '2px'}
+    } else {
+        newFuncBoxStyling = {...funcBoxStyling}
+    }
 
     const filePath = useSelector((state: RootState) => state.views.filepath);
     const mwLibrary = useSelector((state: RootState) => state.views.mwLibrary);
@@ -70,7 +78,7 @@ export default function REFVItem(props: REFVItemProps) {
     }
 
     let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
-    // console.log("funcinfo from mwLibrary:", mwLibrary[funcName].deps)
+    console.log("funcinfo from mwLibrary:", mwLibrary[funcName]?.deps)
     console.log("functionInfo:", props.middleware.functionInfo)
     const [userFilePath, relativeFilePath] = convertToUserFilePath(funcFile)
     console.log("this is input serverpath:", filePath)
@@ -120,7 +128,7 @@ export default function REFVItem(props: REFVItemProps) {
     return (
         <div style={{margin : '5px'}}>
             {/* <Button variant="contained" className="refv-item" onClick={selectFunction}> */}
-            <div style={funcBoxStyling} onClick={selectFunction}>
+            <div style={newFuncBoxStyling} onClick={selectFunction}>
             {/* <Button variant="outlined" style={{textAlign : 'left', alignItems : "center", padding : '15px', display: 'flex', flexDirection : 'column', justifyContent:'center', maxWidth: '100%', wordBreak: 'break-word', backgroundColor : '#E0F0F5'}} onClick={selectFunction}> */}
                 {/* <Card> */}
                         <div style={{justifyContent : 'left', marginBottom : '5px'}}>

@@ -28,7 +28,18 @@ var _default = (0, _helperPluginUtils.declare)((api, options) => {
         visitor: {
           FunctionDeclaration(path) {
             if (path.node.id.name) {
-              path.node.id.name = `CBUNAME_${path.node.id.name}_CBUTYPE_FUNCTIONDECLARATION_CARIBU_CBUSTART${path.node.start}_CBUEND${path.node.end}_CBUPATH${fileName}`
+              let oldName = path.node.id.name
+              let newName = `CBUNAME_${path.node.id.name}_CBUTYPE_FUNCTIONDECLARATION_CARIBU_CBUSTART${path.node.start}_CBUEND${path.node.end}_CBUPATH${fileName}`
+              path.node.id.name = newName
+             
+              path.scope.rename(oldName, newName);
+              path.traverse({
+                Identifier(path) {
+                  if (path.node.name === oldName) {
+                    path.node.name = newName;
+                  }
+                },
+              });
             }
           }
         }
