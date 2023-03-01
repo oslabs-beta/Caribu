@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store";
 import { update_dependency } from "../../slices/viewsSlice";
 import { startTransition } from "react";
@@ -24,6 +24,10 @@ export default function REFVItem(props: REFVItemProps) {
     function selectFunction(){
         dispatch(update_dependency({middleware: props.middleware}));
     }
+
+
+    const filePath = useSelector((state: RootState) => state.views.filepath);
+    const mwLibrary = useSelector((state: RootState) => state.views.mwLibrary);
 
     // console.log(props.middleware)
     console.log(props.middleware.functionInfo.funcName, props.middleware.deps.upstream.dependents)
@@ -56,26 +60,61 @@ export default function REFVItem(props: REFVItemProps) {
         return funcName
     }
 
+    const convertToUserFilePath = (str : string):string[] => {
+        const copiedServerIndex = str.indexOf('copiedServer')
+        const relativeFilePath = funcFile.slice(copiedServerIndex + 12)
+        let userFilePath = filePath + relativeFilePath
+        // const relativeFilePath = funcFile.replace(serverPath, '')
+        console.log("Fixed VSCode link:", userFilePath)
+        return [userFilePath, relativeFilePath]
+    }
+
     let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
+    // console.log("funcinfo from mwLibrary:", mwLibrary[funcName].deps)
+    console.log("functionInfo:", props.middleware.functionInfo)
+    const [userFilePath, relativeFilePath] = convertToUserFilePath(funcFile)
+    console.log("this is input serverpath:", filePath)
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
-    const vsCodeLink = `vscode://file${funcFile}:${funcLine[0]}:${funcLine[1]}`
+    const vsCodeLink = `vscode://file${userFilePath}:${funcLine[0]}:${funcLine[1]}`
     // console.log('VS CODE LINK: ', vsCodeLink)
     const [start, end] = funcPosition
     // console.log(start, end)
     // console.log(funcDef)
+    
 
+    let button = []
+    if (mwLibrary[funcName]?.deps?.upstream?.dependents.length || mwLibrary[funcName]?.deps?.downstream?.dependents.length) {
+        button.push(<Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button>)
+    }
+
+    let newFuncName
+    console.log("funcName", funcName)
     if (funcType !== 'FUNCTIONDECLARATION') {
-        let newFuncName
-        if (funcType === 'ARROWFUNCTION') {
-            newFuncName = "Arrow Function"
-        } else if (funcType === "FUNCTIONEXPRESSION") {
-            newFuncName = "Function Expression"
+        if (funcName.includes('CBUNAME_IMPORTEDMIDDLEWARE')) {
+            let secondUnder = funcName.indexOf('_', 10)
+            let mwNumber = funcName.slice(secondUnder+1)
+            funcName = `Third Party Middleware #${mwNumber}`
         } else {
-            newFuncName = isolateName(funcName)
+            if (funcType === 'ARROWFUNCTION') {
+                newFuncName = "Arrow Function"
+            } else if (funcType === "FUNCTIONEXPRESSION") {
+                newFuncName = "Function Expression"
+            } else {
+                newFuncName = isolateName(funcName)
+            }
+            funcName = `Anonymous ${newFuncName} at line ${funcLine[0]} in ${relativeFilePath}`
         }
-        funcName = `Anonymous ${newFuncName} at position ${start}`
+        
     } 
+
+    let linkAndSource = []
+    if (funcFile.length) {
+        linkAndSource.push(<p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>)
+        linkAndSource.push(<a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>)
+    }
+
+    
     
 
     return (
@@ -86,8 +125,7 @@ export default function REFVItem(props: REFVItemProps) {
                 {/* <Card> */}
                         <div style={{justifyContent : 'left', marginBottom : '5px'}}>
                             <h3>{funcAssignedTo || funcName}</h3>
-                            <p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>
-                            <a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>
+                           {linkAndSource}
                         </div>
                 <Accordion style={{width : '100%'}}>
                     <AccordionSummary>See Code</AccordionSummary>
@@ -100,7 +138,8 @@ export default function REFVItem(props: REFVItemProps) {
                     </AccordionDetails>
                 </Accordion>
                 <br/>
-                <Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button>
+                {button}
+                {/* <Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button> */}
                 {/* <div style={{backgroundColor:'lightgrey', whiteSpace: "pre-line"}}><p>{funcDef}</p></div> */}
                 {/* </Card> */}
             </div>

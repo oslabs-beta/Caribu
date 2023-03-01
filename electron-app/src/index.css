@@ -8,6 +8,11 @@ body {
   
 }
 
+.welcome-logo {
+  margin-top: 70px;
+  width: 400px;
+}
+
 .loading-page {
   display: flex;
   justify-content: center;
@@ -120,18 +125,21 @@ body {
 
 .po-containers {
   display: flex;
+  margin-top: 30px;
 }
 
 .po-container {
   display: flex;
   border: 1px solid;
   margin: 5px;
+  padding: 25px 5px 0 5px;
 }
 
 .routes-container {
   display: flex;
   justify-content: center;
-  gap : 15px
+  gap : 15px;
+  overflow-x: auto
   /* background-color: rgba(0, 226, 102, 0.86); */
 }
 
@@ -235,13 +243,14 @@ Link {
 
 .form-wrapper {
   display: flex;
-  /* flex-direction: column; */
+  flex-direction: column;
   margin-top: 20px;
   justify-content: center;
+  gap: 5px;
 }
 .fileDrop-wrapper {
   border: dotted black 2px;
-  /* width: 500px; */
+  width: 30vw;
   height: 50px;
 }
 .serverName-wrapper {
@@ -270,7 +279,7 @@ Link {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  margin-left: 10px;
+  margin-top: 10px;
 }
 
 .serverSubmit:hover {

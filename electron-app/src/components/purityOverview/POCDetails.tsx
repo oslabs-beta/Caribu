@@ -18,7 +18,7 @@ export default function POCDetails(props: object) {
       // console.log("THIS IS MATCHING FUNC INFO", props.funcLibrary[props.methods[method][func]])
       const funcInfo = props.funcLibrary[props.methods[method][func]]
         funcs.push(
-          <div>
+          <div style={{minWidth : '20vw'}}>
             <POCMItem middleware={func} funcInfo={funcInfo} isShared={isShared}></POCMItem>
           </div>
           

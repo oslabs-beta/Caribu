@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store";
 import { update_dependency } from "../../slices/viewsSlice";
 import { startTransition } from "react";
@@ -20,6 +20,7 @@ interface POMItemProps {
 
 export default function POCMItem(props: POMItemProps) {
 
+    const filePath = useSelector((state: RootState) => state.views.filepath);
 
     const dispatch = useDispatch();
     const conditionalFuncBoxStyling = {...funcBoxStyling}
@@ -56,6 +57,17 @@ export default function POCMItem(props: POMItemProps) {
         return funcName
     }
 
+    const convertToUserFilePath = (str : string):string[] => {
+        const copiedServerIndex = str.indexOf('copiedServer')
+        const relativeFilePath = funcFile.slice(copiedServerIndex + 12)
+        let userFilePath = filePath + relativeFilePath
+        // const relativeFilePath = funcFile.replace(serverPath, '')
+        console.log("filePath:", filePath)
+        console.log("Fixed VSCode link:", userFilePath)
+        return [userFilePath, relativeFilePath]
+    }
+
+
 
     // //parse out a functions name data etc:
     // const parseData = (funcName : string) => {
@@ -69,26 +81,41 @@ export default function POCMItem(props: POMItemProps) {
     //     }
 
     // }
-    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo } = props.funcInfo
+    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.funcInfo
+    const [userFilePath, relativeFilePath] = convertToUserFilePath(funcFile)
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
-    const vsCodeLink = `vscode://file${funcFile}`
+    const vsCodeLink = `vscode://file${userFilePath}:${funcLine[0]}:${funcLine[1]}`
     // console.log('VS CODE LINK: ', vsCodeLink)
     const [start, end] = funcPosition
     // console.log(start, end)
     // console.log(funcDef)
 
+    let newFuncName
+    console.log("funcName", funcName)
     if (funcType !== 'FUNCTIONDECLARATION') {
-        let newFuncName
-        if (funcType === 'ARROWFUNCTION') {
-            newFuncName = "Arrow Function"
+        if (funcName.includes('CBUNAME_IMPORTEDMIDDLEWARE')) {
+            let secondUnder = funcName.indexOf('_', 10)
+            let mwNumber = funcName.slice(secondUnder+1)
+            funcName = `Third Party Middleware #${mwNumber}`
+        } else {
+            if (funcType === 'ARROWFUNCTION') {
+                newFuncName = "Arrow Function"
+            } else if (funcType === "FUNCTIONEXPRESSION") {
+                newFuncName = "Function Expression"
+            } else {
+                newFuncName = isolateName(funcName)
+            }
+            funcName = `Anonymous ${newFuncName} at line ${funcLine[0]} in ${relativeFilePath}`
         }
-        if (funcType === "FUNCTIONEXPRESSION") {
-            newFuncName = "Function Expression"
-        }
-        funcName = `Anonymous ${newFuncName} at position ${start}`
+        
     } 
     
+    let linkAndSource = []
+    if (funcFile.length) {
+        linkAndSource.push(<p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>)
+        linkAndSource.push(<a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>)
+    }
 
     return (
         <div style={{margin : '5px'}}>
@@ -98,8 +125,7 @@ export default function POCMItem(props: POMItemProps) {
                 {/* <Card> */}
                         <div style={{justifyContent : 'left', marginBottom : '5px'}}>
                             <h3>{funcAssignedTo || funcName}</h3>
-                            <p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>
-                            <a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>
+                            {linkAndSource}
                         </div>
                 <Accordion style={{width : '100%'}}>
                     <AccordionSummary>See Code</AccordionSummary>

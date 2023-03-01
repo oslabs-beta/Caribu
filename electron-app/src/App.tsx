@@ -47,24 +47,6 @@ import { Link, Route, Routes } from "react-router-dom";
         <AppBar style={{backgroundColor : '#255858'}}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <Typography
-                variant="h5"
-                noWrap
-                component="a"
-                href=""
-                sx={{
-                  mr: 2,
-                  display: { xs: 'flex', md: 'none' },
-                  flexGrow: 1,
-                  fontFamily: 'arial',
-                  fontWeight: 700,
-                  letterSpacing: '.3rem',
-                  color: 'inherit',
-                  textDecoration: 'none',
-                }}
-              >
-                CARIBU
-              </Typography>
               <MenuItem onClick={navToRE}>
                 <Typography textAlign="center">Route Explorer</Typography>
               </MenuItem>

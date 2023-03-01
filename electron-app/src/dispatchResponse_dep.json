@@ -1,0 +1,1305 @@
+[
+    {
+        "routeName": "/user/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART216_CBUEND408_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$users_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                            "funcPosition": [
+                                216,
+                                408
+                            ],
+                            "funcDef": "function(req, res, next){\n  User.findById(req.payload.id).then(function(user){\n    if(!user){ return res.sendStatus(401); }\n\n    return res.json({user: user.toAuthJSON()});\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                7,
+                                35
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": [
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            288,
+                                            292
+                                        ],
+                                        "location": [
+                                            288,
+                                            292
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            303,
+                                            307
+                                        ],
+                                        "location": [
+                                            303,
+                                            307
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            362,
+                                            366
+                                        ],
+                                        "location": [
+                                            362,
+                                            366
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/user/",
+        "routeMethods": {
+            "put": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART447_CBUEND1249_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$users_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                            "funcPosition": [
+                                447,
+                                1249
+                            ],
+                            "funcDef": "function(req, res, next){\n  User.findById(req.payload.id).then(function(user){\n    if(!user){ return res.sendStatus(401); }\n\n    // only update fields that were actually passed...\n    if(typeof req.body.user.username !== 'undefined'){\n      user.username = req.body.user.username;\n    }\n    if(typeof req.body.user.email !== 'undefined'){\n      user.email = req.body.user.email;\n    }\n    if(typeof req.body.user.bio !== 'undefined'){\n      user.bio = req.body.user.bio;\n    }\n    if(typeof req.body.user.image !== 'undefined'){\n      user.image = req.body.user.image;\n    }\n    if(typeof req.body.user.password !== 'undefined'){\n      user.setPassword(req.body.user.password);\n    }\n\n    return user.save().then(function(){\n      return res.json({user: user.toAuthJSON()});\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                15,
+                                35
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": [
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            519,
+                                            523
+                                        ],
+                                        "location": [
+                                            519,
+                                            523
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            534,
+                                            538
+                                        ],
+                                        "location": [
+                                            534,
+                                            538
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            1195,
+                                            1199
+                                        ],
+                                        "location": [
+                                            1195,
+                                            1199
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/users/login/",
+        "routeMethods": {
+            "post": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART1281_CBUEND1817_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$users_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                            "funcPosition": [
+                                1281,
+                                1817
+                            ],
+                            "funcDef": "function(req, res, next){\n  if(!req.body.user.email){\n    return res.status(422).json({errors: {email: \"can't be blank\"}});\n  }\n\n  if(!req.body.user.password){\n    return res.status(422).json({errors: {password: \"can't be blank\"}});\n  }\n\n  passport.authenticate('local', {session: false}, function(err, user, info){\n    if(err){ return next(err); }\n\n    if(user){\n      user.token = user.generateJWT();\n      return res.json({user: user.toAuthJSON()});\n    } else {\n      return res.status(422).json(info);\n    }\n  })(req, res, next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                42,
+                                28
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": [
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            1584,
+                                            1588
+                                        ],
+                                        "location": [
+                                            1584,
+                                            1588
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            1638,
+                                            1642
+                                        ],
+                                        "location": [
+                                            1638,
+                                            1642
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "user",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                        "upVarPosition": [
+                                            1707,
+                                            1711
+                                        ],
+                                        "location": [
+                                            1707,
+                                            1711
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1843-2116_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "declaredName": "user",
+                                            "type": "var",
+                                            "definition": "var user = new User();",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                                            "position": [
+                                                1871,
+                                                1893
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/users/",
+        "routeMethods": {
+            "post": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART1843_CBUEND2116_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$users_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/users.js",
+                            "funcPosition": [
+                                1843,
+                                2116
+                            ],
+                            "funcDef": "function(req, res, next){\n  var user = new User();\n\n  user.username = req.body.user.username;\n  user.email = req.body.user.email;\n  user.setPassword(req.body.user.password);\n\n  user.save().then(function(){\n    return res.json({user: user.toAuthJSON()});\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                63,
+                                22
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:username/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART470_CBUEND818_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$profiles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                            "funcPosition": [
+                                470,
+                                818
+                            ],
+                            "funcDef": "function(req, res, next){\n  if(req.payload){\n    User.findById(req.payload.id).then(function(user){\n      if(!user){ return res.json({profile: req.profile.toProfileJSONFor(false)}); }\n\n      return res.json({profile: req.profile.toProfileJSONFor(user)});\n    });\n  } else {\n    return res.json({profile: req.profile.toProfileJSONFor(false)});\n  }\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                17,
+                                40
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:username/follow/",
+        "routeMethods": {
+            "post": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART870_CBUEND1181_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$profiles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                            "funcPosition": [
+                                870,
+                                1181
+                            ],
+                            "funcDef": "function(req, res, next){\n  var profileId = req.profile._id;\n\n  User.findById(req.payload.id).then(function(user){\n    if (!user) { return res.sendStatus(401); }\n\n    return user.follow(profileId).then(function(){\n      return res.json({profile: req.profile.toProfileJSONFor(user)});\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                29,
+                                48
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": [
+                                    {
+                                        "upVarName": "profileId",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                                        "upVarPosition": [
+                                            902,
+                                            911
+                                        ],
+                                        "location": [
+                                            902,
+                                            911
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1235-1548_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                                            "declaredName": "profileId",
+                                            "type": "var",
+                                            "definition": "var profileId = req.profile._id;",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                                            "position": [
+                                                1263,
+                                                1295
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "upVarName": "profileId",
+                                        "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                                        "upVarPosition": [
+                                            1056,
+                                            1065
+                                        ],
+                                        "location": [
+                                            1056,
+                                            1065
+                                        ],
+                                        "originalDeclaration": {
+                                            "funcName": "anonymous_function_at_1235-1548_in_/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                                            "declaredName": "profileId",
+                                            "type": "var",
+                                            "definition": "var profileId = req.profile._id;",
+                                            "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                                            "position": [
+                                                1263,
+                                                1295
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:username/follow/",
+        "routeMethods": {
+            "delete": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART1235_CBUEND1548_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$profiles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/profiles.js",
+                            "funcPosition": [
+                                1235,
+                                1548
+                            ],
+                            "funcDef": "function(req, res, next){\n  var profileId = req.profile._id;\n\n  User.findById(req.payload.id).then(function(user){\n    if (!user) { return res.sendStatus(401); }\n\n    return user.unfollow(profileId).then(function(){\n      return res.json({profile: req.profile.toProfileJSONFor(user)});\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                41,
+                                50
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART807_CBUEND2221_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                807,
+                                2221
+                            ],
+                            "funcDef": "function(req, res, next) {\n  var query = {};\n  var limit = 20;\n  var offset = 0;\n\n  if(typeof req.query.limit !== 'undefined'){\n    limit = req.query.limit;\n  }\n\n  if(typeof req.query.offset !== 'undefined'){\n    offset = req.query.offset;\n  }\n\n  if( typeof req.query.tag !== 'undefined' ){\n    query.tagList = {\"$in\" : [req.query.tag]};\n  }\n\n  Promise.all([\n    req.query.author ? User.findOne({username: req.query.author}) : null,\n    req.query.favorited ? User.findOne({username: req.query.favorited}) : null\n  ]).then(function(results){\n    var author = results[0];\n    var favoriter = results[1];\n\n    if(author){\n      query.author = author._id;\n    }\n\n    if(favoriter){\n      query._id = {$in: favoriter.favorites};\n    } else if(req.query.favorited){\n      query._id = {$in: []};\n    }\n\n    return Promise.all([\n      Article.find(query)\n        .limit(Number(limit))\n        .skip(Number(offset))\n        .sort({createdAt: 'desc'})\n        .populate('author')\n        .exec(),\n      Article.count(query).exec(),\n      req.payload ? User.findById(req.payload.id) : null,\n    ]).then(function(results){\n      var articles = results[0];\n      var articlesCount = results[1];\n      var user = results[2];\n\n      return res.json({\n        articles: articles.map(function(article){\n          return article.toJSONFor(user);\n        }),\n        articlesCount: articlesCount\n      });\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                31,
+                                31
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/feed/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART2260_CBUEND3123_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                2260,
+                                3123
+                            ],
+                            "funcDef": "function(req, res, next) {\n  var limit = 20;\n  var offset = 0;\n\n  if(typeof req.query.limit !== 'undefined'){\n    limit = req.query.limit;\n  }\n\n  if(typeof req.query.offset !== 'undefined'){\n    offset = req.query.offset;\n  }\n\n  User.findById(req.payload.id).then(function(user){\n    if (!user) { return res.sendStatus(401); }\n\n    Promise.all([\n      Article.find({ author: {$in: user.following}})\n        .limit(Number(limit))\n        .skip(Number(offset))\n        .populate('author')\n        .exec(),\n      Article.count({ author: {$in: user.following}})\n    ]).then(function(results){\n      var articles = results[0];\n      var articlesCount = results[1];\n\n      return res.json({\n        articles: articles.map(function(article){\n          return article.toJSONFor(user);\n        }),\n        articlesCount: articlesCount\n      });\n    }).catch(next);\n  });\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                89,
+                                35
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/",
+        "routeMethods": {
+            "post": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART3159_CBUEND3529_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                3159,
+                                3529
+                            ],
+                            "funcDef": "function(req, res, next) {\n  User.findById(req.payload.id).then(function(user){\n    if (!user) { return res.sendStatus(401); }\n\n    var article = new Article(req.body.article);\n\n    article.author = user;\n\n    return article.save().then(function(){\n      console.log(article.author);\n      return res.json({article: article.toJSONFor(user)});\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                125,
+                                32
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART3592_CBUEND3878_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                3592,
+                                3878
+                            ],
+                            "funcDef": "function(req, res, next) {\n  Promise.all([\n    req.payload ? User.findById(req.payload.id) : null,\n    req.article.populate('author').execPopulate()\n  ]).then(function(results){\n    var user = results[0];\n\n    return res.json({article: req.article.toJSONFor(user)});\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                141,
+                                39
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/",
+        "routeMethods": {
+            "put": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART3939_CBUEND4776_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                3939,
+                                4776
+                            ],
+                            "funcDef": "function(req, res, next) {\n  User.findById(req.payload.id).then(function(user){\n    if(req.article.author._id.toString() === req.payload.id.toString()){\n      if(typeof req.body.article.title !== 'undefined'){\n        req.article.title = req.body.article.title;\n      }\n\n      if(typeof req.body.article.description !== 'undefined'){\n        req.article.description = req.body.article.description;\n      }\n\n      if(typeof req.body.article.body !== 'undefined'){\n        req.article.body = req.body.article.body;\n      }\n\n      if(typeof req.body.article.tagList !== 'undefined'){\n        req.article.tagList = req.body.article.tagList\n      }\n\n      req.article.save().then(function(article){\n        return res.json({article: article.toJSONFor(user)});\n      }).catch(next);\n    } else {\n      return res.sendStatus(403);\n    }\n  });\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                153,
+                                39
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/",
+        "routeMethods": {
+            "delete": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART4840_CBUEND5210_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                4840,
+                                5210
+                            ],
+                            "funcDef": "function(req, res, next) {\n  User.findById(req.payload.id).then(function(user){\n    if (!user) { return res.sendStatus(401); }\n\n    if(req.article.author._id.toString() === req.payload.id.toString()){\n      return req.article.remove().then(function(){\n        return res.sendStatus(204);\n      });\n    } else {\n      return res.sendStatus(403);\n    }\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                182,
+                                42
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/favorite/",
+        "routeMethods": {
+            "post": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART5286_CBUEND5672_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                5286,
+                                5672
+                            ],
+                            "funcDef": "function(req, res, next) {\n  var articleId = req.article._id;\n\n  User.findById(req.payload.id).then(function(user){\n    if (!user) { return res.sendStatus(401); }\n\n    return user.favorite(articleId).then(function(){\n      return req.article.updateFavoriteCount().then(function(article){\n        return res.json({article: article.toJSONFor(user)});\n      });\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                197,
+                                49
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/favorite/",
+        "routeMethods": {
+            "delete": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART5752_CBUEND6141_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                5752,
+                                6141
+                            ],
+                            "funcDef": "function(req, res, next) {\n  var articleId = req.article._id;\n\n  User.findById(req.payload.id).then(function (user){\n    if (!user) { return res.sendStatus(401); }\n\n    return user.unfavorite(articleId).then(function(){\n      return req.article.updateFavoriteCount().then(function(article){\n        return res.json({article: article.toJSONFor(user)});\n      });\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                212,
+                                51
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/comments/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART6225_CBUEND6732_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                6225,
+                                6732
+                            ],
+                            "funcDef": "function(req, res, next){\n  Promise.resolve(req.payload ? User.findById(req.payload.id) : null).then(function(user){\n    return req.article.populate({\n      path: 'comments',\n      populate: {\n        path: 'author'\n      },\n      options: {\n        sort: {\n          createdAt: 'desc'\n        }\n      }\n    }).execPopulate().then(function(article) {\n      return res.json({comments: req.article.comments.map(function(comment){\n        return comment.toJSONFor(user);\n      })});\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                227,
+                                48
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/comments/",
+        "routeMethods": {
+            "post": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART6809_CBUEND7281_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                6809,
+                                7281
+                            ],
+                            "funcDef": "function(req, res, next) {\n  User.findById(req.payload.id).then(function(user){\n    if(!user){ return res.sendStatus(401); }\n\n    var comment = new Comment(req.body.comment);\n    comment.article = req.article;\n    comment.author = user;\n\n    return comment.save().then(function(){\n      req.article.comments.push(comment);\n\n      return req.article.save().then(function(article) {\n        res.json({comment: comment.toJSONFor(user)});\n      });\n    });\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                248,
+                                49
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/:article/comments/:comment/",
+        "routeMethods": {
+            "delete": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_IMPORTEDMIDDLEWARE_0",
+                            "funcFile": "",
+                            "funcPosition": [
+                                0,
+                                0
+                            ],
+                            "funcDef": "function(req, res, next) {\n    var token;\n\n    if (req.method === 'OPTIONS' && req.headers.hasOwnProperty('access-control-request-headers')) {\n      var hasAuthInAccessControl = !!~req.headers['access-control-request-headers']\n                                    .split(',').map(function (header) {\n                                      return header.trim();\n                                    }).indexOf('authorization');\n\n      if (hasAuthInAccessControl) {\n        return next();\n      }\n    }\n\n    if (typeof options.skip !== 'undefined') {\n      console.warn('WARN: express-jwt: options.skip is deprecated');\n      console.warn('WARN: use app.use(jwt(options).unless({path: \\'/x\\'}))');\n      if (options.skip.indexOf(req.url) > -1) {\n        return next();\n      }\n    }\n\n    if (options.getToken && typeof options.getToken === 'function') {\n      try {\n        token = options.getToken(req);\n      } catch (e) {\n        return next(e);\n      }\n    } else if (req.headers && req.headers.authorization) {\n      var parts = req.headers.authorization.split(' ');\n      if (parts.length == 2) {\n        var scheme = parts[0];\n        var credentials = parts[1];\n\n        if (/^Bearer$/i.test(scheme)) {\n          token = credentials;\n        } else {\n          return next(new UnauthorizedError('credentials_bad_scheme', { message: 'Format is Authorization: Bearer [token]' }));\n        }\n      } else {\n        return next(new UnauthorizedError('credentials_bad_format', { message: 'Format is Authorization: Bearer [token]' }));\n      }\n    }\n\n    if (!token) {\n      if (credentialsRequired) {\n        return next(new UnauthorizedError('credentials_required', { message: 'No authorization token was found' }));\n      } else {\n        return next();\n      }\n    }\n\n    var dtoken = jwt.decode(token, { complete: true }) || {};\n\n    async.waterfall([\n      function getSecret(callback){\n        var arity = secretCallback.length;\n        if (arity == 4) {\n          secretCallback(req, dtoken.header, dtoken.payload, callback);\n        } else { // arity == 3\n          secretCallback(req, dtoken.payload, callback);\n        }\n      },\n      function verifyToken(secret, callback) {\n        jwt.verify(token, secret, options, function(err, decoded) {\n          if (err && credentialsRequired) {\n            callback(new UnauthorizedError('invalid_token', err));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      },\n      function checkRevoked(decoded, callback) {\n        isRevokedCallback(req, dtoken.payload, function (err, revoked) {\n          if (err) {\n            callback(err);\n          }\n          else if (revoked) {\n            callback(new UnauthorizedError('revoked_token', {message: 'The token has been revoked.'}));\n          } else {\n            callback(null, decoded);\n          }\n        });\n      }\n\n    ], function (err, result){\n      if (err) { return next(err); }\n      _.set(req, _requestProperty, result);\n      next();\n    });\n  }",
+                            "funcAssignedTo": "",
+                            "funcLine": [
+                                0,
+                                0
+                            ],
+                            "isThirdParty": true
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    },
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART7345_CBUEND7682_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$articles_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/articles.js",
+                            "funcPosition": [
+                                7345,
+                                7682
+                            ],
+                            "funcDef": "function(req, res, next) {\n  if(req.comment.author.toString() === req.payload.id.toString()){\n    req.article.comments.remove(req.comment._id);\n    req.article.save()\n      .then(Comment.find({_id: req.comment._id}).remove().exec())\n      .then(function(){\n        res.sendStatus(204);\n      });\n  } else {\n    res.sendStatus(403);\n  }\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                266,
+                                60
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "routeName": "/",
+        "routeMethods": {
+            "get": {
+                "middlewares": [
+                    {
+                        "functionInfo": {
+                            "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART161_CBUEND300_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$api$tags_js",
+                            "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/api/tags.js",
+                            "funcPosition": [
+                                161,
+                                300
+                            ],
+                            "funcDef": "function(req, res, next) {\n  Article.find().distinct('tagList').then(function(tags){\n    return res.json({tags: tags});\n  }).catch(next);\n}",
+                            "funcAssignedTo": null,
+                            "funcLine": [
+                                6,
+                                16
+                            ],
+                            "isThirdParty": false
+                        },
+                        "deps": {
+                            "upstream": {
+                                "dependents": []
+                            },
+                            "downstream": {
+                                "dependents": []
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]

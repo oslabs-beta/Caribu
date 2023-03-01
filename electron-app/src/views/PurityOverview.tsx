@@ -4,6 +4,13 @@ import POContainer from "../components/purityOverview/POContainer";
 import { ReactElement } from "react";
 import e from "express";
 import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import cariboxStyling from "../components/caribox";
+
+const newCariboxStyling = {...cariboxStyling, minHeight : '5vh', width: '80vw'}
+import {Navigate, useLocation} from "react-router-dom"
 
 
 
@@ -51,7 +58,12 @@ const Purity = () => {
 
 // gets routes from the state object.
 const routes = useSelector((state: RootState) => state.views.routes);
+const views = useSelector((state: RootState) => state.views);
 
+if(!views.directoryProcessed) {
+  console.log("USER NOT PROCESSED")
+  return <Navigate to="/"/>
+}
 
 const funcLibrary = {}
 
@@ -170,15 +182,33 @@ function generateContainers(){
 
   // sharedMiddlewares is a set with Node objects that contain their unique shared route lists and related functions.
   const sharedMiddlewares: Array<Node> = groupSharedMiddlewares(isoFuncs);
+  sharedMiddlewares.sort((a, b) => {b.routes.size - a.routes.size})
   console.log('shared', sharedMiddlewares);
 
   const containers: ReactElement[] = [];
 
   // pushes each individual container with props for its route, sharedroutes and functions
   for(let i = 0; i < sharedMiddlewares.length; i++){
-    console.log('HSAREd I:', sharedMiddlewares[i])
+    console.log('HSAREd I:', sharedMiddlewares[i], reducedRoutes)
+    let listOfRoutes = ''
+    
+    sharedMiddlewares[i].routes.forEach(el => {listOfRoutes += `${el}, `})
+    listOfRoutes = listOfRoutes.slice(0, listOfRoutes.length-2)
+
     containers.push(
-      <POContainer funcLibrary={funcLibrary} reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
+      <div>
+      <Accordion style={newCariboxStyling}>
+      <AccordionSummary>
+        <div>
+        <b>{`Group ${i+1}:`} <i>{listOfRoutes}</i></b>  
+        </div>
+      </AccordionSummary>
+      <AccordionDetails>
+        <POContainer funcLibrary={funcLibrary} reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
+      </AccordionDetails>
+      </Accordion>
+      <br/>
+      </div>
     );
   }
   return containers;
@@ -187,11 +217,10 @@ function generateContainers(){
 const containers = generateContainers();
 
   return (
-    <div className="po-main">
-      <div className="po-header">
-        Route dependency Breakdowns
-      </div>
-      <div className="po-containers">
+  <div style={{display : 'flex', flexDirection : 'column' , alignItems : 'center', color : '#F1EDE0', marginTop : '5%'}}>
+
+      <h1 >Purity Overview</h1>
+      <div>
         {containers}
       </div>
     </div>

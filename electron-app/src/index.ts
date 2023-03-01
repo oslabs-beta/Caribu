@@ -20,7 +20,7 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 1000,
     width: 1200,
-    icon: __dirname + '/assets/circle_logo_thicker',
+    icon: __dirname + './././assets/circle_logo_thicker.svg',
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true
