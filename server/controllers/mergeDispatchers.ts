@@ -15,6 +15,7 @@ const mergeDispatchersExport = (req, res, next) => {
 
   class FuncObject {
     constructor (path, filePath, code, ast) {
+      this.code = code
       this.path = path
       this.filePath = filePath
       this.globalVars = this.listGlobals(ast, code, filePath)
@@ -241,6 +242,7 @@ const mergeDispatchersExport = (req, res, next) => {
       let code = fs.readFileSync(filePath).toString()
       const funcName = this.funcName
       let dependsList = []
+      code = this.code
         //a dependency is an identifier...
         //that appears in the global/func variables list for its given file that is...
           //any identifier whose direct parent is neither: assignment expression, update, expression, or member expression
@@ -294,25 +296,9 @@ const mergeDispatchersExport = (req, res, next) => {
       }   
 
 
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
+
       // NEED A MEMBER EXPRESSION VERSION OF THIS TRAVERSAL
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
+
       path.traverse({
         Identifier(path) {
           if (path.parent.type !== 'MemberExpression' && path.parent.type !== 'UpdateExpression' && path.parent.type !== 'AssignmentExpression') {
@@ -336,7 +322,6 @@ const mergeDispatchersExport = (req, res, next) => {
         }
       })
 
-      
 
 
 
@@ -375,6 +360,10 @@ const mergeDispatchersExport = (req, res, next) => {
 
     deletePath () {
       delete this.path
+    }
+
+    deleteCode () {
+      delete this.code
     }
   }
 
@@ -574,6 +563,7 @@ const mergeDispatchersExport = (req, res, next) => {
           }
           middleware.funcInfo.listDepends()
           middleware.funcInfo.listUpdates()
+          middleware.funcInfo.deleteCode()
           mwObj.deps =  {
             upstream : { dependents : middleware.funcInfo.depends || []},
             downstream : { dependents : middleware.funcInfo.updates || []}

@@ -11,6 +11,7 @@ var mergeDispatchersExport = function (req, res, next) {
     var fileVars = {};
     var FuncObject = /** @class */ (function () {
         function FuncObject(path, filePath, code, ast) {
+            this.code = code;
             this.path = path;
             this.filePath = filePath;
             this.globalVars = this.listGlobals(ast, code, filePath);
@@ -221,6 +222,7 @@ var mergeDispatchersExport = function (req, res, next) {
             var code = fs.readFileSync(filePath).toString();
             var funcName = this.funcName;
             var dependsList = [];
+            code = this.code;
             //a dependency is an identifier...
             //that appears in the global/func variables list for its given file that is...
             //any identifier whose direct parent is neither: assignment expression, update, expression, or member expression
@@ -268,25 +270,7 @@ var mergeDispatchersExport = function (req, res, next) {
                 // console.log(originalDeclaration)
                 return originalDeclaration;
             }
-            //
-            //
-            //
-            //
-            //
-            //
-            //
-            //
-            //
-            //
             // NEED A MEMBER EXPRESSION VERSION OF THIS TRAVERSAL
-            //
-            //
-            //
-            //
-            //
-            //
-            //
-            //
             path.traverse({
                 Identifier: function (path) {
                     if (path.parent.type !== 'MemberExpression' && path.parent.type !== 'UpdateExpression' && path.parent.type !== 'AssignmentExpression') {
@@ -340,6 +324,9 @@ var mergeDispatchersExport = function (req, res, next) {
         };
         FuncObject.prototype.deletePath = function () {
             delete this.path;
+        };
+        FuncObject.prototype.deleteCode = function () {
+            delete this.code;
         };
         return FuncObject;
     }());
@@ -514,6 +501,7 @@ var mergeDispatchersExport = function (req, res, next) {
                     };
                     middleware.funcInfo.listDepends();
                     middleware.funcInfo.listUpdates();
+                    middleware.funcInfo.deleteCode();
                     mwObj.deps = {
                         upstream: { dependents: middleware.funcInfo.depends || [] },
                         downstream: { dependents: middleware.funcInfo.updates || [] }
