@@ -237,48 +237,57 @@ export const fetchRoutes = () => {
     //   console.log('viewsSlice server responded with:', data)
     // })
 
-
-
-
-    // const newJSON = require('../exampleResponse.json')
+    const newJSON = require("../exampleResponse.json");
     // const newJSON = require('../exampleResponseUs.json')
     // const newJSON = require('../dispatchResponse_dep.json')
     // const newJSON = require('../betterDeps.json')
-    const newJSON = require('../exampleAppDeps.json')
-    dispatch(update_loading(true))
+    // const newJSON = require('../exampleAppDeps.json')
+    dispatch(update_loading(true));
 
     setTimeout(() => {
       dispatch(update_loading(false));
       dispatch(update_routes(newJSON));
-
-    }, 2000)
-
+    }, 2000);
 
     const funcLibrary = {};
 
     //This function parses through the routes object to isolate the middlewares down to an object with routename, method, and functionname.
     // function parseRoutes(){
 
-      const routesDict: object= {};
-      for(let i = 0; i < newJSON.length; i++){
-        const route: object = newJSON[i]
-        for(const key in route.routeMethods){
-          const middlewares = route.routeMethods[key].middlewares;
-          for(let j = 0; j < middlewares.length; j++){
-            let funcName = middlewares[j].functionInfo.funcName
-            if (!funcLibrary[funcName]) {
-              funcLibrary[funcName] = {
-                functionInfo : middlewares[j].functionInfo, 
-                deps : middlewares[j].deps}
-            }
-
+    const routesDict: object = {};
+    for (let i = 0; i < newJSON.length; i++) {
+      const route: object = newJSON[i];
+      for (const key in route.routeMethods) {
+        const middlewares = route.routeMethods[key].middlewares;
+        for (let j = 0; j < middlewares.length; j++) {
+          let funcName = middlewares[j].functionInfo.funcName;
+          if (!funcLibrary[funcName]) {
+            funcLibrary[funcName] = {
+              functionInfo: middlewares[j].functionInfo,
+              deps: middlewares[j].deps,
+            };
           }
         }
       }
-      dispatch(update_mwLibrary(funcLibrary));
     }
+    dispatch(update_mwLibrary(funcLibrary));
+    const response = await fetch(testUrl, {
+      method: "POST",
 
+      // add a header: URLSearchParams sets the header for us so having below was causing an error
+      // /*\\       headers: {
+      //   Content-Type: 'application/x-www-form-urlencoded;charset=UTF-8'
+      // },
+      body: new URLSearchParams({
+        filepath: getState().views.filepath,
+        serverpath: getState().views.serverpath,
+        nodepath: getState().views.nodepath,
+      }),
+    });
+    console.log("viewsSlice server responded with :", response.body);
+    dispatch(update_routes(await response.json()));
   };
+};
 // };
 //     console.log("viewsSlice anonymous thunk func fired");
 //     console.log(
@@ -289,20 +298,20 @@ export const fetchRoutes = () => {
 //       "fetching to /api/routes with serverpath: ",
 //       getState().views.serverpath
 //     );
-//     const response = await fetch(testUrl, {
-//       method: "POST",
-//       // add a header: URLSearchParams sets the header for us so having below was causing an error
-//       /*       headers: {
-//         Content-Type: 'application/x-www-form-urlencoded;charset=UTF-8'
-//       }, */
-//       body: new URLSearchParams({
-//         filepath: getState().views.filepath,
-//         serverpath: getState().views.serverpath,
-//         nodepath: getState().views.nodepath,
-//       }),
-//     });
-//     console.log("viewsSlice server responded with :", response.body);
-//     dispatch(update_routes(await response.json()));
+// const response = await fetch(testUrl, {
+//   method: "POST",
+//   // add a header: URLSearchParams sets the header for us so having below was causing an error
+//   // /*       headers: {
+//   //   Content-Type: 'application/x-www-form-urlencoded;charset=UTF-8'
+//   // }, */
+//   body: new URLSearchParams({
+//     filepath: getState().views.filepath,
+//     serverpath: getState().views.serverpath,
+//     nodepath: getState().views.nodepath,
+//   }),
+// });
+// console.log("viewsSlice server responded with :", response.body);
+// dispatch(update_routes(await response.json()));
 //   };
 // };
 
