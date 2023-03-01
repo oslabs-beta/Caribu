@@ -1,18 +1,15 @@
-import { Express } from 'express';
-
-const getRenamedObjExport = (req, res, next) => {
+module.exports = (req, res, next) => {
   console.log("IN GET RENAMED EXPRESS APP OBJ");
   //require Express
   const e = require("express");
   const fs = require("fs");
-  const { appTreeFolder } = require("./serverDirPaths");
-  const path = require('path');
   //**** NEED TO MAKE THIS DYNAMIC ****
   const renamedServer = "../process/renamedServer";
-  const expressApp: Express = require(renamedServer + req.body.serverpath.replace(req.body.filepath, ""));
+  const expressApp = require(renamedServer + req.body.serverpath.replace(req.body.filepath, ""));
+  // const expressApp = require("../renamedServer/app.js");
+  // const expressApp = require('../copiedServerNamed/server.js')
 
-
-  const app: Express = expressApp;
+  const app = expressApp;
 
   //NODES NEEDED
 
@@ -20,7 +17,7 @@ const getRenamedObjExport = (req, res, next) => {
   // APP TREE
   // Beginning of tree, this holds the entirety of the app and initializes empty arrays for the routers and bound dispatchers (explained below)
   class AppTree {
-    app: Express;
+    app: object;
     routers: any[];
     boundDispatchers: any[];
     constructor(app: object) {
@@ -43,37 +40,12 @@ const getRenamedObjExport = (req, res, next) => {
     bd: object = {};
     methods: any = null;
     stack: any[] = [];
-    endpoints : any;
-    constructor(boundDispatch: object, fullPath: string) {
-      // this.path = boundDispatch.route.path;
-      this.path = fullPath || '/';
-      this.router = boundDispatch;
+    constructor(boundDispatch: object) {
+      this.path = boundDispatch.route.path;
+      this.bd = boundDispatch;
       this.methods = boundDispatch.route.methods;
       this.stack = boundDispatch.route.stack;
-      this.endpoints = this.listAllBDEndpoints(boundDispatch)
     }
-
-
-    // endpoints": {
-    //   "/:id": {
-    //       "methods": {
-    //           "delete": true
-    //       },
-
-    listAllBDEndpoints = (r: object) => {
-      //make general endpoint obj
-      const endpoints = {};
-
-      let newMWLL = new middlewareLL(r.route)
-      const newEndpoint = {}
-      newEndpoint[r.route.path] = {}
-      newEndpoint[r.route.path]['methods'] = r.route.methods
-      newEndpoint[r.route.path]['path'] = r.route.path
-      newEndpoint[r.route.path]['stack'] = r.route.stack
-      newEndpoint[r.route.path]['middlewareChain'] = newMWLL
-
-      return newEndpoint
-    };
   }
 
   // ROUTER
@@ -98,15 +70,13 @@ const getRenamedObjExport = (req, res, next) => {
     listAllEndpoints = (r: object) => {
       //make general endpoint obj
       const endpoints = {};
-
-
-
       r.handle.stack.forEach((el) => {
         // make endpoint-specific key in obj
-        endpoints[el?.route?.path] = {};
+        endpoints[el.route.path] = {};
         // make LLs of middleware functions for each specific endpoint
-        endpoints[el?.route?.path] = new middlewareLL(el.route);
+        endpoints[el.route.path] = new middlewareLL(el.route);
       });
+      // return
       return endpoints;
     };
   }
@@ -119,7 +89,7 @@ const getRenamedObjExport = (req, res, next) => {
     path: string;
     stack: any[];
     middlewareChain: object;
-    constructor(subRoute: object, ) {
+    constructor(subRoute: object) {
       //this method is HTTP method, not js method
       this.methods = subRoute.methods;
       //this is currently always indefined
@@ -153,6 +123,10 @@ const getRenamedObjExport = (req, res, next) => {
       let indexInChain: number = 0;
       // iterate through ll and log the fucnction position, route, and function definition
       while (current) {
+        console.log(
+          `\n Function #${indexInChain} in ${this.path}:`.bold.green,
+          `\n ${current.funcString} \n`
+        );
         indexInChain++;
         current = current.nextFunc;
       }
@@ -173,101 +147,48 @@ const getRenamedObjExport = (req, res, next) => {
       this.funcString = func.handle.toString();
       // this will get reassigned if it is not the last LL node
       this.nextFunc = null;
+      this.name = func.name
     }
   }
 
   // create app node
-  const appTree: AppTree = new AppTree(app);
-  const dispatcherArr: object[] = []
-
-  const regexToPath = (regex) => {
-        const newArr = regex.split('')
-        let filteredArr = newArr.filter(el => el.toUpperCase() !== el.toLowerCase() || el === ":")
-        return filteredArr.join('')
-  }
-  //pass in a router stack
-  const routerRecur = (router, type, path = '') => {
-    //make a noRouters thign equal to true
-    let noRouters = true
-    let regexPath = ''
-    let newPath = path
-    if (router?.regexp && path.length === 0) {
-      regexPath = regexToPath(router.regexp.source)
-      newPath = `${path}/${regexPath}/`
-    }
-    if (router?.handle?.stack) {
-      //for each element in the router stack
-      router.handle.stack.forEach(stackEl => {
-
-        
-        //if element is a bound Dispatcher
-        if (stackEl.name === 'bound dispatch') {
-          //update noRouter to false
-          noRouters = false        
-          // routerRecur(stackEl, 'bd')
-          stackEl.route.stack.forEach(bdStackEl => {
-          })
-          //call boundDisaptcher creator
-          // console.log("regexPath", regexPath)
-          // console.log("newPath", newPath)
-          // console.log("stackEl.route.path", stackEl.route.path)
-          let bdPath = `${newPath}/${stackEl.route.path}/`
-          // console.log(bdPath.indexOf('//'))
-          while (bdPath.indexOf('//') >= 0) {
-            // console.log(bdPath)
-            bdPath = bdPath.replace('//', '/')
-          }
-          // console.log("new bd path********************************************************************\n", bdPath)
-          const newBD: object = new BoundDispatcher(stackEl, bdPath);
-          appTree.boundDispatchers.push(newBD);
-          dispatcherArr.push(newBD)
-        } else if (stackEl.name === 'router') {
-          //if the element is a router
-          //update noRouter to false
-          noRouters = false
-          //recursively call this function
-          routerRecur(stackEl, 'router', newPath)
-        }
-        if (noRouters) {
-          if (type === 'router') {
-            const newRouter: object = new Router(router);
-            appTree.routers.push(newRouter);
-            // console.log(newRouter.path, newRouter.methods)
-          } else if (type === 'bd') {
-            const newBD: object = new BoundDispatcher(router);
-            appTree.boundDispatchers.push(newBD);
-            dispatcherArr.push(newBD)
-          }
-        }
-      })
-    } else {
-      if (type === 'router') {
-        const newRouter: object = new Router(router);
-        appTree.routers.push(newRouter);
-      } else if (type === 'bd') {
-        const newBD: object = new BoundDispatcher(router);
-        appTree.boundDispatchers.push(newBD);
-        dispatcherArr.push(newBD)
-      }
-    }
-  }
-
+  const appTree: object = new AppTree(app);
   // look at the routers stack
   appTree.app._router.stack.forEach((router) => {
-
     // if route is a bound dispatcher, create a new boundDispatcher
+    console.log('router name is ', router.name);
     if (router.name === "bound dispatch") {
-      routerRecur(router, 'bd')
+      const newBD: object = new BoundDispatcher(router);
+      appTree.boundDispatchers.push(newBD);
     }
     // if the route is a router, create a new router
     if (router.name === "router") {
-      routerRecur(router, 'router')
+      const newRouter: object = new Router(router);
+      appTree.routers.push(newRouter);
     }
   });
 
+  // console.log(appTree);
+  appTree.routers.forEach((el) => {
+    // console.log(
+    //   "************************************************************************************************************"
+    // );
+    // console.log(el)
+    // console.log(el.endpoints)
+    for (let endpoint in el.endpoints) {
+      // console.log(el.endpoints[endpoint].stack)
+      // console.log("THIS IS ENDPOINT: ", endpoint);
+      // console.log("THIS IS ENDPOINT MW STACK: ", el.endpoints[endpoint].stack);
+    }
+    // // el.endpoints.forEach(elEnd => {
+    //   console.log(elEnd.middlewareChain)
+    // })
+  });
+
   const originalAppTree = appTree;
+  console.log('renamedappTree before writeFileSync is ', originalAppTree);
   fs.writeFileSync(
-    path.join(__dirname, "../process/appTrees/renamedAppTree.json"),
+    "renamedAppTree.json",
     JSON.stringify(originalAppTree),
     (error) => {
       if (error) throw error;
@@ -277,16 +198,3 @@ const getRenamedObjExport = (req, res, next) => {
 
   //
 };
-
-
-// const req = {
-//   body : {
-//     "filepath" : "/Users/morry/git/node-express-realworld-example-app",
-//     "nodepath" : "/Users/morry/git/node-express-realworld-example-app/node_modules",
-//     "serverpath" : "/Users/morry/git/node-express-realworld-example-app/app.js"
-//   }
-// }
-
-// getRenamedObjExport(req, null, () => {})
-
-module.exports = getRenamedObjExport

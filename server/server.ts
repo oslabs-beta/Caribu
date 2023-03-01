@@ -5,7 +5,9 @@ const copyServer = require("./controllers/copyServer");
 const renameFuncs = require("./controllers/renameFuncs");
 const getOriginalExpressAppObj = require("./controllers/getOriginalExpressAppObj");
 const getRenamedExpressAppObj = require("./controllers/getRenamedExpressAppObj");
-const mergeTrees = require('./controllers/mergeTrees')
+const mergeTrees = require('./controllers/mergeTrees');
+const addClose = require('./controllers/addClose')
+const mergeDispatcher = require('./controllers/mergeDispatchers')
 
 const PORT = 3003;
 /**
@@ -30,7 +32,8 @@ app.use(function (req, res, next) {
   //run mergeTrees and send the finalObj back as a response
 
 
-app.post('/routes', copyServer, renameFuncs, getOriginalExpressAppObj, getRenamedExpressAppObj, mergeTrees, (req, res) => {
+// app.post('/routes', copyServer, addClose, renameFuncs, getOriginalExpressAppObj, getRenamedExpressAppObj, mergeTrees, (req, res) => {
+app.post('/routes', copyServer, addClose, renameFuncs, getOriginalExpressAppObj, getRenamedExpressAppObj, mergeDispatcher, (req, res) => {
   console.log('at end of server route')
   console.log(res.locals.tree)
   res.status(200).json(res.locals.tree)

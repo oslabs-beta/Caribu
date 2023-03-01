@@ -19,6 +19,41 @@ const renameFuncs = (req, res, next) => {
 
   // this is the main transform function. It takes code, parses it, renames all its arrow functions, transforms it back into code, and returns it
   const babelTransform = (code: string, filePath: string): string => {
+    //make a library of function declarations you're changing
+    let funcDecLibrary = {}
+    //first, look for all function declarations and rename them
+    const ast = parser.parse(code)
+    // let newFileName = filePath.replaceAll("-", "Ü") || "noFileNameFound";
+    // traverse(ast, {
+    //   FunctionDeclaration(path) {
+    //     if (path.node.id.name) {
+    //       let newName = `CBUNAME_${path.node.id.name}_CBUTYPE_FUNCTIONDECLARATION_CARIBU_CBUSTART${path.node.start}_CBUEND${path.node.end}_CBUPATH${newFileName}`
+    //       funcDecLibrary[path.node.id.name] = newName
+    //       path.node.id.name = `CBUNAME_${path.node.id.name}_CBUTYPE_FUNCTIONDECLARATION_CARIBU_CBUSTART${path.node.start}_CBUEND${path.node.end}_CBUPATH${newFileName}`
+    //     }
+    //   }
+    // })
+
+    // traverse(ast, {
+    //   Identifier(path) {
+    //     // console.log(path)
+    //     if (funcDecLibrary[path.node.name]) {
+    //       console.log("PAth Name found")
+    //       console.log(path.node.name)
+    //       path.node.name = funcDecLibrary[path.node.name]
+    //     }
+    //   }
+    // })
+
+    // console.log("before newCode")
+    // console.log(ast)
+    // let newCode = generate(
+    //   ast,
+    //   { sourceMaps: true }
+    // );
+    // console.log("newCode generated:")
+    // console.log(newCode.code)
+
     //stop the requiring of this every time
 
     // assign replace the value of using the `arrowToNamed` plugin on the passed in code. Which will return an object of which we only want code for now.
@@ -94,6 +129,8 @@ const renameFuncs = (req, res, next) => {
           if (stat.isDirectory()) {
             if (oldFilePath.indexOf('/node_modules') !== -1) {
               console.log(`${oldFilePath} contains '/node_modules' when we have already copied the node modules. Continuing without copying. Location: ${oldFilePath.indexOf('/node_modules')}`)
+            } else if (oldFilePath.indexOf('/.git') !== -1) {
+              console.log(`${oldFilePath} contains '/.git' when don't want /.git stuff. Continuing without copying. Location: ${oldFilePath.indexOf('/node_modules')}`)
             } else {
               // if (!oldFilePath.indexOf(".git")) {
               console.log(oldFilePath + " is a directory");
