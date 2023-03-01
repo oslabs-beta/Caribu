@@ -19,6 +19,13 @@ export default function DragDrop() {
   };
   return (
     <FileUploader
+      children={
+        <div style={{borderColor : '#F1EDE0', borderStyle : 'dashed', borderRadius : '10px', color : '#F1EDE0', minHeight : '5vh', display : 'flex', alignItems : 'center', justifyContent : 'center', width : '40vw'}}>
+          <div>
+          Drop your server directory here!
+          </div>
+        </div>
+      }
       handleChange={handleChange}
       name="folder"
       label="Drag and drop your app folder here!"

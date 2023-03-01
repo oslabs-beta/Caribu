@@ -5,6 +5,8 @@ const getRenamedObjExport = (req, res, next) => {
   //require Express
   const e = require("express");
   const fs = require("fs");
+  const { appTreeFolder } = require("./serverDirPaths");
+  const path = require('path');
   //**** NEED TO MAKE THIS DYNAMIC ****
   const renamedServer = "../process/renamedServer";
   const expressApp: Express = require(renamedServer + req.body.serverpath.replace(req.body.filepath, ""));
@@ -265,7 +267,7 @@ const getRenamedObjExport = (req, res, next) => {
 
   const originalAppTree = appTree;
   fs.writeFileSync(
-    "renamedAppTree.json",
+    path.join(__dirname, "../process/appTrees/renamedAppTree.json"),
     JSON.stringify(originalAppTree),
     (error) => {
       if (error) throw error;

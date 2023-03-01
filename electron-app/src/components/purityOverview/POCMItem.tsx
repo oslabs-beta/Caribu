@@ -11,37 +11,26 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 
 import funcBoxStyling from "../funcBoxStyling";
 
-let newFuncBoxStyling
 
-interface REFVItemProps {
+interface POMItemProps {
+    isShared: boolean,
+    funcInfo: object,
     middleware: object,
   }
 
-export default function REFVItem(props: REFVItemProps) {
-
-    const dispatch = useDispatch();
-
-    // updates the redux state with the currently selected dependency on click of the function component.
-    function selectFunction(){
-        dispatch(update_dependency({middleware: props.middleware}));
-    }
-
-    const curMiddleware = useSelector((state: RootState) => state.views.curMiddleware)
-    console.log(curMiddleware?.functionInfo?.funcName === props?.middleware?.functionInfo?.funcName)
-    if(curMiddleware?.functionInfo?.funcName === props?.middleware?.functionInfo?.funcName) {
-        newFuncBoxStyling = {...funcBoxStyling, borderStyle : 'dashed', borderColor : '#025959', borderWidth : '2px'}
-    } else {
-        newFuncBoxStyling = {...funcBoxStyling}
-    }
+export default function POCMItem(props: POMItemProps) {
 
     const filePath = useSelector((state: RootState) => state.views.filepath);
-    const mwLibrary = useSelector((state: RootState) => state.views.mwLibrary);
 
-    // console.log(props.middleware)
-    console.log(props.middleware.functionInfo.funcName, props.middleware.deps.upstream.dependents)
-    console.log(props.middleware.functionInfo.funcName, props.middleware.deps.downstream.dependents)
-    // console.log(props.middleware.deps.downstream.dependents)
-    // console.log(props.middleware)
+    const dispatch = useDispatch();
+    const conditionalFuncBoxStyling = {...funcBoxStyling}
+    if (props.isShared) conditionalFuncBoxStyling.backgroundColor = '#FFED92'
+    // updates the redux state with the currently selected dependency on click of the function component.
+    // function selectFunction(){
+    //     dispatch(update_dependency({middleware: props.middleware}));
+    // }
+
+    // console.log("POCMITEM funcINFO", props.funcInfo)
     // assigns function name to funcname variable to allow it to render in the refv item component.
     // const funcName = props.middleware.functionInfo.funcName
 
@@ -73,15 +62,27 @@ export default function REFVItem(props: REFVItemProps) {
         const relativeFilePath = funcFile.slice(copiedServerIndex + 12)
         let userFilePath = filePath + relativeFilePath
         // const relativeFilePath = funcFile.replace(serverPath, '')
+        console.log("filePath:", filePath)
         console.log("Fixed VSCode link:", userFilePath)
         return [userFilePath, relativeFilePath]
     }
 
-    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
-    console.log("funcinfo from mwLibrary:", mwLibrary[funcName]?.deps)
-    console.log("functionInfo:", props.middleware.functionInfo)
+
+
+    // //parse out a functions name data etc:
+    // const parseData = (funcName : string) => {
+
+    //     // let name = isolatePath(funcName)
+
+    //     let returnObj = {
+    //         name : isolateName(funcName),
+    //         path : isolatePath(funcName),
+    //         type : isolateType(funcName)
+    //     }
+
+    // }
+    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.funcInfo
     const [userFilePath, relativeFilePath] = convertToUserFilePath(funcFile)
-    console.log("this is input serverpath:", filePath)
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
     const vsCodeLink = `vscode://file${userFilePath}:${funcLine[0]}:${funcLine[1]}`
@@ -89,12 +90,6 @@ export default function REFVItem(props: REFVItemProps) {
     const [start, end] = funcPosition
     // console.log(start, end)
     // console.log(funcDef)
-    
-
-    let button = []
-    if (mwLibrary[funcName]?.deps?.upstream?.dependents.length || mwLibrary[funcName]?.deps?.downstream?.dependents.length) {
-        button.push(<Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button>)
-    }
 
     let newFuncName
     console.log("funcName", funcName)
@@ -115,25 +110,22 @@ export default function REFVItem(props: REFVItemProps) {
         }
         
     } 
-
+    
     let linkAndSource = []
     if (funcFile.length) {
         linkAndSource.push(<p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>)
         linkAndSource.push(<a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>)
     }
 
-    
-    
-
     return (
         <div style={{margin : '5px'}}>
             {/* <Button variant="contained" className="refv-item" onClick={selectFunction}> */}
-            <div style={newFuncBoxStyling} onClick={selectFunction}>
+            <div style={conditionalFuncBoxStyling}>
             {/* <Button variant="outlined" style={{textAlign : 'left', alignItems : "center", padding : '15px', display: 'flex', flexDirection : 'column', justifyContent:'center', maxWidth: '100%', wordBreak: 'break-word', backgroundColor : '#E0F0F5'}} onClick={selectFunction}> */}
                 {/* <Card> */}
                         <div style={{justifyContent : 'left', marginBottom : '5px'}}>
                             <h3>{funcAssignedTo || funcName}</h3>
-                           {linkAndSource}
+                            {linkAndSource}
                         </div>
                 <Accordion style={{width : '100%'}}>
                     <AccordionSummary>See Code</AccordionSummary>
@@ -145,9 +137,6 @@ export default function REFVItem(props: REFVItemProps) {
                         </Card>
                     </AccordionDetails>
                 </Accordion>
-                <br/>
-                {button}
-                {/* <Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button> */}
                 {/* <div style={{backgroundColor:'lightgrey', whiteSpace: "pre-line"}}><p>{funcDef}</p></div> */}
                 {/* </Card> */}
             </div>

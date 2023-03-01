@@ -10,15 +10,23 @@ import {
 } from "../slices/viewsSlice";
 import DragDrop from "./DragDrop";
 
+import logo from "./../../assets/text_logo.svg"
+
+
 const WelcomePage = (props: object) => {
   const dispatch = useDispatch();
   const views = useSelector((state: RootState) => state.views);
   return (
-    <div className="welcomePage">
-      <div className="wp-header">Welcome To Caribu</div>
+
+    <div className="welcomePage" style={{marginTop : '8%', color : '#F1EDE0'}}>
+      <img src={logo} alt="Logo" />
+      <div style={{marginTop : '10%'}} className="wp-header">Welcome To Caribu</div>
+
       <div className="wp-instructions">
-        To get started, drop the server folder for your application into the dropzone, then simply specify
-        the absolute paths to your server file and node modules folder, and submit!{" "}
+        To get started, drop the server folder for your application into the
+        dropzone. <br></br>
+        Then simply specify the absolute paths to your server file and node
+        modules folder, and submit!{" "}
       </div>
       <div>
         <DragDrop />
@@ -34,7 +42,7 @@ const WelcomePage = (props: object) => {
           <input
             className="nodePath-wrapper"
             type="text"
-            placeholder="Enter node modules path here"
+            placeholder="Enter node module's path here"
             onChange={async (e) => {
               await dispatch(update_nodepath({ path: e.target.value }));
             }}
@@ -44,7 +52,7 @@ const WelcomePage = (props: object) => {
             onClick={async (e) => {
               // check if server input is empty
               if (!views.serverpath) {
-                alert("Please specify your servers name first!");
+                alert("Please specify your server's name first!");
                 return;
               }
               e.preventDefault();

@@ -1,3 +1,5 @@
+import POCMItem from './POCMItem'; 
+
 export default function POCDetails(props: object) {
  
   const container = [];
@@ -9,10 +11,20 @@ export default function POCDetails(props: object) {
   for(const method in props.methods){
     const funcs = [];
     for(const func in props.methods[method]){
+      console.log(props.methods[method][func])
+      let isShared = false
+      if (props.sharedObj[props.methods[method][func]] > 1) {isShared = true}
+      console.log(isShared)
+      // console.log("THIS IS MATCHING FUNC INFO", props.funcLibrary[props.methods[method][func]])
+      const funcInfo = props.funcLibrary[props.methods[method][func]]
         funcs.push(
-          <div className="pocd-function">
-            {props.methods[method][func]}
+          <div style={{minWidth : '20vw'}}>
+            <POCMItem middleware={func} funcInfo={funcInfo} isShared={isShared}></POCMItem>
           </div>
+          
+          // <div className="pocd-function">
+          //   {props.methods[method][func]}
+          // </div>
         )
     }
     methods.push(
@@ -20,9 +32,9 @@ export default function POCDetails(props: object) {
         <div className="pocd-method">
           {method}
         </div>
-        <div className="pocd-functions">
+        {/* <div className="pocd-functions"> */}
           {funcs}
-        </div>
+        {/* </div> */}
       </div>
     )
   }
@@ -40,7 +52,17 @@ export default function POCDetails(props: object) {
   )
 
   return (
-      <div className="poc-details">
+      // <div className="poc-details">
+      <div style={{
+          backgroundImage: 'linear-gradient(#ABE0FF, rgba(171, 224, 255, 0.12))', 
+          borderColor : '#F1EDE0',
+          borderWidth : '2px',
+          borderStyle : 'solid',
+          borderRadius : '15px',
+          padding: '5px',
+          marginTop : '5px',
+          paddingBottom : '10px'
+      }}>
         {container}
       </div>
 

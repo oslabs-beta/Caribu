@@ -1,118 +1,24 @@
 [
   {
-      "routeName": "/:id",
+      "routeName": "/",
       "routeMethods": {
-          "delete": {
+          "get": {
               "middlewares": [
                   {
                       "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1745_CBUEND2126_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$characterController_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/characterController.js",
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1887_CBUEND1967_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$server_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/server.js",
                           "funcPosition": [
-                              1745,
-                              2126
+                              1887,
+                              1967
                           ],
-                          "funcDef": "(req, res, next) => {\n    testNum-=3\n    console.log(\"in delete Char\")\n    const id = req.params.id;\n    res.locals.deleteId = id;\n    console.log(\"in character delete controller: \" , res.locals)\n    if (!id) next({ message: { err: 'characterController.deleteCharacter: ERROR: no ID received' }, log: 'ERROR: Incorrect Data Recieved in characterController.delete' });\n    next();\n}",
-                          "funcAssignedTo": "characterController.deleteCharacter",
-                          "funcLine": [
-                              39,
-                              38
-                          ]
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": []
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  },
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART3951_CBUEND5460_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$fileController_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
-                          "funcPosition": [
-                              3951,
-                              5460
-                          ],
-                          "funcDef": "async (req, res, next) => {\n  testNum--\n  try {\n    // check if the correct information is on res.locals\n    if (!res.locals.deleteId)\n      throw {\n        type: 'previous middleware error',\n        err: 'incorrect info on res.locals',\n      };\n    // grab the id from res.locals of the character that will be deleted\n    const { deleteId } = res.locals;\n    // read json file for all characters\n    const chars = await fs.readFile(path.resolve(__dirname, '../data/characters.json'), 'UTF-8');\n    const parsedData = JSON.parse(chars);\n    // grab the character based off id\n    const deleted = parsedData.results[deleteId];\n    // if character is not custom, throw error, invoking catch handler\n    if (deleted.custom !== true) throw {\n        type: 'incorrect data provided',\n        err: 'character must be custom',\n      };\n    // delete character object from array\n    parsedData.results.splice(deleteId, 1);\n    // re-id remaining custom cards\n    for (let i = deleteId; i < parsedData.results.length; i++) {\n      parsedData.results[i].dbId = i;\n    }\n    // write the updated info to file\n    await fs.writeFile(path.resolve(__dirname, '../data/characters.json'),\n      JSON.stringify(parsedData),'UTF-8');\n    // save deleted character in res.locals\n    res.locals.deletedCharacter = deleted;\n    return next();\n  } catch (err) {\n    return next(createErr({\n      method: 'deleteCharacter',\n      type: err.type ? err.type : 'reading/writing file',\n      err: err.err ? err.err : err,\n    }));\n  }\n}",
-                          "funcAssignedTo": "fileController.deleteCharacter",
-                          "funcLine": [
-                              101,
-                              33
-                          ]
-                      },
-                      "deps": {
-                          "upstream": {
-                              "dependents": [
-                                  {
-                                      "upVarName": "parsedData",
-                                      "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
-                                      "upVarPosition": [
-                                          4456,
-                                          4466
-                                      ],
-                                      "location": [
-                                          4456,
-                                          4466
-                                      ],
-                                      "originalDeclaration": {
-                                          "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
-                                          "declaredName": "parsedData",
-                                          "type": "const",
-                                          "definition": "const parsedData = JSON.parse(chars);",
-                                          "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
-                                          "position": [
-                                              1264,
-                                              1301
-                                          ]
-                                      }
-                                  },
-                                  {
-                                      "upVarName": "parsedData",
-                                      "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
-                                      "upVarPosition": [
-                                          5145,
-                                          5155
-                                      ],
-                                      "location": [
-                                          5145,
-                                          5155
-                                      ],
-                                      "originalDeclaration": {
-                                          "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
-                                          "declaredName": "parsedData",
-                                          "type": "const",
-                                          "definition": "const parsedData = JSON.parse(chars);",
-                                          "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
-                                          "position": [
-                                              1264,
-                                              1301
-                                          ]
-                                      }
-                                  }
-                              ]
-                          },
-                          "downstream": {
-                              "dependents": []
-                          }
-                      }
-                  },
-                  {
-                      "functionInfo": {
-                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1108_CBUEND1202_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$characters_js",
-                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/characters.js",
-                          "funcPosition": [
-                              1108,
-                              1202
-                          ],
-                          "funcDef": "(req, res) => {\n    console.log(req);\n    res.status(200).json(res.locals.deletedCharacter);\n}",
+                          "funcDef": "(req, res) => {\n  res.sendFile(path.join(__dirname + '../client/index.html'));\n}",
                           "funcAssignedTo": null,
                           "funcLine": [
-                              28,
-                              91
-                          ]
+                              66,
+                              13
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -128,7 +34,66 @@
       }
   },
   {
-      "routeName": "/",
+      "routeName": "/api/characters/:id/",
+      "routeMethods": {
+          "get": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART148_CBUEND724_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$swapiController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/swapiController.js",
+                          "funcPosition": [
+                              148,
+                              724
+                          ],
+                          "funcDef": "(req, res, next) => {\n    const { id } = req.params;\n    //error testing [works]\n    // fetch(`https://swapi.dev/api/pd}`)\n    //\n    fetch(`https://swapi.dev/api/people/${id}`)\n        .then((response) => response.json())\n        // .then((data) => console.log(\"Swapi response: \", data))\n        .then((data) => res.locals.charInfo = data)\n        .then((data) => {\n            next()})\n        .catch(() => next({ message : { err: \"error occurred in swapiController.getMoreCharacterData\"}, log : \"ERROR: Incorrect Data Recieved in swapiController.getMoreCharacterData\" }))\n}",
+                          "funcAssignedTo": "swapiController.getMoreCharacterData",
+                          "funcLine": [
+                              7,
+                              39
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART423_CBUEND510_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$characters_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/characters.js",
+                          "funcPosition": [
+                              423,
+                              510
+                          ],
+                          "funcDef": "(req, res, next) => {\n    res.status(200).json(res.locals.charInfo);\n    // next(err)\n}",
+                          "funcAssignedTo": null,
+                          "funcLine": [
+                              12,
+                              57
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  },
+  {
+      "routeName": "/api/characters/",
       "routeMethods": {
           "post": {
               "middlewares": [
@@ -145,7 +110,8 @@
                           "funcLine": [
                               10,
                               38
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -169,7 +135,8 @@
                           "funcLine": [
                               43,
                               31
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -240,7 +207,8 @@
                           "funcLine": [
                               17,
                               84
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -256,7 +224,269 @@
       }
   },
   {
-      "routeName": "/",
+      "routeName": "/api/characters/:id/",
+      "routeMethods": {
+          "patch": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_updateCharacterFunctionDeclaration_CBUTYPE_FUNCTIONEXPRESSION_CARIBU_CBUSTART1160_CBUEND1662_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$characterController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/characterController.js",
+                          "funcPosition": [
+                              1160,
+                              1662
+                          ],
+                          "funcDef": "function updateCharacterFunctionDeclaration (req, res, next) {\n    const newNum = testNum + 3\n    const id = req.params.id\n    const { nickname, fav_food } = req.body;\n    res.locals.updates = { nickname, fav_food, id }\n    for (const traits in res.locals.updates) {\n        if (!res.locals.updates[traits]) next({ message: { err: 'characterController.updateCharacter: ERROR: Incorrect data received' }, log: 'ERROR: Incorrect Data Recieved in update. Missing a trait to update' });\n    }\n    next();\n}",
+                          "funcAssignedTo": "characterController.updateCharacter",
+                          "funcLine": [
+                              27,
+                              38
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1467_CBUEND3870_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$fileController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                          "funcPosition": [
+                              1467,
+                              3870
+                          ],
+                          "funcDef": "(req, res, next) => {\n  // check if the correct information is on res.locals\n  if (!res.locals.updates && !res.locals.newCharacter) {\n    return next(createErr({\n      method: 'saveCharacter',\n      type: 'previous middleware error',\n      err: 'incorrect info on res.locals',\n    }));\n  }\n  // read from characters file\n  fs.readFile(path.resolve(__dirname, '../data/characters.json'), 'UTF-8')\n    .then(data => {\n      let finalCharacter;\n      const parsedData = JSON.parse(data);\n      if (res.locals.updates) {\n        // if we are updating, grab info from res.locals\n        const { id, nickname, fav_food } = res.locals.updates;\n        // get the character from our array based off its id\n        const character = parsedData.results[id];\n        /** NOTE: these checks are in place of defining a delete route for deleting customizations.\n         * This was done to achieve simplicity in the steps of this unit \n         * and this pattern should NOT be replicated in production code. */\n        if (nickname !== 'keep') character.nickname = nickname;\n        if (nickname === 'delete') delete character.nickname;\n        if (fav_food !== 'keep') character.fav_food = fav_food;\n        if (fav_food === 'delete') delete character.fav_food;\n\n        finalCharacter = character;\n      } else if (res.locals.newCharacter) {\n        // if we are saving a new character, give it an id and custom prop\n        // & use what was stored on res.locals from previous middleware\n        finalCharacter = {\n          dbId: parsedData.results.length,\n          custom: true,\n          ...res.locals.newCharacter\n        } // push the new character into the character array\n        parsedData.results.push(finalCharacter);\n      } // write updated characters to file as json\n      fs.writeFile(path.resolve(__dirname, '../data/characters.json'), \n      JSON.stringify(parsedData), 'UTF-8')\n        .then(() => {\n          // save the newly created/updated character on res.locals\n          if (res.locals.updates) res.locals.updatedCharacter = finalCharacter;\n          else res.locals.newCharacter = finalCharacter;\n          return next();\n        }).catch(err => next(createErr({\n            method: 'saveCharacter', \n            type: 'writing file', \n            err,\n        })));\n    }).catch(err => next(createErr({\n      method: 'saveCharacter', \n      type: 'reading file', \n      err,\n    })));\n}",
+                          "funcAssignedTo": "fileController.saveCharacter",
+                          "funcLine": [
+                              43,
+                              31
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": [
+                                  {
+                                      "upVarName": "parsedData",
+                                      "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                      "upVarPosition": [
+                                          1921,
+                                          1931
+                                      ],
+                                      "location": [
+                                          1921,
+                                          1931
+                                      ],
+                                      "originalDeclaration": {
+                                          "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "declaredName": "parsedData",
+                                          "type": "const",
+                                          "definition": "const parsedData = JSON.parse(chars);",
+                                          "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "position": [
+                                              1264,
+                                              1301
+                                          ]
+                                      }
+                                  },
+                                  {
+                                      "upVarName": "parsedData",
+                                      "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                      "upVarPosition": [
+                                          3331,
+                                          3341
+                                      ],
+                                      "location": [
+                                          3331,
+                                          3341
+                                      ],
+                                      "originalDeclaration": {
+                                          "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "declaredName": "parsedData",
+                                          "type": "const",
+                                          "definition": "const parsedData = JSON.parse(chars);",
+                                          "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "position": [
+                                              1264,
+                                              1301
+                                          ]
+                                      }
+                                  }
+                              ]
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART900_CBUEND971_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$characters_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/characters.js",
+                          "funcPosition": [
+                              900,
+                              971
+                          ],
+                          "funcDef": "(req, res) => {\n    res.status(200).json(res.locals.updatedCharacter)\n}",
+                          "funcAssignedTo": null,
+                          "funcLine": [
+                              23,
+                              88
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  },
+  {
+      "routeName": "/api/characters/:id/",
+      "routeMethods": {
+          "delete": {
+              "middlewares": [
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1745_CBUEND2126_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$characterController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/characterController.js",
+                          "funcPosition": [
+                              1745,
+                              2126
+                          ],
+                          "funcDef": "(req, res, next) => {\n    testNum-=3\n    console.log(\"in delete Char\")\n    const id = req.params.id;\n    res.locals.deleteId = id;\n    console.log(\"in character delete controller: \" , res.locals)\n    if (!id) next({ message: { err: 'characterController.deleteCharacter: ERROR: no ID received' }, log: 'ERROR: Incorrect Data Recieved in characterController.delete' });\n    next();\n}",
+                          "funcAssignedTo": "characterController.deleteCharacter",
+                          "funcLine": [
+                              39,
+                              38
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART3951_CBUEND5460_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$controllers$fileController_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                          "funcPosition": [
+                              3951,
+                              5460
+                          ],
+                          "funcDef": "async (req, res, next) => {\n  testNum--\n  try {\n    // check if the correct information is on res.locals\n    if (!res.locals.deleteId)\n      throw {\n        type: 'previous middleware error',\n        err: 'incorrect info on res.locals',\n      };\n    // grab the id from res.locals of the character that will be deleted\n    const { deleteId } = res.locals;\n    // read json file for all characters\n    const chars = await fs.readFile(path.resolve(__dirname, '../data/characters.json'), 'UTF-8');\n    const parsedData = JSON.parse(chars);\n    // grab the character based off id\n    const deleted = parsedData.results[deleteId];\n    // if character is not custom, throw error, invoking catch handler\n    if (deleted.custom !== true) throw {\n        type: 'incorrect data provided',\n        err: 'character must be custom',\n      };\n    // delete character object from array\n    parsedData.results.splice(deleteId, 1);\n    // re-id remaining custom cards\n    for (let i = deleteId; i < parsedData.results.length; i++) {\n      parsedData.results[i].dbId = i;\n    }\n    // write the updated info to file\n    await fs.writeFile(path.resolve(__dirname, '../data/characters.json'),\n      JSON.stringify(parsedData),'UTF-8');\n    // save deleted character in res.locals\n    res.locals.deletedCharacter = deleted;\n    return next();\n  } catch (err) {\n    return next(createErr({\n      method: 'deleteCharacter',\n      type: err.type ? err.type : 'reading/writing file',\n      err: err.err ? err.err : err,\n    }));\n  }\n}",
+                          "funcAssignedTo": "fileController.deleteCharacter",
+                          "funcLine": [
+                              101,
+                              33
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": [
+                                  {
+                                      "upVarName": "parsedData",
+                                      "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                      "upVarPosition": [
+                                          4456,
+                                          4466
+                                      ],
+                                      "location": [
+                                          4456,
+                                          4466
+                                      ],
+                                      "originalDeclaration": {
+                                          "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "declaredName": "parsedData",
+                                          "type": "const",
+                                          "definition": "const parsedData = JSON.parse(chars);",
+                                          "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "position": [
+                                              1264,
+                                              1301
+                                          ]
+                                      }
+                                  },
+                                  {
+                                      "upVarName": "parsedData",
+                                      "upVarFile": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                      "upVarPosition": [
+                                          5145,
+                                          5155
+                                      ],
+                                      "location": [
+                                          5145,
+                                          5155
+                                      ],
+                                      "originalDeclaration": {
+                                          "funcName": "anonymous_function_at_926-1382_in_/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "declaredName": "parsedData",
+                                          "type": "const",
+                                          "definition": "const parsedData = JSON.parse(chars);",
+                                          "filePath": "/Users/morry/git/Caribu/server/process/copiedServer/controllers/fileController.js",
+                                          "position": [
+                                              1264,
+                                              1301
+                                          ]
+                                      }
+                                  }
+                              ]
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  },
+                  {
+                      "functionInfo": {
+                          "funcName": "CBUNAME_ANONYMOUS_CBUTYPE_ARROWFUNCTION_CARIBU_CBUSTART1108_CBUEND1202_CBUPATHUsers$morry$git$Caribu$server$process$copiedServer$routes$characters_js",
+                          "funcFile": "/Users/morry/git/Caribu/server/process/copiedServer/routes/characters.js",
+                          "funcPosition": [
+                              1108,
+                              1202
+                          ],
+                          "funcDef": "(req, res) => {\n    console.log(req);\n    res.status(200).json(res.locals.deletedCharacter);\n}",
+                          "funcAssignedTo": null,
+                          "funcLine": [
+                              28,
+                              91
+                          ],
+                          "isThirdParty": false
+                      },
+                      "deps": {
+                          "upstream": {
+                              "dependents": []
+                          },
+                          "downstream": {
+                              "dependents": []
+                          }
+                      }
+                  }
+              ]
+          }
+      }
+  },
+  {
+      "routeName": "/api/",
       "routeMethods": {
           "get": {
               "middlewares": [
@@ -273,7 +503,8 @@
                           "funcLine": [
                               25,
                               31
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -297,7 +528,8 @@
                           "funcLine": [
                               11,
                               46
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -313,7 +545,7 @@
       }
   },
   {
-      "routeName": "/more-characters",
+      "routeName": "/api/more-characters/",
       "routeMethods": {
           "get": {
               "middlewares": [
@@ -330,7 +562,8 @@
                           "funcLine": [
                               25,
                               31
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -354,7 +587,8 @@
                           "funcLine": [
                               22,
                               36
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -378,7 +612,8 @@
                           "funcLine": [
                               50,
                               46
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
@@ -402,7 +637,8 @@
                           "funcLine": [
                               17,
                               141
-                          ]
+                          ],
+                          "isThirdParty": false
                       },
                       "deps": {
                           "upstream": {
