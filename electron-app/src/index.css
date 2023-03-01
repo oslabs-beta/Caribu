@@ -236,13 +236,14 @@ Link {
 
 .form-wrapper {
   display: flex;
-  /* flex-direction: column; */
+  flex-direction: column;
   margin-top: 20px;
   justify-content: center;
+  gap: 5px;
 }
 .fileDrop-wrapper {
   border: dotted black 2px;
-  /* width: 500px; */
+  width: 30vw;
   height: 50px;
 }
 .serverName-wrapper {
@@ -271,7 +272,7 @@ Link {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  margin-left: 10px;
+  margin-top: 10px;
 }
 
 .serverSubmit:hover {

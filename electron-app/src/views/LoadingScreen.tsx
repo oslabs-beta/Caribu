@@ -20,8 +20,8 @@ const LoadingScreen = (props: object) => {
   console.log(props);
   return (
       <div class="loading-page">
+        <h2 style={{color : '#F1EDE0'}}>{loadingMessage}</h2>
         <img class="loading-logo" src={logoCircleSpin} alt="LogoCircleSpin" />
-        <div>{loadingMessage}</div>
       </div>
   );
 }

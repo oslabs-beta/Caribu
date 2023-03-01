@@ -234,8 +234,8 @@ export const fetchRoutes = () => {
 
 
     // const newJSON = require('../exampleResponse.json')
-    const newJSON = require('../exampleResponseUs.json')
-    // const newJSON = require('../dispatchResponse_dep.json')
+    // const newJSON = require('../exampleResponseUs.json')
+    const newJSON = require('../dispatchResponse_dep.json')
     dispatch(update_loading(true))
     setTimeout(() => {
       dispatch(update_loading(false))
@@ -254,7 +254,9 @@ export const fetchRoutes = () => {
           for(let j = 0; j < middlewares.length; j++){
             let funcName = middlewares[j].functionInfo.funcName
             if (!funcLibrary[funcName]) {
-              funcLibrary[funcName] = middlewares[j].functionInfo
+              funcLibrary[funcName] = {
+                functionInfo : middlewares[j].functionInfo, 
+                deps : middlewares[j].deps}
             }
           }
         }
