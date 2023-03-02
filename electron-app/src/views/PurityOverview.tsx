@@ -279,7 +279,7 @@ const Purity = () => {
           tags={tags}
           suggestions={[]}
           delimiters={[188, 13]}
-          placeholder={'Enter a middleware name or filename to filter out (eg. cookie checkers). To filter third-party middleware (eg. from node_modules), enter `3p`.'}
+          placeholder={'Enter a middleware name or filename to filter out (eg. cookie checkers). To filter third-party middleware, enter `3p` or `_num` for a specific number.'}
           handleDelete={handleDelete}
           handleAddition={handleAddition}
           handleDrag={handleDrag}
