@@ -1,5 +1,5 @@
 
-export default function MSItem(props: object) {
+export default function MSItem() {
 
   return (
       <div className="ms-item">

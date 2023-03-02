@@ -2,7 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {Navigate, useLocation} from "react-router-dom"
 import { RootState } from "../store";
 import { update_loadingMessage } from "../slices/viewsSlice";
-import logoCircleSpin from "../assets/circle_logo_thicker.svg"
+// @ts-ignore
+import logoCircleSpin from "../assets/circle_logo_thicker.svg";
+// const logoCircleSpin = require("../assets/circle_logo_thicker.svg") as string;
 
 const LoadingScreen = (props: object) => {
   const dispatch = useDispatch();
@@ -22,10 +24,10 @@ const LoadingScreen = (props: object) => {
   console.log(props);
   if(!views.directoryProcessed) {
     return (
-        <div class="loading-page" style={{color : '#F1EDE0', flexDirection : 'column', justifyContent : 'center', alignItems : 'center'}}>
+        <div className="loading-page" style={{color : '#F1EDE0', flexDirection : 'column', justifyContent : 'center', alignItems : 'center'}}>
           <div style={{textAlign : 'center', width : '100%', minWidth : '100%'}}>This may take up to a few minutes while we crawl the entire app. <br></br></div>
           <div>
-            <img class="loading-logo" src={logoCircleSpin} alt="LogoCircleSpin" />
+            <img className="loading-logo" src={logoCircleSpin} alt="LogoCircleSpin" />
             <h1>{loadingMessage}</h1>  
           </div>
           <br></br>

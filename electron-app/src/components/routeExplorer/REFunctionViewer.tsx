@@ -3,10 +3,10 @@ import { RootState } from "../../store";
 import { useSelector } from "react-redux";
 import cariboxStyling from '../caribox'
 
-export default function REFunctionViewer(props: object) {
+export default function REFunctionViewer() {
 
   // imports the routes object, current method selected, and the route index from the redux state.
-  const routes = useSelector((state: RootState) => state.views.routes);
+  const routes: any = useSelector((state: RootState) => state.views.routes);
   const routeIndex = useSelector((state: RootState) => state.views.routeIndex);
   const method = useSelector((state: RootState) => state.views.curMethod);
 

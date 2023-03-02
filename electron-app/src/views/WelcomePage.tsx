@@ -1,25 +1,22 @@
 import "../../src/index.css";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { RootState, AppDispatch } from "../store";
 import {
   fetchRoutes,
   update_filepath,
   update_serverpath,
   update_nodepath,
 } from "../slices/viewsSlice";
-import DragDrop from "./DragDrop";
+import DragDrop from "../components/DragDrop";
 import { CopyBlock } from "react-code-blocks";
 
+// const logo = require("./../../assets/text_logo.svg") as string;
+// @ts-ignore
+import logo from "../../assets/text_logo.svg";
 
-
-
-import logo from "./../../assets/text_logo.svg";
-
-const downloadCode = 'git clone '
-
-const WelcomePage = (props: object) => {
-  const dispatch = useDispatch();
+const WelcomePage = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const views = useSelector((state: RootState) => state.views);
   return (
     <div className="welcomePage" style={{ marginTop: "8%", color: "#F1EDE0" }}>

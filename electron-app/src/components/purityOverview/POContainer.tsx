@@ -13,7 +13,7 @@ interface POContainerProps {
   reducedRoutes: object;
 }
 
-export default function POContainer(props: POContainerProps) {
+export default function POContainer(props: any) {
 
   const routeContainer: ReactElement[] = [];
 
@@ -21,14 +21,14 @@ export default function POContainer(props: POContainerProps) {
 
   console.log(props)
   const shared : string[] = []
-  const sharedObj = {}
+  const sharedObj: any = {}
   
   props.reducedRoutes
 
-  props.sharedRoutes.forEach(el => {
-    let overlapArr = []
+  props.sharedRoutes.forEach((el: string | number) => {
+    // let overlapArr: any = []
     console.log('rd',props.reducedRoutes[el]);
-    for (let method in props.reducedRoutes[el]) {
+    for (const method in props.reducedRoutes[el]) {
       for (const funcName of props.reducedRoutes[el][method]) {
         console.log(funcName)
         console.log(sharedObj[funcName])
@@ -48,8 +48,8 @@ export default function POContainer(props: POContainerProps) {
   // const {funcLibrary} = props
   // console.log("FUNC LIIB", funcLibrary)
 
-  props.sharedRoutes.forEach(el => {
-    let overlapArr = []
+  props.sharedRoutes.forEach((el: string | number) => {
+    // const overlapArr = []
     console.log('rd',props.reducedRoutes[el]);
     // for (let method in props.reducedRoutes[el]) {
     //   for (const funcName of props.reducedRoutes[el][method]) {

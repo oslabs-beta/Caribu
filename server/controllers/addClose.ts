@@ -1,16 +1,14 @@
 const fs = require('fs')
-
 const parser = require('@babel/parser')
 // const { babel, parse } = require('@babel/core')
 const generate = require("@babel/generator").default;
-
 const traverse = require("@babel/traverse").default;
-
 const t = require("@babel/types");
+import { copiedServer } from './serverDirPaths';
 
 const addCloseExport = (req, res, next) => {
   console.log("INN ADD CLOSE EXPORT")
-  const copiedServer = "./process/copiedServer";
+  // const copiedServer = "./process/copiedServer";
   console.log("serverPath: ", req.body.serverpath)
   console.log(req.body.serverpath.replace(req.body.filepath, copiedServer))
   let copiedServerApp = req.body.serverpath.replace(req.body.filepath, copiedServer)
@@ -50,7 +48,7 @@ const addCloseExport = (req, res, next) => {
         // console.log(path)
         console.log("PATH.NODE:")
         console.dir(path.node.arguments, {depth : 4})
-        newArguments = [...path.node.arguments]
+        let newArguments = [...path.node.arguments]
         newArguments[0] = t.numericLiteral(3033);
         path.replaceWith(
           t.callExpression(

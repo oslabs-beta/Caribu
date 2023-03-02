@@ -1,6 +1,11 @@
-import POCMItem from './POCMItem'; 
+import POCMItem from './POCMItem';
 
-export default function POCDetails(props: object) {
+interface POCDetailsProps {
+  route: string,
+  methods: (...args: any[]) => any,
+}
+
+export default function POCDetails(props: any) {
  
   const container = [];
   const methods = [];
@@ -61,7 +66,8 @@ export default function POCDetails(props: object) {
           borderRadius : '15px',
           padding: '5px',
           marginTop : '5px',
-          paddingBottom : '10px'
+          paddingBottom : '10px',
+          alignItems : 'left'
       }}>
         {container}
       </div>

@@ -4,11 +4,10 @@ import REDVItem from "./REDVItem";
 import cariboxStyling from "../caribox";
 
 
-export default function REDependencyViewer(props: object) {
-  console.log("dependency viewer hook runnning")
+export default function REDependencyViewer() {
 
   // get state for routes, currently selected middleware.
-  const routes = useSelector((state: RootState) => state.views.routes);
+  // const routes = useSelector((state: RootState) => state.views.routes);
   const middleware = useSelector((state: RootState) => state.views.curMiddleware);
 
   console.log(middleware)
@@ -17,9 +16,9 @@ export default function REDependencyViewer(props: object) {
   const dependencyTree = middleware.deps;
 
   // creates a list for upstream and downstream dependencies.
-  const uDependencies = [];
-  const dDependencies = [];
-  const dependencySet = new Set()
+  const uDependencies : any[] = [];
+  const dDependencies : any[] = [];
+  const dependencySet : Set<any> = new Set()
   // checks if upstream depencies exists
   if(dependencyTree){
     if (dependencyTree.upstream.dependents.length) {

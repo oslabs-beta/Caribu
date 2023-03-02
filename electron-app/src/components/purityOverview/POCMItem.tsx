@@ -18,12 +18,12 @@ interface POMItemProps {
     middleware: object,
   }
 
-export default function POCMItem(props: POMItemProps) {
+export default function POCMItem(props: any) {
 
     const filePath = useSelector((state: RootState) => state.views.filepath);
 
     const dispatch = useDispatch();
-    const conditionalFuncBoxStyling = {...funcBoxStyling}
+    const conditionalFuncBoxStyling: any = {...funcBoxStyling}
     if (props.isShared) conditionalFuncBoxStyling.backgroundColor = '#FFED92'
     // updates the redux state with the currently selected dependency on click of the function component.
     // function selectFunction(){
@@ -46,21 +46,21 @@ export default function POCMItem(props: POMItemProps) {
     const isolateType = (str : string):string => {
         const typeStart : number = str.indexOf('CBUTYPE_')+8
         const firstUnder : number = str.indexOf('_', typeStart + 12)
-        let funcType : string = str.slice(typeStart, firstUnder)
+        const funcType : string = str.slice(typeStart, firstUnder)
         return funcType
     }
 
     const isolateName = (str : string):string => {
         // const nameStart : number = str.indexOf('CBUTYPE_')+8
         const firstUnder : number = str.indexOf('_', 8)
-        let funcName : string = str.slice(0, firstUnder)
+        const funcName : string = str.slice(0, firstUnder)
         return funcName
     }
 
     const convertToUserFilePath = (str : string):string[] => {
         const copiedServerIndex = str.indexOf('copiedServer')
         const relativeFilePath = funcFile.slice(copiedServerIndex + 12)
-        let userFilePath = filePath + relativeFilePath
+        const userFilePath = filePath + relativeFilePath
         // const relativeFilePath = funcFile.replace(serverPath, '')
         console.log("filePath:", filePath)
         console.log("Fixed VSCode link:", userFilePath)
@@ -81,7 +81,8 @@ export default function POCMItem(props: POMItemProps) {
     //     }
 
     // }
-    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.funcInfo
+    let { funcName } = props.funcInfo
+    const { funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.funcInfo
     const [userFilePath, relativeFilePath] = convertToUserFilePath(funcFile)
     const funcType = isolateType(funcName)
     // console.log("funcType", funcType)
@@ -95,8 +96,8 @@ export default function POCMItem(props: POMItemProps) {
     console.log("funcName", funcName)
     if (funcType !== 'FUNCTIONDECLARATION') {
         if (funcName.includes('CBUNAME_IMPORTEDMIDDLEWARE')) {
-            let secondUnder = funcName.indexOf('_', 10)
-            let mwNumber = funcName.slice(secondUnder+1)
+            const secondUnder = funcName.indexOf('_', 10)
+            const mwNumber = funcName.slice(secondUnder+1)
             funcName = `Third Party Middleware #${mwNumber}`
         } else {
             if (funcType === 'ARROWFUNCTION') {
@@ -111,7 +112,7 @@ export default function POCMItem(props: POMItemProps) {
         
     } 
     
-    let linkAndSource = []
+    const linkAndSource = []
     if (funcFile.length) {
         linkAndSource.push(<p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>)
         linkAndSource.push(<a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>)

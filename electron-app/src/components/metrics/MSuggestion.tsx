@@ -1,6 +1,6 @@
 import MSItem from "./MSItem";
 
-export default function MSuggestions(props: object) {
+export default function MSuggestions() {
 
   return (
       <div className="m-suggestions">

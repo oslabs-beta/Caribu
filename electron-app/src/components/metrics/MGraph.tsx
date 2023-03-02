@@ -1,5 +1,5 @@
 
-export default function MGraph(props: object) {
+export default function MGraph() {
 
   return (
       <div className="m-graph">

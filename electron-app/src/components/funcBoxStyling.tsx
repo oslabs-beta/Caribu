@@ -1,4 +1,4 @@
-const funcBoxStyling = {
+const funcBoxStyling: any = {
   textAlign : 'left', 
   alignItems : "center", 
   padding : '15px', 

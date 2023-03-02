@@ -18,7 +18,7 @@ export default function RERVItem(props: RERVItemProps) {
         dispatch(update_dependency({middleware: {}}));
     }
     
-    let buttonStyle = {
+    const buttonStyle: any = {
         color : '#255858'
     }
     if (props.highlight) {

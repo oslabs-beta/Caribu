@@ -18,8 +18,8 @@ interface REDVItemProps {
   depVarPath?: string,
 }
 
-export default function REDVItem(props: REDVItemProps) {
-  const mwLibrary = useSelector((state: RootState) => state.views.mwLibrary);
+export default function REDVItem(props: any) {
+  const mwLibrary: any = useSelector((state: RootState) => state.views.mwLibrary);
   const filePath = useSelector((state: RootState) => state.views.filepath);
   console.log('filePAth:', filePath)
   console.log(mwLibrary)
@@ -30,7 +30,7 @@ export default function REDVItem(props: REDVItemProps) {
   const convertToUserFilePath = (str : string):string[] => {
     const copiedServerIndex = str.indexOf('copiedServer')
     const relativeFilePath = str.slice(copiedServerIndex + 12)
-    let userFilePath = filePath + relativeFilePath
+    const userFilePath = filePath + relativeFilePath
     // const relativeFilePath = funcFile.replace(serverPath, '')
     // console.log("Fixed VSCode link:", userFilePath)
     return [userFilePath, relativeFilePath]

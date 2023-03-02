@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
+  "build": {
+    "appId": "Caribu"
+  },
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -22,9 +25,11 @@
     "@babel/preset-react": "^7.18.6",
     "@electron-forge/cli": "^6.0.4",
     "@electron-forge/maker-deb": "^6.0.4",
+    "@electron-forge/maker-dmg": "^6.0.5",
     "@electron-forge/maker-rpm": "^6.0.4",
     "@electron-forge/maker-squirrel": "^6.0.4",
     "@electron-forge/maker-zip": "^6.0.4",
+    "@electron-forge/plugin-electronegativity": "^6.0.5",
     "@electron-forge/plugin-webpack": "^6.0.4",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
@@ -36,6 +41,7 @@
     "babel-loader": "^9.1.2",
     "css-loader": "^6.7.3",
     "electron": "22.2.0",
+    "electron-packager": "^17.1.1",
     "eslint": "^8.33.0",
     "eslint-plugin-import": "^2.27.5",
     "file-loader": "^6.2.0",
@@ -44,8 +50,7 @@
     "style-loader": "^3.3.1",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
-    "typescript": "~4.5.4",
-    "url-search-params": "^1.1.0"
+    "typescript": "~4.5.4"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -54,6 +59,7 @@
     "@mui/material": "^5.11.10",
     "@mui/system": "^5.11.9",
     "@reduxjs/toolkit": "^1.9.2",
+    "concurrently": "^7.6.0",
     "electron-squirrel-startup": "^1.0.0",
     "fs": "^0.0.1-security",
     "react": "^18.2.0",

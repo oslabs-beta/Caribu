@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import POContainer from "../components/purityOverview/POContainer";
 import { ReactElement } from "react";
-import e from "express";
-import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
+// import e from "express";
+// import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -12,12 +12,15 @@ import cariboxStyling from "../components/caribox";
 import { update_filters } from "../slices/viewsSlice";
 import { WithContext as ReactTags } from 'react-tag-input';
 import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
+// import Stack from '@mui/material/Stack';
 
 const newCariboxStyling = {...cariboxStyling, minHeight : '5vh', width: '80vw'}
 import {Navigate, useLocation} from "react-router-dom";
 
-
+interface RouteNames {
+  routeName?: string;
+  routeMethods?: any;
+}
 
 // Node, find, union, and addroute are all a data structure used for the union find algorithm aka Disjoint set union.
 class Node {
@@ -81,13 +84,13 @@ const Purity = () => {
   function parseRoutes(strs: string[] = ['']){
     strs = strs.filter((el) => el.length);
 
-    const routesDict: object= {};
+    const routesDict: object = {};
     for(let i = 0; i < routes.length; i++){
-      const route: object = routes[i];
+      const route : RouteNames = routes[i];
       if(!routesDict[route.routeName]) routesDict[route.routeName] = {};
       
       for(const key in route.routeMethods){
-        const middlewares = route.routeMethods[key].middlewares;
+        const middlewares : any = route.routeMethods[key].middlewares;
         routesDict[route.routeName][key] = [];
         // if string is in function name at all, be sure to skip over that function.
         // assume it comes from a value in the store.
@@ -200,7 +203,7 @@ const Purity = () => {
 
     // sharedMiddlewares is a set with Node objects that contain their unique shared route lists and related functions.
     const sharedMiddlewares: Array<Node> = groupSharedMiddlewares(isoFuncs);
-    sharedMiddlewares.sort((a, b) => {b.routes.size - a.routes.size})
+    sharedMiddlewares.sort((a, b):any => {b.routes.size - a.routes.size})
     console.log('shared', sharedMiddlewares);
 
     const containers: ReactElement[] = [];

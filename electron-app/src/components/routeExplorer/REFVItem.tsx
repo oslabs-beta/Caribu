@@ -14,7 +14,8 @@ import funcBoxStyling from "../funcBoxStyling";
 let newFuncBoxStyling
 
 interface REFVItemProps {
-    middleware: object,
+    // TODO: define type when properties are finalized
+    middleware: any,
   }
 
 export default function REFVItem(props: REFVItemProps) {
@@ -35,7 +36,7 @@ export default function REFVItem(props: REFVItemProps) {
     }
 
     const filePath = useSelector((state: RootState) => state.views.filepath);
-    const mwLibrary = useSelector((state: RootState) => state.views.mwLibrary);
+    const mwLibrary: any = useSelector((state: RootState) => state.views.mwLibrary);
 
     // console.log(props.middleware)
     console.log(props.middleware.functionInfo.funcName, props.middleware.deps.upstream.dependents)
@@ -57,27 +58,28 @@ export default function REFVItem(props: REFVItemProps) {
     const isolateType = (str : string):string => {
         const typeStart : number = str.indexOf('CBUTYPE_')+8
         const firstUnder : number = str.indexOf('_', typeStart + 12)
-        let funcType : string = str.slice(typeStart, firstUnder)
+        const funcType : string = str.slice(typeStart, firstUnder)
         return funcType
     }
 
     const isolateName = (str : string):string => {
         // const nameStart : number = str.indexOf('CBUTYPE_')+8
         const firstUnder : number = str.indexOf('_', 8)
-        let funcName : string = str.slice(0, firstUnder)
+        const funcName : string = str.slice(0, firstUnder)
         return funcName
     }
 
     const convertToUserFilePath = (str : string):string[] => {
         const copiedServerIndex = str.indexOf('copiedServer')
         const relativeFilePath = funcFile.slice(copiedServerIndex + 12)
-        let userFilePath = filePath + relativeFilePath
+        const userFilePath = filePath + relativeFilePath
         // const relativeFilePath = funcFile.replace(serverPath, '')
         console.log("Fixed VSCode link:", userFilePath)
         return [userFilePath, relativeFilePath]
     }
 
-    let { funcName, funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
+    let { funcName } = props.middleware.functionInfo
+    const { funcFile, funcDef, funcPosition, funcAssignedTo, funcLine } = props.middleware.functionInfo
     console.log("funcinfo from mwLibrary:", mwLibrary[funcName]?.deps)
     console.log("functionInfo:", props.middleware.functionInfo)
     const [userFilePath, relativeFilePath] = convertToUserFilePath(funcFile)
@@ -91,7 +93,7 @@ export default function REFVItem(props: REFVItemProps) {
     // console.log(funcDef)
     
 
-    let button = []
+    const button = []
     if (mwLibrary[funcName]?.deps?.upstream?.dependents.length || mwLibrary[funcName]?.deps?.downstream?.dependents.length) {
         button.push(<Button onClick={selectFunction} variant="outlined" style={{width : '100%'}} >View Dependencies</Button>)
     }
@@ -100,8 +102,8 @@ export default function REFVItem(props: REFVItemProps) {
     console.log("funcName", funcName)
     if (funcType !== 'FUNCTIONDECLARATION') {
         if (funcName.includes('CBUNAME_IMPORTEDMIDDLEWARE')) {
-            let secondUnder = funcName.indexOf('_', 10)
-            let mwNumber = funcName.slice(secondUnder+1)
+            const secondUnder = funcName.indexOf('_', 10)
+            const mwNumber = funcName.slice(secondUnder+1)
             funcName = `Third Party Middleware #${mwNumber}`
         } else {
             if (funcType === 'ARROWFUNCTION') {
@@ -116,7 +118,7 @@ export default function REFVItem(props: REFVItemProps) {
         
     } 
 
-    let linkAndSource = []
+    const linkAndSource = []
     if (funcFile.length) {
         linkAndSource.push(<p style={{fontSize : '0.7em'}}><i>Source File:{"\n"}{funcFile}</i></p>)
         linkAndSource.push(<a href={vsCodeLink} style={{textDecoration : 'none'}}>Open in VSCode</a>)

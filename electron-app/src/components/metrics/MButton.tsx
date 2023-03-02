@@ -1,5 +1,5 @@
 
-export default function MButton(props: object) {
+export default function MButton() {
 
   return (
       <div className="m-button">
