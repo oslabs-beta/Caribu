@@ -26,13 +26,13 @@ Once our server is up and running as displayed above, simply drag and drop your 
 
 Once your application has been parsed by Caribu (which may take a moment as we make a copy of your entire server), you will be able to view the applications functionality in the Route Explorer and Purity Overview.
 
-<b>Route Explorer</b>
+<b>Route Explorer</b><br></br>
 This tab displays all of the individual routes in your application. When a route is clicked, it will display all the functions in that specific route. Each function is also able to be individually clicked which will then display a list of dependencies for that specific function.
 
 <!-- Picture of route explorer in use -->
 <img style="margin-left: 50%; margin-right: 50%;" src="https://media.giphy.com/media/b9vPsobQ2B5bNQ6zoq/giphy.gif" width="70%" height="70%"/>
 
-<b>Purity Overview</b>
+<b>Purity Overview</b><br></br>
 This tab displays the smallest possible breakdown of your application's routes. Each route will display its corresponding middleware and highlight middleware that is not pure. You also have the option to filter out any middleware as you see fit using the tag input box.
 
 <!-- Picture of Purity Overview -->
