@@ -289,3 +289,55 @@ Link {
     rgba(230, 169, 0, 0.25) 0 16px 32px;
   transform: scale(1.05) rotate(-1deg);
 }
+
+.ReactTags__tags {
+  position: relative;
+}
+
+/* Styles for the input */
+.ReactTags__tagInput {
+  border-radius: 2px;
+  display: inline-block;
+}
+/* This is the text input box for the tags */
+.ReactTags__tagInput input.ReactTags__tagInputField,
+.ReactTags__tagInput input.ReactTags__tagInputField:focus {
+  height: 31px;
+  width: 80vw;
+  margin: 0;
+  font-size: 12px;
+  border: 1px solid #eee;
+  min-width: 150px;
+  color: #F1EDE0;
+  background-color: rgba(255, 255, 255, 0);
+  outline: none;
+}
+.ReactTags__tagInput input.ReactTags__tagInputField::placeholder{
+  color: white;
+}
+
+.ReactTags__editInput {
+  border-radius: 1px;
+}
+
+.ReactTags__editTagInput {
+  display: inline-flex;
+}
+
+/* Styles for selected tags */
+/* This box is for the tags themselves that wrap around the top of the input box */
+.ReactTags__selected span.ReactTags__tag {
+  border: 1px solid #ddd;
+  background: #F1EDE0;
+  color: #255858;
+  font-size: 12px;
+  display: inline-block;
+  padding: 5px;
+  margin: 0 5px;
+  border-radius: 2px;
+}
+.ReactTags__selected a.ReactTags__remove {
+  color: #aaa;
+  margin-left: 5px;
+  cursor: pointer;
+}
