@@ -311,6 +311,10 @@ Link {
   color: #F1EDE0;
   background-color: rgba(255, 255, 255, 0);
   outline: none;
+  padding-left : 15px;
+  padding-right : 15px;
+  border-radius: 10px;
+  margin: 10px;
 }
 .ReactTags__tagInput input.ReactTags__tagInputField::placeholder{
   color: white;
@@ -329,15 +333,30 @@ Link {
 .ReactTags__selected span.ReactTags__tag {
   border: 1px solid #ddd;
   background: #F1EDE0;
+  border-radius: 5px !important;
   color: #255858;
   font-size: 12px;
   display: inline-block;
-  padding: 5px;
-  margin: 0 5px;
+  padding-left: 15px;
+  padding-right: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin: 10px;
   border-radius: 2px;
 }
+
 .ReactTags__selected a.ReactTags__remove {
-  color: #aaa;
-  margin-left: 5px;
+  color: rgba(255,255,255,0) !important;
+  margin-left: 5px !important;
+  padding-left: 10px !important;
+  cursor: pointer;
+}
+
+.ReactTags__selected button {
+  color: #255858;
+  background-color: rgba(255,255,255,0) !important;
+  border-style: none;
+  margin-left: 5px !important;
+  /* padding-left: 10px !important; */
   cursor: pointer;
 }

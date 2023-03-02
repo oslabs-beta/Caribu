@@ -253,10 +253,10 @@ export const fetchRoutes = () => {
     // })
 
     // const newJSON = require("../exampleResponse.json");
-    // const newJSON = require('../exampleResponseUs.json')
+    const newJSON = require('../exampleResponseUs.json')
     // const newJSON = require('../dispatchResponse_dep.json')
     // const newJSON = require('../betterDeps.json')
-    const newJSON = require('../exampleAppDeps.json')
+    // const newJSON = require('../exampleAppDeps.json')
     dispatch(update_loading(true));
 
     setTimeout(() => {
