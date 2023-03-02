@@ -277,18 +277,15 @@ const Purity = () => {
       <h1 >Purity Overview</h1>
       <ReactTags
           tags={tags}
-          classNames={{
-            tags: 'tagsClass',
-            tagInput: 'tagInputClass',
-            tag: 'tagClass',}}
           suggestions={[]}
           delimiters={[188, 13]}
+          placeholder={'Enter a middleware name or filename to filter out (eg. cookie checkers). To filter third-party middleware, enter `3p` or `_num` for a specific number.'}
           handleDelete={handleDelete}
           handleAddition={handleAddition}
           handleDrag={handleDrag}
           handleTagClick={handleTagClick}
           inputFieldPosition="bottom"
-          renderSuggestion = {({ text }, query) => <div style={{ textDecoration: 'underline', textDecorationStyle: 'wavy', backgroundColor : 'black' }}>{text} ({ query })</div>}
+          // renderSuggestion = {({ text }, query) => <div style={{ textDecoration: 'underline', textDecorationStyle: 'wavy', backgroundColor : 'black' }}>{text} ({ query })</div>}
           autocomplete
         />
       <div>

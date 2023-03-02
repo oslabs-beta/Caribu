@@ -11,9 +11,9 @@ const LoadingScreen = (props: object) => {
   const loadingMessage = useSelector((state: RootState) => state.views.loadingMessage);
   console.log("THIS IS LOADING LES")
 
-  setTimeout(() => {
-    dispatch(update_loadingMessage('Analyzing Control Flow Depencencies'))
-  }, 3500)
+  // setTimeout(() => {
+  //   dispatch(update_loadingMessage('Analyzing Control Flow Depencencies'))
+  // }, 3500)
 
   setTimeout(() => {
     dispatch(update_loadingMessage('Generating Results...'))
@@ -22,9 +22,13 @@ const LoadingScreen = (props: object) => {
   console.log(props);
   if(!views.directoryProcessed) {
     return (
-        <div class="loading-page">
-          <img class="loading-logo" src={logoCircleSpin} alt="LogoCircleSpin" />
-          <div>{loadingMessage}</div>
+        <div class="loading-page" style={{color : '#F1EDE0', flexDirection : 'column', justifyContent : 'center', alignItems : 'center'}}>
+          <div style={{textAlign : 'center', width : '100%', minWidth : '100%'}}>This may take up to a few minutes while we crawl the entire app. <br></br></div>
+          <div>
+            <img class="loading-logo" src={logoCircleSpin} alt="LogoCircleSpin" />
+            <h1>{loadingMessage}</h1>  
+          </div>
+          <br></br>
         </div>
     );
   }
