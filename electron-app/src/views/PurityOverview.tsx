@@ -11,6 +11,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import cariboxStyling from "../components/caribox";
 import { update_filters } from "../slices/viewsSlice";
 import { WithContext as ReactTags } from 'react-tag-input';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 
 const newCariboxStyling = {...cariboxStyling, minHeight : '5vh', width: '80vw'}
 import {Navigate, useLocation} from "react-router-dom";
@@ -209,17 +211,27 @@ const Purity = () => {
     // pushes each individual container with props for its route, sharedroutes and functions
     for(let i = 0; i < sharedMiddlewares.length; i++){
       console.log('HSAREd I:', sharedMiddlewares[i], reducedRoutes)
-      let listOfRoutes = ''
+      let listOfRoutes = []
       
-      sharedMiddlewares[i].routes.forEach(el => {listOfRoutes += `${el}, `})
-      listOfRoutes = listOfRoutes.slice(0, listOfRoutes.length-2)
+      sharedMiddlewares[i].routes.forEach(el => {
+        listOfRoutes.push(<Chip label={el}></Chip>)
+        // listOfRoutes += `${el}, `
+      })
+      // listOfRoutes = listOfRoutes.slice(0, listOfRoutes.length-2)
 
       containers.push(
         <div>
         <Accordion style={newCariboxStyling}>
         <AccordionSummary>
-          <div>
-          <b>{`Group ${i+1}:`} <i>{listOfRoutes}</i></b>  
+          <div style={{display : 'flex', alignItems : 'left', flexDirection : 'row', justifyContent : 'center'}}>
+            <div style={{minWidth : '10%', display :'flex', justifyContent : 'center', alignItems : 'center'}}>
+            <b>{`Group ${i+1}:`}</b>  
+            </div>
+            {/* <Stack direction='row' spacing={1}> */}
+              <div style={{marginLeft : '10px'}}>
+              {listOfRoutes}
+              </div>
+              {/* </Stack> */}
           </div>
         </AccordionSummary>
         <AccordionDetails>
@@ -270,11 +282,13 @@ const Purity = () => {
           tags={tags}
           suggestions={[]}
           delimiters={[188, 13]}
+          placeholder={'Enter a middleware name or filename to filter out (eg. cookie checkers). To filter third-party middleware, enter `3p` or `_num` for a specific number.'}
           handleDelete={handleDelete}
           handleAddition={handleAddition}
           handleDrag={handleDrag}
           handleTagClick={handleTagClick}
           inputFieldPosition="bottom"
+          // renderSuggestion = {({ text }, query) => <div style={{ textDecoration: 'underline', textDecorationStyle: 'wavy', backgroundColor : 'black' }}>{text} ({ query })</div>}
           autocomplete
         />
       <div>

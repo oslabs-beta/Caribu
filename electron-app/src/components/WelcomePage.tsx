@@ -9,6 +9,10 @@ import {
   update_nodepath,
 } from "../slices/viewsSlice";
 import DragDrop from "./DragDrop";
+import { CopyBlock } from "react-code-blocks";
+
+
+
 
 const logo = require("./../../assets/text_logo.svg");
 // import logo from "../../assets/text_logo.svg";
@@ -18,9 +22,34 @@ const WelcomePage = () => {
   const views = useSelector((state: RootState) => state.views);
   return (
     <div className="welcomePage" style={{ marginTop: "8%", color: "#F1EDE0" }}>
-      <img src={logo} alt="Logo" />
+      <img src={logo} alt="Logo" style={{width : '50%', maxHeight : '30vh', marginBottom : '-10%'}}/>
       <div style={{ marginTop: "10%" }} className="wp-header">
         Welcome To Caribu
+      </div>
+      <br></br>
+
+      <div className="wp-instructions" style={{display : 'flex', flexDirection : 'column', alignItems : 'center', justifyContent : 'center'}}>
+        To operate completely locally, the Caribu desktop app requires a local instance of our server to be running.
+        <br></br>
+        <div style={{backgroundColor : 'white',
+          padding : '10px',
+          marginTop : '2vh',
+          borderRadius : '10px', 
+          maxWidth : '80%', 
+          display : 'flex', 
+          alignItems : 'center', 
+          justifyContent : 'center'}}>
+          <div style={{textAlign : 'left'}}>
+          <CopyBlock
+            text={'git clone https://github.com/oslabs-beta/Caribu \ncd Caribu/server/ \nnpm i \nnode server'}
+            language={'javascript'}
+            showLineNumbers={false}
+            startingLineNumber={0}
+            theme={'atomOneLight'}
+            wrapLines
+          />
+          </div>
+        </div>
       </div>
 
       <div className="wp-instructions">

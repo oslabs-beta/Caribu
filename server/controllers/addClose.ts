@@ -49,12 +49,13 @@ const addCloseExport = (req, res, next) => {
         console.log("PATH:")
         // console.log(path)
         console.log("PATH.NODE:")
-        console.log(path)
-
+        console.dir(path.node.arguments, {depth : 4})
+        newArguments = [...path.node.arguments]
+        newArguments[0] = t.numericLiteral(3033);
         path.replaceWith(
           t.callExpression(
             t.memberExpression(
-              t.callExpression(path.node.callee, path.node.arguments),
+              t.callExpression(path.node.callee, newArguments),
               t.identifier('close')
             ),
             []
