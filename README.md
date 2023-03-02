@@ -16,8 +16,8 @@ If you would like to run our application in development mode, please clone our r
 
 To use our application, first copy our script and run it in your terminal.
 
-<div style="display:flex; flex-direction: column;">
-<img style="width: 350px;" src="https://i.imgur.com/OBR5MK0.png" title="source: imgur.com" /><img style="width: 350px" src="https://i.imgur.com/QId5FHU.png" title="source: imgur.com" /></div>
+<img style="width: 350px;" src="https://i.imgur.com/OBR5MK0.png" title="source: imgur.com" />
+<img style="width: 350px" src="https://i.imgur.com/QId5FHU.png" title="source: imgur.com" />
 
 Once our server is up and running as displayed above, simply drag and drop your applications server folder, then specify the absolute paths to your server file and node modules folder, then submit!
 
