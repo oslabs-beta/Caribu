@@ -11,11 +11,9 @@ import {
 import DragDrop from "../components/DragDrop";
 import { CopyBlock } from "react-code-blocks";
 
-
-
-
-const logo = require("./../../assets/text_logo.svg");
-// import logo from "../../assets/text_logo.svg";
+// const logo = require("./../../assets/text_logo.svg") as string;
+// @ts-ignore
+import logo from "../../assets/text_logo.svg";
 
 const WelcomePage = () => {
   const dispatch = useDispatch<AppDispatch>();

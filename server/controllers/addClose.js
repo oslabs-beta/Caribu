@@ -1,3 +1,4 @@
+"use strict";
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -7,18 +8,20 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+exports.__esModule = true;
 var fs = require('fs');
 var parser = require('@babel/parser');
 // const { babel, parse } = require('@babel/core')
 var generate = require("@babel/generator")["default"];
 var traverse = require("@babel/traverse")["default"];
 var t = require("@babel/types");
+var serverDirPaths_1 = require("./serverDirPaths");
 var addCloseExport = function (req, res, next) {
     console.log("INN ADD CLOSE EXPORT");
-    var copiedServer = "./process/copiedServer";
+    // const copiedServer = "./process/copiedServer";
     console.log("serverPath: ", req.body.serverpath);
-    console.log(req.body.serverpath.replace(req.body.filepath, copiedServer));
-    var copiedServerApp = req.body.serverpath.replace(req.body.filepath, copiedServer);
+    console.log(req.body.serverpath.replace(req.body.filepath, serverDirPaths_1.copiedServer));
+    var copiedServerApp = req.body.serverpath.replace(req.body.filepath, serverDirPaths_1.copiedServer);
     console.log(copiedServerApp);
     var codeToParse = fs.readFileSync(copiedServerApp).toString();
     // console.log(copiedServerApp)
@@ -46,7 +49,7 @@ var addCloseExport = function (req, res, next) {
                 // console.log(path)
                 console.log("PATH.NODE:");
                 console.dir(path.node.arguments, { depth: 4 });
-                newArguments = __spreadArray([], path.node.arguments, true);
+                var newArguments = __spreadArray([], path.node.arguments, true);
                 newArguments[0] = t.numericLiteral(3033);
                 path.replaceWith(t.callExpression(t.memberExpression(t.callExpression(path.node.callee, newArguments), t.identifier('close')), []));
                 closeAppOnce = false;

@@ -66,7 +66,8 @@ export default function POCDetails(props: any) {
           borderRadius : '15px',
           padding: '5px',
           marginTop : '5px',
-          paddingBottom : '10px'
+          paddingBottom : '10px',
+          alignItems : 'left'
       }}>
         {container}
       </div>

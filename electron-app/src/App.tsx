@@ -1,6 +1,6 @@
 import { Link, Route, Routes } from "react-router-dom";
 
-  import WelcomePage from "./components/WelcomePage";
+  import WelcomePage from "./views/WelcomePage";
   import RouteExplorer from './views/RouteExplorer';
   import Purity from './views/PurityOverview';
   import Metrics from './views/Metrics';
