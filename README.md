@@ -6,7 +6,7 @@ Caribu is a micro-service migration planning tool for Express applications.
 
 ## Installation
 
-If you would like run our application in production mode, please follow the instructions on Caribujs.com
+If you would like run our application in production mode, please follow the instructions on <a href="https://www.caribujs.com/">Caribujs.com</a>
 
 If you would like to run our application in development mode, please clone our repo to get started and make sure to run `npm install` to install all the necessary dependencies, then simply change directory into the electron-app folder using `cd /electron-app`. Finally run the `npm start` script to begin running the application.
 
@@ -16,7 +16,7 @@ If you would like to run our application in development mode, please clone our r
 
 To use our application, first copy our script and run it in your terminal.
 
-<div style="display:flex; flex-direction: column; align-items: center">
+<div style="display:flex; flex-direction: column;">
 <img style="width: 350px;" src="https://i.imgur.com/OBR5MK0.png" title="source: imgur.com" /><img style="width: 350px" src="https://i.imgur.com/QId5FHU.png" title="source: imgur.com" /></div>
 
 Once our server is up and running as displayed above, simply drag and drop your applications server folder, then specify the absolute paths to your server file and node modules folder, then submit!
