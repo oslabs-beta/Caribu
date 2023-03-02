@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {Navigate, useLocation} from "react-router-dom"
 import { RootState } from "../store";
 import { update_loadingMessage } from "../slices/viewsSlice";
-import logoCircleSpin from "../assets/circle_logo_thicker.svg"
+const logoCircleSpin = require("../assets/circle_logo_thicker.svg");
 
 const LoadingScreen = (props: object) => {
   const dispatch = useDispatch();

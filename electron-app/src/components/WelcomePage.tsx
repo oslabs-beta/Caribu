@@ -10,8 +10,8 @@ import {
 } from "../slices/viewsSlice";
 import DragDrop from "./DragDrop";
 
-// const logo = require("./../../assets/text_logo.svg");
-import logo from "../../assets/text_logo.svg";
+const logo = require("./../../assets/text_logo.svg");
+// import logo from "../../assets/text_logo.svg";
 
 const WelcomePage = () => {
   const dispatch = useDispatch<AppDispatch>();
