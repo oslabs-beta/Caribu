@@ -57,8 +57,6 @@
     "electron-squirrel-startup": "^1.0.0",
     "fs": "^0.0.1-security",
     "react": "^18.2.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-drag-drop-files": "^2.3.8",
     "react-dropzone": "^14.2.3",

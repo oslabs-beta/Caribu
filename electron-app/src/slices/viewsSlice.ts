@@ -115,9 +115,9 @@ export interface viewsState {
 }
 
 type tag = {
-  id: string,
-  text: string,
-}
+  id: string;
+  text: string;
+};
 
 const initialState: viewsState = {
   // FOR TESTING ONLY: populate initial state to test if redux state is accessible from components
@@ -200,7 +200,10 @@ export const viewsSlice = createSlice({
       state.loadingMessage = loadingMessage;
     },
     update_filters: (state, action: PayloadAction<{ filters: Array<tag> }>) => {
-      console.log("viewsSlice update_N=updateFilters fired with ", action.payload);
+      console.log(
+        "viewsSlice update_N=updateFilters fired with ",
+        action.payload
+      );
       const { filters } = action.payload;
       state.filters = filters;
     },
@@ -249,46 +252,42 @@ export const fetchRoutes = () => {
     //   console.log('viewsSlice server responded with:', data)
     // })
 
-
-
-
-    // const newJSON = require('../exampleResponse.json')
+    const newJSON = require("../exampleResponse.json");
     // const newJSON = require('../exampleResponseUs.json')
     // const newJSON = require('../dispatchResponse_dep.json')
     // const newJSON = require('../betterDeps.json')
-    const newJSON = require('../exampleAppDeps.json')
-    dispatch(update_loading(true))
+    // const newJSON = require('../exampleAppDeps.json')
+    dispatch(update_loading(true));
 
     setTimeout(() => {
       dispatch(update_loading(false));
       dispatch(update_routes(newJSON));
-    }, 0)
+    }, 0);
 
     const funcLibrary = {};
 
     //This function parses through the routes object to isolate the middlewares down to an object with routename, method, and functionname.
     // function parseRoutes(){
 
-      const routesDict: object= {};
-      for(let i = 0; i < newJSON.length; i++){
-        const route: object = newJSON[i]
-        for(const key in route.routeMethods){
-          const middlewares = route.routeMethods[key].middlewares;
-          for(let j = 0; j < middlewares.length; j++){
-            let funcName = middlewares[j].functionInfo.funcName
-            if (!funcLibrary[funcName]) {
-              funcLibrary[funcName] = {
-                functionInfo : middlewares[j].functionInfo, 
-                deps : middlewares[j].deps}
-            }
-
+    const routesDict: object = {};
+    for (let i = 0; i < newJSON.length; i++) {
+      const route: object = newJSON[i];
+      for (const key in route.routeMethods) {
+        const middlewares = route.routeMethods[key].middlewares;
+        for (let j = 0; j < middlewares.length; j++) {
+          let funcName = middlewares[j].functionInfo.funcName;
+          if (!funcLibrary[funcName]) {
+            funcLibrary[funcName] = {
+              functionInfo: middlewares[j].functionInfo,
+              deps: middlewares[j].deps,
+            };
           }
         }
       }
-      dispatch(update_mwLibrary(funcLibrary));
     }
-
+    dispatch(update_mwLibrary(funcLibrary));
   };
+};
 // };
 //     console.log("viewsSlice anonymous thunk func fired");
 //     console.log(
