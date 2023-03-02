@@ -267,30 +267,6 @@ const routerRecur = (router, type, path = '') => {
     }
   });
 
-<<<<<<< HEAD
-=======
-  // //no apptree.boundDispatchers yet
-
-  // // console.log(appTree);
-  // appTree.routers.forEach((el) => {
-  //   for (let endpoint in el.endpoints) {
-  //     // console.log(el.endpoints[endpoint].stack)
-  //     // console.log("THIS IS ENDPOINT: ", endpoint);
-  //     // console.log("THIS IS ENDPOINT MW STACK: ", el.endpoints[endpoint].stack);
-  //   }
-  //   // // el.endpoints.forEach(elEnd => {
-  //   //   console.log(elEnd.middlewareChain)
-  //   // })
-  // });
-
-  //clear out any existing copied server
-  if (fs.existsSync(appTreeFolder)) {
-    fs.rmSync(appTreeFolder, { recursive: true, force: true });
-  }
-  //make a new one
-  fs.mkdirSync(appTreeFolder);
-
->>>>>>> dev
   const originalAppTree = appTree;
   // console.log('renamedappTree before writeFileSync is ', originalAppTree);
   // console.log('appTree before writeFileSync is ', originalAppTree);

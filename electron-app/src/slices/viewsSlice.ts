@@ -262,7 +262,7 @@ export const fetchRoutes = () => {
     setTimeout(() => {
       dispatch(update_loading(false));
       dispatch(update_routes(newJSON));
-    }, 0);
+    }, 15000);
 
     const funcLibrary = {};
 
