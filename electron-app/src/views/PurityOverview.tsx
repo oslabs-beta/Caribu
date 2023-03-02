@@ -1,7 +1,24 @@
-import { useSelector } from "react-redux";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import POContainer from "../components/purityOverview/POContainer";
 import { ReactElement } from "react";
+import e from "express";
+import { convertRoutesToDataRoutes } from "@remix-run/router/dist/utils";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import cariboxStyling from "../components/caribox";
+import { update_filters } from "../slices/viewsSlice";
+import { WithContext as ReactTags } from 'react-tag-input';
+
+const newCariboxStyling = {...cariboxStyling, minHeight : '5vh', width: '80vw'}
+import {Navigate, useLocation} from "react-router-dom";
+
+interface RouteNames {
+  routeName?: string;
+  routeMethods?: any;
+}
 
 // Node, find, union, and addroute are all a data structure used for the union find algorithm aka Disjoint set union.
 class Node {
@@ -45,29 +62,67 @@ function addRoute(x: Node, route: string): void{
 
 const Purity = () => {
 
-  // gets routes from the state object.
+  const dispatch = useDispatch();
+  // gets routes from the state object. Get the whole state object.
   const routes = useSelector((state: RootState) => state.views.routes);
+  const views = useSelector((state: RootState) => state.views);
+
+  // get the filters object from state and convert them from tags to strings.
+  const filtertags = useSelector((state: RootState) => state.views.filters);
+  const filters = filtertags.map((el) => el.text);
+
+  if(!views.directoryProcessed) {
+    console.log("USER NOT PROCESSED")
+    return <Navigate to="/"/>
+  }
+
+  const funcLibrary = {}
 
   //This function parses through the routes object to isolate the middlewares down to an object with routename, method, and functionname.
-  function parseRoutes(){
-    const routesDict: object= {};
+  function parseRoutes(strs: string[] = ['']){
+    strs = strs.filter((el) => el.length);
+
+    const routesDict: object = {};
     for(let i = 0; i < routes.length; i++){
-      const route: any /**update type when finalized */= routes[i]
-      routesDict[route.routeName] = {};
+      const route : RouteNames = routes[i];
+      if(!routesDict[route.routeName]) routesDict[route.routeName] = {};
       
       for(const key in route.routeMethods){
-        const middlewares = route.routeMethods[key].middlewares;
+        const middlewares : any = route.routeMethods[key].middlewares;
         routesDict[route.routeName][key] = [];
+        // if string is in function name at all, be sure to skip over that function.
+        // assume it comes from a value in the store.
+        // if string not provided, leave string empty
+        // be sure to make sure that string.length is > 0 for the includes method in this.
+        // think of maybe maing it an array of string for multiple options.
         for(let j = 0; j < middlewares.length; j++){
+          const funcName = middlewares[j].functionInfo.funcName;
+
+          // This code checks for each filter criteria:
+          // if the filter string is in the function name, skip over this function
+          if(strs.map((el: string) => funcName.toLowerCase().includes(el.toLowerCase())).reduce((acc: boolean, el: boolean) => el || acc, false)) continue;
+          // if the filter string is in the funcAssignedTo name, skip over this function
+          if(middlewares[j].functionInfo.funcAssignedTo)
+            if(strs.map((el: string) => middlewares[j].functionInfo.funcAssignedTo.toLowerCase().includes(el.toLowerCase())).reduce((acc: boolean, el: boolean) => el || acc, false)) continue;
+          // if the user specified 3p, check whether the function has a third party attribute sest to true. Skip function if so
+          if(strs.includes('3p'))
+            if(middlewares[j].functionInfo.isThirdParty) continue;
+
+          if (!funcLibrary[funcName]) {
+            funcLibrary[funcName] = middlewares[j].functionInfo
+          }
           routesDict[route.routeName][key].push(middlewares[j].functionInfo.funcName);
         }
+        if(routesDict[route.routeName][key].length === 0) delete routesDict[route.routeName][key];
       }
+      if(Object.keys(routesDict[route.routeName]).length === 0) delete routesDict[route.routeName];
     }
+    console.log("routesDict", routesDict)
     return routesDict;
   }
 
 
-// function to generate the containers for each route where routes are grouped by shared middlewares function.
+  // function to generate the containers for each route where routes are grouped by shared middlewares function.
   function generateContainers(){
 
 
@@ -78,7 +133,9 @@ const Purity = () => {
         if(!isoFuncs[key]) isoFuncs[key] = new Set();
         for(const key2 in reducedRoutes[key]){
           const methodFuncs = reducedRoutes[key][key2]
-          for(let i = 0; i < methodFuncs.length; i++) isoFuncs[key].add(reducedRoutes[key][key2][i]);
+          for(let i = 0; i < methodFuncs.length; i++) {
+            isoFuncs[key].add(reducedRoutes[key][key2][i])
+          };
         }
       }
       return isoFuncs;
@@ -134,21 +191,43 @@ const Purity = () => {
     }
 
     // routes object to => { routes: { methods : [functions] } }
-    const reducedRoutes = parseRoutes();
+    console.log(routes)
+    const reducedRoutes = parseRoutes(filters);
+    console.log('reducedRoutes', reducedRoutes)
 
     // reducedRoutes object to => {routes: Set(functions) }
     const isoFuncs: object = isolateRouteFunctions();
+    console.log('isofuncs', isoFuncs)
 
     // sharedMiddlewares is a set with Node objects that contain their unique shared route lists and related functions.
     const sharedMiddlewares: Array<Node> = groupSharedMiddlewares(isoFuncs);
+    sharedMiddlewares.sort((a, b):any => {b.routes.size - a.routes.size})
     console.log('shared', sharedMiddlewares);
 
     const containers: ReactElement[] = [];
 
     // pushes each individual container with props for its route, sharedroutes and functions
     for(let i = 0; i < sharedMiddlewares.length; i++){
+      console.log('HSAREd I:', sharedMiddlewares[i], reducedRoutes)
+      let listOfRoutes = ''
+      
+      sharedMiddlewares[i].routes.forEach(el => {listOfRoutes += `${el}, `})
+      listOfRoutes = listOfRoutes.slice(0, listOfRoutes.length-2)
+
       containers.push(
-        <POContainer reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
+        <div>
+        <Accordion style={newCariboxStyling}>
+        <AccordionSummary>
+          <div>
+          <b>{`Group ${i+1}:`} <i>{listOfRoutes}</i></b>  
+          </div>
+        </AccordionSummary>
+        <AccordionDetails>
+          <POContainer funcLibrary={funcLibrary} reducedRoutes={reducedRoutes} sharedRoutes={sharedMiddlewares[i].routes} functions={sharedMiddlewares[i].functions}/>
+        </AccordionDetails>
+        </Accordion>
+        <br/>
+        </div>
       );
     }
     return containers;
@@ -156,12 +235,49 @@ const Purity = () => {
 
   const containers = generateContainers();
 
+  const [tags, setTags] = React.useState([
+  ]);
+
+  const handleDelete = i => {
+    setTags(tags.filter((tag, index) => index !== i));
+  };
+
+  const handleAddition = tag => {
+    setTags([...tags, tag]);
+  };
+
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = tags.slice();
+
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+
+    // re-render
+    setTags(newTags);
+  };
+
+  const handleTagClick = (index) => {
+    console.log('The tag at index ' + index + ' was clicked');
+  };
+
+  dispatch(update_filters({ filters: tags }));
+
   return (
-    <div className="po-main">
-      <div className="po-header">
-        Route dependency Breakdowns
-      </div>
-      <div className="po-containers">
+  <div style={{display : 'flex', flexDirection : 'column' , alignItems : 'center', color : '#F1EDE0', marginTop : '5%'}}>
+
+      <h1 >Purity Overview</h1>
+      <ReactTags
+          tags={tags}
+          suggestions={[]}
+          delimiters={[188, 13]}
+          handleDelete={handleDelete}
+          handleAddition={handleAddition}
+          handleDrag={handleDrag}
+          handleTagClick={handleTagClick}
+          inputFieldPosition="bottom"
+          autocomplete
+        />
+      <div>
         {containers}
       </div>
     </div>

@@ -1,10 +1,12 @@
 import { update_method, update_dependency} from "../../slices/viewsSlice";
 import { useDispatch } from "react-redux";
+import Button from '@mui/material/Button';
 
 interface RERVItemProps {
     method: string;
     name: string;
     index: number;
+    highlight : boolean
   }
 
 export default function RERVItem(props: RERVItemProps) {
@@ -15,12 +17,22 @@ export default function RERVItem(props: RERVItemProps) {
         dispatch(update_method({method: props.method, routeIndex: props.index}));
         dispatch(update_dependency({middleware: {}}));
     }
+    
+    const buttonStyle: any = {
+        color : '#255858'
+    }
+    if (props.highlight) {
+        buttonStyle.backgroundColor = "#F2EDDF"
+    }
 
     return (
         <div>
-            <button className="rerv-item" onClick={selectRoute}>
+            <Button style={buttonStyle} onClick={selectRoute}>
                 {props.method}: {props.name}
-            </button>
+            </Button>
+            {/* <button className="rerv-item" onClick={selectRoute}>
+                {props.method}: {props.name}
+            </button> */}
         </div>
 
     )

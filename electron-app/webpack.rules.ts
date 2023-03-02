@@ -25,9 +25,14 @@ export const rules: Required<ModuleOptions>["rules"] = [
       options: {
         exclude: /node_modules/,
         presets: ["@babel/preset-react"],
-      },
+      }, 
     },
   },
+  {
+    test: /\.(gif|svg|jpg|png)$/,
+    loader: "file-loader",
+  },
+// },
   {
     test: /\.tsx?$/,
     exclude: /(node_modules|\.webpack)/,

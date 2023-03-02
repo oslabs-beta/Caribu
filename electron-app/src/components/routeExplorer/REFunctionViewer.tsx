@@ -1,11 +1,12 @@
 import REFVItem from "./REFVItem";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
+import cariboxStyling from '../caribox'
 
 export default function REFunctionViewer() {
 
   // imports the routes object, current method selected, and the route index from the redux state.
-  const routes = useSelector((state: RootState) => state.views.routes);
+  const routes: any = useSelector((state: RootState) => state.views.routes);
   const routeIndex = useSelector((state: RootState) => state.views.routeIndex);
   const method = useSelector((state: RootState) => state.views.curMethod);
 
@@ -15,14 +16,14 @@ export default function REFunctionViewer() {
   if(method){
     const middlewares = routes[routeIndex].routeMethods[method].middlewares;
     for(let i = 0; i < middlewares.length; i++){
-      functions.push(<REFVItem middleware={middlewares[i]} />)
+      functions.push(<REFVItem middleware={middlewares[i]}/>)
     }
   }
 
   return (
-    <div>
+    <div style={cariboxStyling}>
       <span className='refv-header'>Functions</span>
-      {functions}
+      {functions || ''}
     </div>
 
   )
